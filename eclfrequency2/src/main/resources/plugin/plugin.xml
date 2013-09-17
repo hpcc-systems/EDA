@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin id="ECLFrequency"
+	iconfile="frequency.png"
+	description="Frequency"
+	tooltip="Frequency" 
+	category="HPCC EDA"
+	classname="org.hpccsystems.pentaho.job.eclfrequency.ECLFrequency">
+            
+    <libraries>
+	  <library name="../../hpcc-common/javaecl-0.1.0.jar"/>
+        <library name="../../hpcc-common/eclgui.jar"/>
+        <library name="eclfrequency.jar"/>
+    </libraries>            
+</plugin>
