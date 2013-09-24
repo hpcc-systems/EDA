@@ -8,26 +8,37 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -35,7 +46,6 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -49,10 +59,7 @@ import org.pentaho.di.ui.trans.step.BaseStepDialog;
 
 import org.hpccsystems.eclguifeatures.AutoPopulate;
 import org.hpccsystems.eclguifeatures.ErrorNotices;
-import org.hpccsystems.recordlayout.CreateTable;
-import org.hpccsystems.recordlayout.RecordBO;
 import org.hpccsystems.recordlayout.RecordLabels;
-import org.hpccsystems.recordlayout.RecordList;
 import org.hpccsystems.ecljobentrybase.*;
 /**
  *
@@ -60,19 +67,24 @@ import org.hpccsystems.ecljobentrybase.*;
  */
 public class ECLFrequencyDialog extends ECLJobEntryDialog{
 	
+	public static final String NAME = "Name";
+	public static final String OPTION = "Sort Option";
+	public static final String COLUMN = "Column";
+  
+	public static final String[] PROP = { NAME, OPTION, COLUMN};
+	
+	java.util.List people;
+	
 	private String normlist = "";
-	private String desc = "";
     private ECLFrequency jobEntry;
     private Text jobEntryName;
     private Text TableName;
     private Combo datasetName;
     private Combo sort;
-    private CreateTable ct;
-    RecordList recordlist = new RecordList();
     ArrayList<String> Fieldfilter = new ArrayList<String>();
 
    
-    private Button wOK, wCancel, add, ASC, DESC;
+    private Button wOK, wCancel;
     private boolean backupChanged;
     
     
@@ -109,13 +121,12 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
         }
 
         shell = new Shell(parentShell, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MIN | SWT.MAX);
-        ct = new CreateTable(shell);
-        ct.setColumnNames(new String[]{"Column Name","Default Value", "Column Type", "Sort Option"});
-        
+        people = new ArrayList();
+
         TabFolder tab = new TabFolder(shell, SWT.FILL | SWT.RESIZE | SWT.MIN | SWT.MAX);
         FormData datatab = new FormData();
         
-        datatab.height = 525;
+        datatab.height = 300;
         datatab.width = 650;
         tab.setLayoutData(datatab);
         
@@ -159,11 +170,11 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
         FormData generalGroupFormat = new FormData();
         generalGroupFormat.top = new FormAttachment(0, margin);
         generalGroupFormat.width = 400;
-        generalGroupFormat.height = 105;
+        generalGroupFormat.height = 65;
         generalGroupFormat.left = new FormAttachment(middle, 0);
         generalGroup.setLayoutData(generalGroupFormat);
 		
-		jobEntryName = buildText("Job Name :      ", null, lsMod, middle, margin*2, generalGroup);
+		jobEntryName = buildText("Job Name :    ", null, lsMod, middle, margin, generalGroup);
 		
 		//All other contols
         //Dataset Declaration
@@ -174,71 +185,99 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
         FormData datasetGroupFormat = new FormData();
         datasetGroupFormat.top = new FormAttachment(generalGroup, margin);
         datasetGroupFormat.width = 400;
-        datasetGroupFormat.height = 300;
+        datasetGroupFormat.height = 180;
         datasetGroupFormat.left = new FormAttachment(middle, 0);
         datasetGroup.setLayoutData(datasetGroupFormat);
 		
 		
-		datasetName = buildCombo("Dataset :       ", jobEntryName, lsMod, middle, margin*2, datasetGroup, datasets);
+        datasetName = buildCombo("Dataset :    ", jobEntryName, lsMod, middle, margin, datasetGroup, datasets);
 		
-		TableName = buildText("Outname :  ", datasetName, lsMod, middle, 25, datasetGroup);
-		
-        sort = buildCombo("Sort :   ", TableName, lsMod, middle, 25, datasetGroup, new String[]{"NO", "COLUMN", "VALUE"});
-		
-        ASC = new Button(datasetGroup, SWT.RADIO);
-        ASC.setText("ASC");
-        ASC.setEnabled(false);
-        DESC = new Button(datasetGroup, SWT.RADIO);
-        DESC.setText("DESC");
-        DESC.setEnabled(false);
-        FormData dat = new FormData();
-        dat.top = new FormAttachment(sort, 25);
-        dat.left = new FormAttachment(0, 145);
-        //dat.right = new FormAttachment(100, 0);
-        ASC.setLayoutData(dat);
-        ASC.setBackground(new Color(tab.getDisplay(),255,255,255));
+        TableName = buildText("Outname :", datasetName, lsMod, middle, 15, datasetGroup);
         
-        dat = new FormData();
-        dat.top = new FormAttachment(sort,25);
-        dat.left = new FormAttachment(ASC, 15);
-        //dat.right = new FormAttachment(100, 0);
-        DESC.setLayoutData(dat);
-        DESC.setBackground(new Color(tab.getDisplay(),255,255,255));
+        sort = buildCombo("Sort :", TableName, lsMod, middle, 15, datasetGroup, new String[]{"NO", "YES"});
         
-		add = buildButton("Add Columns", ASC, lsMod, middle, 25, datasetGroup);         
+        item1.setControl(compForGrp);
+        /**
+         * TableViewer in new Tab starts
+         */
+        
+        TabItem item2 = new TabItem(tab, SWT.NULL);
+        item2.setText("Fields Selected");
 		
-		sort.addModifyListener(new ModifyListener(){
-        	
-            public void modifyText(ModifyEvent e){
-            	if(!sort.getText().equals("NO") && !sort.getText().equals("")){
-            		ASC.setEnabled(true);
-            		DESC.setEnabled(true);
-            		Listener DESCL = new Listener(){
-						@Override
-						public void handleEvent(Event arg0) {
-							if(DESC.getSelection())
-								desc = "YES";
-							else
-								desc = "NO";
-						}
-            			
-            		};
-            		DESC.addListener(SWT.Selection, DESCL);
-            	}
-            	if(sort.getText().equals("NO")){
-            		ASC.setEnabled(false);
-            		DESC.setEnabled(false);
-            	}
-            	
+        ScrolledComposite sc2 = new ScrolledComposite(tab, SWT.H_SCROLL | SWT.V_SCROLL);
+        Composite compForGrp2 = new Composite(sc2, SWT.NONE);
+        compForGrp2.setLayout(new GridLayout(1, false));
+        sc2.setContent(compForGrp2);
+
+        // Set the minimum size
+        sc2.setMinSize(300, 200);
+
+        // Expand both horizontally and vertically
+        sc2.setExpandHorizontal(true);
+        sc2.setExpandVertical(true);
+        item2.setControl(sc2);
+        Button button = new Button(compForGrp2, SWT.PUSH);
+        button.setLayoutData(new GridData(GridData.FILL));
+
+	    // Create the table viewer to display the players
+	    //final Table table = new Table(composite, SWT.CHECK | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+	    final TableViewer tv = new TableViewer(compForGrp2,  SWT.CHECK | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
+
+	    tv.setContentProvider(new PlayerContentProvider());
+	    tv.setLabelProvider(new PlayerLabelProvider());
+	    
+	    final Table table = tv.getTable();
+	    table.setLayoutData(new GridData(GridData.FILL_BOTH));
+	    
+	    TableColumn tc0 = new TableColumn(table, SWT.LEFT);
+	    tc0.setText("First Name");
+	    tc0.setWidth(100);
+
+	    final TableColumn tc = new TableColumn(table, SWT.CENTER);
+	    tc.setText("Sort Option");
+	    tc.setWidth(0);
+	    tc.setResizable(false);
+	    final TableColumn tc1 = new TableColumn(table, SWT.CENTER);
+	    tc1.setText("Column Option");
+	    tc1.setWidth(0);
+	    tc1.setResizable(false);
+	    if(jobEntry.getPeople() != null)
+            people = jobEntry.getPeople();
+	    tv.setInput(people);
+	    if(people != null && people.size() > 0) {
+            
+            for (Iterator iterator = people.iterator(); iterator.hasNext();) {
+                    Player obj = (Player) iterator.next();
             }
-        });
-        
-        Listener addlisten = new Listener(){
+	    }
+        tv.setInput(people);
+        table.setRedraw(true);
+	    
 
-			@Override
-			public void handleEvent(Event arg0) {
-				// Need to preserve checked status
+	    
+	    Button del = new Button(compForGrp2, SWT.PUSH);
+	    del.setText("Delete");
+	    del.addSelectionListener(new SelectionAdapter(){
+	    	public void widgetSelected(SelectionEvent event){
+	    		int cnt = 0;
+	    		for(int i = 0; i<table.getItemCount(); i++){
+	    			if(table.getItem(i).getChecked()){
+	    				
+	    				people.remove(Math.abs(cnt - i));
+						cnt++;
+					}
+	    		}
+	    		tv.refresh();
+	    		tv.setInput(people);
+	    		
+	    	}
+	    });
 
+	    button.setText("Add Columns");
+
+	    // Add a listener to change the tableviewer's input
+	    button.addSelectionListener(new SelectionAdapter() {
+	      public void widgetSelected(SelectionEvent event) {
 				final Shell shellFilter = new Shell(display);
 				FormLayout layoutFilter = new FormLayout();
 				layoutFilter.marginWidth = 25;
@@ -308,23 +347,23 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 				CancelFilter.setText("   Cancel   ");
 			    				
 				AutoPopulate ap = new AutoPopulate();
-                try{
-            		
-                    String[] items = ap.fieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
-                    
-                    for(int i = 0; i < items.length; i++){
-                		TreeItem item = new TreeItem(tab, SWT.NONE);
-                		item.setText(items[i].toLowerCase());
-                		field.add(new String[]{items[i].toLowerCase(),"false"});
-                	}
-                    
-                    
-                }catch (Exception ex){
-                    System.out.println("failed to load record definitions");
-                    System.out.println(ex.toString());
-                    ex.printStackTrace();
-                }
-                FormData dat = new FormData();
+              try{
+          		
+                  String[] items = ap.fieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
+                  
+                  for(int i = 0; i < items.length; i++){
+              		TreeItem item = new TreeItem(tab, SWT.NONE);
+              		item.setText(items[i].toLowerCase());
+              		field.add(new String[]{items[i].toLowerCase(),"false"});
+              	}
+                  
+                  
+              }catch (Exception ex){
+                  System.out.println("failed to load record definitions");
+                  System.out.println(ex.toString());
+                  ex.printStackTrace();
+              }
+              FormData dat = new FormData();
 		        dat.top = new FormAttachment(NameFilter, 0, SWT.CENTER);
 		        filter.setLayoutData(dat);
 		        dat = new FormData();
@@ -389,38 +428,29 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 		       });
 		        
 		        Listener okfilter = new Listener(){
-
-					
 					@Override
 					public void handleEvent(Event arg0) {
+						ArrayList<String> check = new ArrayList<String>();
+						if(table.getItemCount() > 0){
+							for(int i = 0; i<table.getItemCount(); i++){
+								check.add(table.getItem(i).getText());
+							}
+						}
+						for(Iterator<String[]> it = field.iterator(); it.hasNext();){
+							String[] S = it.next();
+							if(S[1].equalsIgnoreCase("True") && !check.contains(S[0])){
+								Player p = new Player();
+								p.setFirstName(S[0]);
+								p.setSort(Integer.valueOf("0"));
+								p.setColumns(Integer.valueOf("0"));
+								people.add(p);
+								
+							}
+							
+						}
 						
-						ArrayList<String[]> Str = new ArrayList<String[]>();
+						tv.setInput(people);
 						
-						for(Iterator<RecordBO> iterator = recordlist.getRecords().iterator(); iterator.hasNext();){
-							String[] s1 = {iterator.next().getColumnName(),"STRING",""};
-							Str.add(s1);
-		            	}
-						
-		            	for(int i = 0; i<tab.getItemCount(); i++){		            		
-	            			if(tab.getItem(i).getChecked()){
-	            				boolean flag = true;
-	            				recordlist = ct.getRecordList();
-		    	 				if(recordlist.getRecords() != null && recordlist.getRecords().size() > 0) {
-		    	 					for(Iterator<RecordBO> iterator = recordlist.getRecords().iterator(); iterator.hasNext();){
-		    	 						if(tab.getItem(i).getText().equals(iterator.next().getColumnName()))
-		    	 							{flag = false; break;}
-		    	 					}
-		    	 				}
-		    	 				if(flag){
-		    	 					String[] S = {tab.getItem(i).getText(),"STRING",""};
-		    	 					Str.add(S);
-		    	 				}
-	            			}	            				            		
-		            	}
-		            		            	
-		            	ct.setRecordList(jobEntry.ArrayListToRecordList(Str));
-		            	ct.redrawTable(true);
-		            	recordlist = ct.getRecordList();
 						shellFilter.dispose();
 						
 					}
@@ -447,28 +477,49 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 				}
 
 			}
-        	
-        };
-        add.addListener(SWT.Selection, addlisten);
-        
-        item1.setControl(compForGrp);
-        
-        if(jobEntry.getRecordList() != null){
-            recordlist = jobEntry.getRecordList();
-            ct.setRecordList(jobEntry.getRecordList());
-            
-            if(recordlist.getRecords() != null && recordlist.getRecords().size() > 0) {
-                    System.out.println("Size: "+recordlist.getRecords().size());
-                    for (Iterator<RecordBO> iterator = recordlist.getRecords().iterator(); iterator.hasNext();) {
-                            RecordBO obj = (RecordBO) iterator.next();
-                    }
-            }
-        }
-        
-        TabItem item2 = ct.buildDefTab("Fields", tab);
-        ct.redrawTable(true);
-        
-        wOK = new Button(shell, SWT.PUSH);
+
+	      
+	    });
+	    
+	    table.setHeaderVisible(true);
+	    table.setLinesVisible(true);
+
+	    final CellEditor[] editors = new CellEditor[3];
+	    editors[0] = new TextCellEditor(table);
+	    
+	    editors[1] = new ComboBoxCellEditor(table, SortOption.INSTANCES, SWT.READ_ONLY);
+	   
+	    editors[2] = new ComboBoxCellEditor(table, ColOption.INSTANCES1, SWT.READ_ONLY);
+	    // Set the editors, cell modifier, and column properties
+	    tv.setColumnProperties(PROP);
+	    tv.setCellModifier(new PersonCellModifier(tv));
+	    tv.setCellEditors(editors);
+
+		/**
+		 * Fields Tab ends
+		 */
+	    
+	    sort.addModifyListener(new ModifyListener(){
+
+			@Override
+			public void modifyText(ModifyEvent arg0) {
+				if(sort.getText().equals("YES")){
+					tc1.setWidth(100);
+					tc1.setResizable(true);
+					tc.setWidth(100);
+					tc.setResizable(true);
+				}
+				if(sort.getText().equals("NO")){
+					tc1.setWidth(0);
+					tc1.setResizable(false);
+					tc.setWidth(0);
+					tc.setResizable(false);
+				}
+			}
+	    	
+	    });
+	    
+	    wOK = new Button(shell, SWT.PUSH);
         wOK.setText("OK");
         wCancel = new Button(shell, SWT.PUSH);
         wCancel.setText("Cancel");
@@ -484,21 +535,14 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
         Listener okListener = new Listener() {
 
             public void handleEvent(Event e) {
-            	//Fieldfilter = new ArrayList<String>();
+            	
             	normlist = new String();
-				recordlist = ct.getRecordList();
-				if(recordlist.getRecords() != null && recordlist.getRecords().size() > 0) {
-					for(Iterator<RecordBO> iterator = recordlist.getRecords().iterator(); iterator.hasNext();){
-						String s = iterator.next().getColumnName();
-						normlist += s+",";
-						//Fieldfilter.add(s);
-					}
-						
+				for(int i = 0; i<table.getItemCount(); i++){
+					String s1 = table.getItem(i).getText(0)+","+table.getItem(i).getText(1)+","+table.getItem(i).getText(2)+"-";
+					//String s2 = table.getItem(i).getText(1);
+					normlist += s1;
+					
 				}
-				if(DESC.getSelection())
-					desc = "YES";
-				else
-					desc = "NO";
 				ok();
             }
         };
@@ -537,16 +581,17 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
         	normlist = jobEntry.getnormList();
         }
         
-        if (jobEntry.getsortlist() != null) {
-        	sort.setText(jobEntry.getsortlist());
-        }
-        
-        if (jobEntry.getdesc() != null) {
-        	desc = jobEntry.getdesc();
+        if (jobEntry.getSort() != null) {
+        	sort.setText(jobEntry.getSort());
         }
         
         if (jobEntry.gettablename() != null) {
         	TableName.setText(jobEntry.gettablename());
+        }
+        
+        if(jobEntry.getPeople() != null){
+        	people = jobEntry.getPeople();
+        	tv.setInput(people);
         }
         
         shell.pack();
@@ -577,6 +622,10 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
    			isValid = false;
        		errors += "\"Dataset Name\" is a required field!\r\n";
    		}
+   		if(this.sort.getText().equals("")){
+   			isValid = false;
+       		errors += "\"Choice of Sort\" is a required field!\r\n";
+   		}
    		if(this.normlist.equals("")){
    			isValid = false;
    			errors += "You need to Enter Some Field to compute Frequency";
@@ -600,10 +649,9 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
         jobEntry.setName(jobEntryName.getText());
         jobEntry.setDatasetName(this.datasetName.getText());
         jobEntry.setnormList(this.normlist);
-        jobEntry.setRecordList(this.recordlist);
-        jobEntry.setsortlist(this.sort.getText());
-        jobEntry.setdesc(this.desc);
+        jobEntry.setSort(this.sort.getText());
         jobEntry.settablename(this.TableName.getText());
+        jobEntry.setPeople(this.people);
 
         dispose();
     }
@@ -614,5 +662,166 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
         dispose();
     }
     
-    
 }
+
+class PersonCellModifier implements ICellModifier {
+	  private Viewer viewer;
+
+	  public PersonCellModifier(Viewer viewer) {
+	    this.viewer = viewer;
+	  }
+
+	  public boolean canModify(Object element, String property) {
+	    // Allow editing of all values
+	    return true;
+	  }
+	  public Object getValue(Object element, String property) {
+	    Player p = (Player) element;
+	    if (ECLFrequencyDialog.NAME.equals(property))
+	      return p.getFirstName();
+	    else if (ECLFrequencyDialog.OPTION.equals(property))
+	      return p.getSort();
+	    else if (ECLFrequencyDialog.COLUMN.equals(property))
+		      return p.getColumns();
+	    else
+	      return null;
+	  }
+
+	  public void modify(Object element, String property, Object value) {
+	    if (element instanceof Item)
+	      element = ((Item) element).getData();
+
+	    Player p = (Player) element;
+	    if (ECLFrequencyDialog.NAME.equals(property))
+	      p.setFirstName((String) value);
+	    else if (ECLFrequencyDialog.OPTION.equals(property))
+	      p.setSort((Integer) value);
+	    else if (ECLFrequencyDialog.COLUMN.equals(property))
+		      p.setColumns((Integer) value);
+	    // Force the viewer to refresh
+	    viewer.refresh();
+	  }
+}
+
+
+class Player {
+	  private String firstName;
+	  private Integer sortoption;
+	  private Integer Column;
+
+
+	  public String getFirstName() {
+		  return firstName;
+	  }
+
+	  public void setFirstName(String firstName) {
+		  this.firstName = firstName;
+	  }
+
+	  public Integer getSort() {
+		  return sortoption;
+	  }
+
+	  public void setSort(Integer sortoption) {
+		  this.sortoption = sortoption;
+	  }
+	  public Integer getColumns() {
+		  return Column;
+	  }
+
+	  public void setColumns(Integer Column) {
+		  this.Column = Column;
+	  }
+
+}
+
+
+
+
+
+class PlayerLabelProvider implements ITableLabelProvider {
+
+
+// Constructs a PlayerLabelProvider
+	public PlayerLabelProvider() {
+	}
+
+
+	public Image getColumnImage(Object arg0, int arg1) {
+  
+		return null;
+	}
+
+
+	public String getColumnText(Object arg0, int arg1) {
+	  Player values = (Player) arg0;
+	//  String text = "";
+	  switch(arg1){
+	  case 0:
+	  	  return values.getFirstName();//text = values[0];
+	  	//break;
+	  case 1:
+		  return SortOption.INSTANCES[values.getSort().intValue()];//text = values[1];
+	  case 2:
+		  return ColOption.INSTANCES1[values.getColumns().intValue()];
+	  	//break;
+	  }
+	  return null;
+	}
+	
+	public void addListener(ILabelProviderListener arg0) {
+	  // Throw it away
+	}
+	
+	public void dispose() {
+	 
+	}
+	
+	public boolean isLabelProperty(Object arg0, String arg1) {
+	  return false;
+	}
+	
+	public void removeListener(ILabelProviderListener arg0) {
+	  // Do nothing
+	}
+}
+
+
+class PlayerContentProvider implements IStructuredContentProvider {
+
+	public Object[] getElements(Object arg0) {
+	  
+	  return ((List) arg0).toArray();
+	}
+	
+	public void dispose() {
+	  // We don't create any resources, so we don't dispose any
+	}
+	
+	public void inputChanged(Viewer arg0, Object arg1, Object arg2) {
+	  // Nothing to do
+	}
+}
+
+class SortOption {
+	  public static final String NONE = " ";
+	
+	  public static final String DESC = "DESC";
+	  
+	  public static final String ASC = "ASC";
+
+	  public final static String[] INSTANCES = { NONE, ASC, DESC };
+	
+}
+
+class ColOption {
+	  public static final String NONE = " ";
+	
+	  public static final String NAME = "NAME";
+	  
+	  public static final String VAL = "VALUE";
+
+	  public final static String[] INSTANCES1 = { NONE, NAME, VAL };
+	
+}
+
