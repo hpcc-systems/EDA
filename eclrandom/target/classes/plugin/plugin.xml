@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin id="ECLRandom"
+	iconfile="random.png"
+	description="Random"
+	tooltip="Random" 
+	category="HPCC EDA"
+	classname="org.hpccsystems.pentaho.job.eclrandom.ECLRandom">
+            
+    <libraries>
+	  <library name="../../hpcc-common/javaecl-0.1.0.jar"/>
+        <library name="../../hpcc-common/eclgui.jar"/>
+        <library name="eclrandom.jar"/>
+    </libraries>            
+</plugin>
