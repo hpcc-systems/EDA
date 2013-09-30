@@ -46,6 +46,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -114,6 +115,7 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
             //Object[] jec = this.jobMeta.getJobCopies().toArray();
         	
             datasets = ap.parseDatasetsRecordsets(this.jobMeta.getJobCopies());
+            
         }catch (Exception e){
             System.out.println("Error Parsing existing Datasets");
             System.out.println(e.toString());
@@ -126,7 +128,7 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
         TabFolder tab = new TabFolder(shell, SWT.FILL | SWT.RESIZE | SWT.MIN | SWT.MAX);
         FormData datatab = new FormData();
         
-        datatab.height = 300;
+        datatab.height = 270;
         datatab.width = 650;
         tab.setLayoutData(datatab);
         
@@ -185,16 +187,16 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
         FormData datasetGroupFormat = new FormData();
         datasetGroupFormat.top = new FormAttachment(generalGroup, margin);
         datasetGroupFormat.width = 400;
-        datasetGroupFormat.height = 180;
+        datasetGroupFormat.height = 120;
         datasetGroupFormat.left = new FormAttachment(middle, 0);
         datasetGroup.setLayoutData(datasetGroupFormat);
 		
 		
         datasetName = buildCombo("Dataset :    ", jobEntryName, lsMod, middle, margin, datasetGroup, datasets);
 		
-        TableName = buildText("Outname :", datasetName, lsMod, middle, 15, datasetGroup);
+        TableName = buildText("OutTablename :", datasetName, lsMod, middle, margin, datasetGroup);
         
-        sort = buildCombo("Sort :", TableName, lsMod, middle, 15, datasetGroup, new String[]{"NO", "YES"});
+        sort = buildCombo("Sort :", TableName, lsMod, middle, margin, datasetGroup, new String[]{"NO", "YES"});
         
         item1.setControl(compForGrp);
         /**
@@ -229,10 +231,38 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 	    final Table table = tv.getTable();
 	    table.setLayoutData(new GridData(GridData.FILL_BOTH));
 	    
-	    TableColumn tc0 = new TableColumn(table, SWT.LEFT);
+	    final TableColumn tc0 = new TableColumn(table, SWT.LEFT);
 	    tc0.setText("First Name");
 	    tc0.setWidth(100);
-
+	    tc0.setImage(RecordLabels.getImage("unchecked"));
+	    tc0.addListener(SWT.Selection, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+		        boolean checkBoxFlag = false;
+		        for (int i = 0; i < table.getItemCount(); i++) {
+		            if (table.getItems()[i].getChecked()) {
+		                checkBoxFlag = true;
+		                
+		            }
+		        }
+		        if (checkBoxFlag) {
+		            for (int m = 0; m < table.getItemCount(); m++) {
+		                table.getItems()[m].setChecked(false);
+		                tc0.setImage(RecordLabels.getImage("unchecked"));				                
+		                table.deselectAll();
+		            }
+		        } else {
+		            for (int m = 0; m < table.getItemCount(); m++) {
+		                table.getItems()[m].setChecked(true);
+		                tc0.setImage(RecordLabels.getImage("checked"));
+		                table.selectAll();
+		            }
+		        } 	
+		        tv.refresh();
+		        table.redraw();
+		    } 
+		});
+	    
 	    final TableColumn tc = new TableColumn(table, SWT.CENTER);
 	    tc.setText("Sort Option");
 	    tc.setWidth(0);
@@ -267,10 +297,21 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 						cnt++;
 					}
 	    		}
+	    		if(tc0.getImage().equals(RecordLabels.getImage("checked")))
+	    			tc0.setImage(RecordLabels.getImage("unchecked")); 
 	    		tv.refresh();
 	    		tv.setInput(people);
 	    		
 	    	}
+	    });
+	    
+	    datasetName.addModifyListener(new ModifyListener(){
+        	
+            public void modifyText(ModifyEvent e){
+            	people = new ArrayList();
+            	tv.refresh();
+            	tv.setInput(people);            	
+            }
 	    });
 
 	    button.setText("Add Columns");
@@ -334,6 +375,20 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 				 	   	     	 }
 				 	   	     	 field.remove(idx);
 				 	   	     	 field.add(idx,new String[]{st,"true"});
+				 	   	     	 // to find index of the selected item in the original field array list
+				        	}
+				        	if(!tab.getItem(m).getChecked()){
+				        		String st = tab.getItem(m).getText();
+				        		int idx = 0; 
+				 	   	      	 for(Iterator<String[]> it2 = field.iterator(); it2.hasNext(); ){
+				 	   	     	 	 String[] s = it2.next();
+				 	   	     		 if(s[0].equalsIgnoreCase(st)){
+				 	   	     				idx = field.indexOf(s);
+				 	   	     				break;
+				 	   	     		 }
+				 	   	     	 }
+				 	   	     	 field.remove(idx);
+				 	   	     	 field.add(idx,new String[]{st,"false"});
 				 	   	     	 // to find index of the selected item in the original field array list
 				        	}
 				        }
@@ -483,6 +538,14 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 	    
 	    table.setHeaderVisible(true);
 	    table.setLinesVisible(true);
+	    table.addListener (SWT.Selection, new Listener () {
+            public void handleEvent (Event event) {
+            	if(event.detail == SWT.CHECK){	
+            		tv.refresh();
+                    table.redraw();
+            	}
+            }
+        });
 
 	    final CellEditor[] editors = new CellEditor[3];
 	    editors[0] = new TextCellEditor(table);
@@ -494,6 +557,8 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 	    tv.setColumnProperties(PROP);
 	    tv.setCellModifier(new PersonCellModifier(tv));
 	    tv.setCellEditors(editors);
+	    
+	    
 
 		/**
 		 * Fields Tab ends

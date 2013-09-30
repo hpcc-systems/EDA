@@ -33,7 +33,7 @@ import org.hpccsystems.ecljobentrybase.*;
 
 /**
  *
- * @author KeshavS [:P]
+ * @author KeshavS 
  */
 public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements Cloneable, JobEntryInterface {
 	
@@ -103,8 +103,6 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
         else{
         	//String sort = Sort;
 	        String format = ""; String frequency = "";String[] norm = this.normList.split("-");
-	        logBasic(norm[0]);
-	        logBasic(norm[1]);
 	        for(int i = 0; i < norm.length; i++){
 	        	Table freq = new Table();
 	        	String[] cols = norm[i].split(",");
