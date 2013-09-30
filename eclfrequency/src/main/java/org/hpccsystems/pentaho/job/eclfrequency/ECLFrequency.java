@@ -33,14 +33,24 @@ import org.hpccsystems.ecljobentrybase.*;
 
 /**
  *
- * @author KeshavS [:P]
+ * @author KeshavS 
  */
 public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements Cloneable, JobEntryInterface {
 	
 	private String Name = "";
+	private String Sort = "";
 	private String DatasetName = "";
 	private String normList = "";
-	private String logicalName = "";
+	private String tablename = "";
+	private java.util.List people = new ArrayList();
+	
+	public void setPeople(java.util.List people){
+		this.people = people;
+	}
+	
+	public java.util.List getPeople(){
+		return people;
+	}
 	
 	public String getName(){
 		return Name;
@@ -49,6 +59,14 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	public void setName(String Name){
 		this.Name = Name;
 	}
+	public String getSort(){
+		return Sort;
+	}
+    
+	public void setSort(String Sort){
+		this.Sort = Sort;
+	}
+	
 	
 	public String getDatasetName(){
 		return DatasetName;
@@ -66,18 +84,14 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 		this.normList = normList;
 	}
     
-	public String getlogicalName(){
-		return logicalName;
+	public String gettablename(){
+		return tablename;
 	}
-    
-	public void setlogicalName(String logicalName){
-		this.logicalName = logicalName;
+	
+	public void settablename(String tablename){
+		this.tablename = tablename;
 	}
 
-	/*public String fieldsValid(RecordList recordList2) {
-		// TODO Auto-generated method stub
-		return null;
-	}*/
     @Override
     public Result execute(Result prevResult, int k) throws KettleException {
     	
@@ -87,19 +101,65 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
         	
         }
         else{
-	        String format = ""; String frequency = "";String[] norm = this.normList.split(",");
-	        
+        	//String sort = Sort;
+	        String format = ""; String frequency = "";String[] norm = this.normList.split("-");
 	        for(int i = 0; i < norm.length; i++){
 	        	Table freq = new Table();
-	        	logBasic(this.normList);
-		        freq.setName(getName()+Integer.toString(i));
+	        	String[] cols = norm[i].split(",");
+		        freq.setName(gettablename()+Integer.toString(i));
 		        freq.setRecordset(this.DatasetName);
-		        freq.setExpression(norm[i]);
-		        freq.setSize("FEW");
-		        format = this.DatasetName+"."+norm[i]+";\nfre"+Integer.toString(i)+":= COUNT(GROUP);";
+		        
+		        freq.setExpression(cols[0]);
+		        
+		        format = this.DatasetName+"."+cols[0]+";\nfre"+Integer.toString(i)+":= COUNT(GROUP);";
+		        
 		        freq.setFormat(format);
+		        
 		        format = new String();
-		        frequency += freq.ecl() + "OUTPUT("+getName()+Integer.toString(i) +");\n";
+		        if(getSort().equals("NO") || getSort().equals("")){
+		        	freq.setSize("FEW");
+		        	frequency += freq.ecl() + "OUTPUT("+gettablename()+Integer.toString(i)+",NAMED(\'"+cols[0]+"\'));\n";
+		        }
+		        else{
+		        if(cols[2].equals("NAME")){
+			       	if(cols[1].equals("DESC")){
+			       		freq.setSize("FEW");
+			       		frequency += freq.ecl() +gettablename()+Integer.toString(i)+"s:="+"SORT("+gettablename()+Integer.toString(i)+ ",-"+cols[0]+");\n";
+			       		frequency +="OUTPUT("+gettablename()+Integer.toString(i)+"s,NAMED(\'"+cols[0]+"\'));\n";
+			       	}
+			       	else{
+			       		if(cols[1].equals("ASC"))
+			       			frequency += freq.ecl() + "OUTPUT("+gettablename()+Integer.toString(i)+",NAMED(\'"+cols[0]+"\'));\n";
+			       		else{
+			       			freq.setSize("FEW");
+				        	frequency += freq.ecl() + "OUTPUT("+gettablename()+Integer.toString(i)+",NAMED(\'"+cols[0]+"\'));\n";
+			       		}
+			       	}
+			       	
+			       }
+			       else if(cols[2].equals("VALUE")){
+			       		if(cols[1].equals("DESC")){
+			       			freq.setSize("FEW");
+			       			frequency += freq.ecl() +gettablename()+Integer.toString(i)+"s:="+ "SORT("+gettablename()+Integer.toString(i)+ ",-fre"+Integer.toString(i)+");\n";
+			       			frequency +="OUTPUT("+gettablename()+Integer.toString(i)+"s,NAMED(\'"+cols[0]+"\'));\n";
+			       		}
+			       		else{
+			       			if(cols[1].equals("ASC")){
+			       				freq.setSize("FEW");
+			       				frequency += freq.ecl() +gettablename()+Integer.toString(i)+"s:="+ "SORT("+gettablename()+Integer.toString(i)+ ",fre"+Integer.toString(i)+");\n";
+			       				frequency += "OUTPUT("+gettablename()+Integer.toString(i)+"s,NAMED(\'"+cols[0]+"\'));\n";
+			       			}
+			       			else{
+				       			freq.setSize("FEW");
+					        	frequency += freq.ecl() + "OUTPUT("+gettablename()+Integer.toString(i)+",NAMED(\'"+cols[0]+"\'));\n";
+				       		}
+			       		}
+			       	}
+			        else{
+			        	freq.setSize("FEW");
+					   	frequency += freq.ecl() + "OUTPUT("+gettablename()+Integer.toString(i)+",NAMED(\'"+cols[0]+"\'));\n";
+			        }
+		        }
 	        }
 	        
 	
@@ -114,88 +174,39 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        List list = result.getRows();
 	        list.add(data);
 	        String eclCode = parseEclFromRowData(list);
-	        /*
-	        String eclCode = "";
-	        if (list == null) {
-	            list = new ArrayList();
-	        } else {
-	            
-	            for (int i = 0; i < list.size(); i++) {
-	                RowMetaAndData rowData = (RowMetaAndData) list.get(i);
-	                String code = rowData.getString("ecl", null);
-	                if (code != null) {
-	                    eclCode += code;
-	                }
-	            }
-	            logBasic("{Frequency Job} ECL Code =" + eclCode);
-	        }
-	        */
 	        result.setRows(list);
 	        result.setLogText("ECLFrequency executed, ECL code added");
         }
         return result;
     }
- 
-    /*public String saveRecordList(){
-        String out = "";
-        ArrayList list = recordList.getRecords();
-        Iterator<RecordBO> itr = list.iterator();
-        boolean isFirst = true;
-        while(itr.hasNext()){
-            if(!isFirst){out+="|";}
-            
-            out += itr.next().toCSV();
-            isFirst = false;
-        }
-        return out;
-    }
     
-    public void openRecordList(String in){
+    public String savePeople(){
+    	String out = "";
+    	
+    	Iterator it = people.iterator();
+    	boolean isFirst = true;
+    	while(it.hasNext()){
+    		if(!isFirst){out+="|";}
+    		Player p = (Player) it.next();
+    		out +=  p.getFirstName()+","+p.getSort().toString();
+            isFirst = false;
+    	}
+    	return out;
+    }
+
+    public void openPeople(String in){
         String[] strLine = in.split("[|]");
-        
         int len = strLine.length;
         if(len>0){
-            recordList = new RecordList();
-            //System.out.println("Open Record List");
-            for(int i =0; i<len; i++){
-                //System.out.println("++++++++++++" + strLine[i]);
-                //this.recordDef.addRecord(new RecordBO(strLine[i]));
-                RecordBO rb = new RecordBO(strLine[i]);
-                //System.out.println(rb.getColumnName());
-                recordList.addRecordBO(rb);
-            }
+        	people = new ArrayList();
+        	for(int i = 0; i<len; i++){
+        		String[] S = strLine[i].split(",");
+        		Player P = new Player();
+        		P.setFirstName(S[0]);
+        		P.setSort(Integer.parseInt(S[1]));
+        		people.add(P);
+        	}
         }
-    }
-    */
-    public RecordList ArrayListToRecordList(ArrayList<String[]> in){
-    
-    	RecordList recordList = null;
-    	/*
-    	 					column[0] = "";//label            THIS BLOCK WAS ALREADY COMMENTED OUT
-                        	column[1] = "";//type
-                        	column[2] = "";//value
-                        	column[3] = "";//size
-                        	column[4] = "";//maxsize
-    	 */
-        
-       if(in.size()>0){
-            recordList = new RecordList();
-            for(int i =0; i<in.size(); i++){
-                RecordBO rb = new RecordBO();
-                rb.setColumnName(in.get(i)[0]);
-                //rb.setColumnType(in.get(i)[1].replaceAll("\\d+",""));//replaces digit with "" so we get STRING/INTEGER etc
-                //System.out.println("Letters: " + x.replaceAll("\\d+[_]*",""));
-                rb.setColumnType(in.get(i)[1].replaceAll("\\d+[_]*",""));//replaces digit with "" so we get STRING/INTEGER etc
-                
-                //rb.setColumnWidth(in.get(i)[1].replaceAll("\\D+",""));//replace non digit with "" so we get just number 
-                //System.out.println("Numbers: " + x.replaceAll("[^0-9_]+",""));
-                rb.setColumnWidth(in.get(i)[1].replaceAll("[^0-9_]+",""));//replace non digit with "" so we get just number 
-                
-                rb.setDefaultValue(in.get(i)[2]);
-                recordList.addRecordBO(rb);
-            }
-        }
-        return recordList;
     }
     
     @Override
@@ -208,12 +219,17 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "dataset_name")) != null)
                 setDatasetName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "dataset_name")));
             
-            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "logical_file_name")) != null)
-                setlogicalName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "logical_file_name")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "tablename")) != null)
+                settablename(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "tablename")));
+
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "Sort")) != null)
+                setSort(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "Sort")));
             
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "normList")) != null)
                 setnormList(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "normList")));
             
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "people")) != null)
+                openPeople(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "people")));
             
         } catch (Exception e) {
             throw new KettleXMLException("ECL Dataset Job Plugin Unable to read step info from XML node", e);
@@ -226,8 +242,9 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
         
         retval += super.getXML();
         retval += "		<name><![CDATA[" + Name + "]]></name>" + Const.CR;
-        retval += "		<logical_file_name><![CDATA[" + logicalName + "]]></logical_file_name>" + Const.CR;
-        retval += "		<normList><![CDATA[" + normList + "]]></normList>" + Const.CR;
+        retval += "		<Sort eclIsDef=\"true\" eclType=\"frequency\"><![CDATA[" + Sort + "]]></Sort>" + Const.CR;
+        retval += "		<tablename><![CDATA[" + tablename + "]]></tablename>" + Const.CR;
+        retval += "		<normList><![CDATA[" + this.getnormList() + "]]></normList>" + Const.CR;
         retval += "		<dataset_name eclIsDef=\"true\" eclType=\"frequency\"><![CDATA[" + DatasetName + "]]></dataset_name>" + Const.CR;
         
         return retval;
@@ -243,13 +260,18 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
         	if(rep.getStepAttributeString(id_jobentry, "datasetName") != null)
                 DatasetName = rep.getStepAttributeString(id_jobentry, "datasetName"); //$NON-NLS-1$
             
-             
-            if(rep.getStepAttributeString(id_jobentry, "logicalFileName") != null)
-                logicalName = rep.getStepAttributeString(id_jobentry, "logicalFileName"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "tablename") != null)
+            	tablename = rep.getStepAttributeString(id_jobentry, "tablename"); //$NON-NLS-1$
+
+            if(rep.getStepAttributeString(id_jobentry, "Sort") != null)
+            	Sort = rep.getStepAttributeString(id_jobentry, "Sort"); //$NON-NLS-1$
             
             if(rep.getStepAttributeString(id_jobentry, "normList") != null)
-                normList = rep.getStepAttributeString(id_jobentry, "normList"); //$NON-NLS-1$
+                this.setnormList(rep.getStepAttributeString(id_jobentry, "normList")); //$NON-NLS-1$
             
+            if(rep.getStepAttributeString(id_jobentry, "people") != null)
+                this.openPeople(rep.getStepAttributeString(id_jobentry, "people")); //$NON-NLS-1$
+
             
         } catch (Exception e) {
             throw new KettleException("Unexpected Exception", e);
@@ -260,11 +282,15 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
         try {
         	rep.saveStepAttribute(id_job, getObjectId(), "datasetName", DatasetName); //$NON-NLS-1$
 
-        	rep.saveStepAttribute(id_job, getObjectId(), "logicalFileName", logicalName); //$NON-NLS-1$
+        	rep.saveStepAttribute(id_job, getObjectId(), "tablename", tablename); //$NON-NLS-1$
+        	
+        	rep.saveStepAttribute(id_job, getObjectId(), "Sort", Sort); //$NON-NLS-1$
         	
         	rep.saveStepAttribute(id_job, getObjectId(), "Name", Name); //$NON-NLS-1$
         	
-        	rep.saveStepAttribute(id_job, getObjectId(), "normList", normList); //$NON-NLS-1$
+        	rep.saveStepAttribute(id_job, getObjectId(), "normList", this.getnormList()); //$NON-NLS-1$
+        	
+            rep.saveStepAttribute(id_job, getObjectId(), "people", this.savePeople()); //$NON-NLS-1$
             
             
         } catch (Exception e) {
@@ -280,35 +306,4 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
         return true;
     }
     
-    public ArrayList<String[]> parseFileHeader(String serverHost, int serverPort, String user,String pass, String fileName){
-    	
-    	GetHeader header = new GetHeader(serverHost,serverPort,user,pass);
-    	
-    	List<Header> headers = new ArrayList<Header>();
-			
-		headers = header.retrieveHeaderInformation(fileName);
-		ArrayList<String[]> details = new ArrayList<String[]>();
-		for (Iterator<Header> iter = headers.iterator(); iter.hasNext();) 
-		{
-			Header entry = (Header) iter.next();
-			System.out.println("Column Name: " + entry.getColumnName());		
-			System.out.println("Data Type: " + entry.getDataType());
-			String[] column = new String[5];
-			column[0] = entry.getColumnName();
-			column[1] = entry.getDataType();
-			column[2] = "";
-			column[3] = "";
-			column[4] = "";
-			details.add(column);
-		}
-		/*
-		 * column[0] = attributes.getNamedItem("label").getTextContent();
-		   column[1] = attributes.getNamedItem("ecltype").getTextContent();
-		   column[2] = "";
-		   column[3] = attributes.getNamedItem("size").getTextContent();
-		   column[4] = attributes.getNamedItem("size").getTextContent();
-		 */
-    	return details;
-    }
-
 }

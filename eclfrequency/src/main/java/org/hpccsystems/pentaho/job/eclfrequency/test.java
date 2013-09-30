@@ -1,214 +1,314 @@
 package org.hpccsystems.pentaho.job.eclfrequency;
 
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
-import org.hpccsystems.eclguifeatures.AutoPopulate;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.StringReader;
+import java.net.Authenticator;
+import java.net.HttpURLConnection;
+import java.net.PasswordAuthentication;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-public class test {
-	Combo datasetName;
-	Text Name;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import sun.misc.BASE64Encoder;
+
+
+@SuppressWarnings("restriction")
+public class test{// extends ApplicationWindow {
 	
-
-	public static void main(String[] args) {
-		Display display = new Display();
-		Shell shell = new test().createShell(display);
-		shell.open();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
-				display.sleep();
+	/*private static String hostname = "192.168.115.128";
+	private static int port = 8010;
+	private static String user = "";
+	private static String pass = "";
+	public static boolean isLogonFail = false;
+	
+	
+	public static InputStream doSoap(String xmldata, String path){
+	       //ArrayList<?> response = new ArrayList();
+	       //String xml = "";
+	       URLConnection conn = null;
+	       //boolean isError = false;
+	       boolean isSuccess = false;
+	       
+	       int errorCnt = 0;
+	       InputStream is = null;
+	       while(errorCnt < 5 && !isSuccess && !isLogonFail){
+		       try {
+		
+		
+		    	   	//System.out.println("ECLSoap doSoap -- User:"+user+ " " + "Pass:" + pass);
+		            
+		    	   	ECLAuthenticator eclauth = new ECLAuthenticator(user,pass);
+		    	   	
+		    	   	
+		    	   	Authenticator.setDefault(eclauth);
+		             
+		          
+		            //String encoding = new sun.misc.BASE64Encoder().encode ((user+":"+pass).getBytes());
+		            String host = "http://"+hostname+":"+port+path;
+		            //System.out.println("HOST: " + host);
+		            URL url = new URL(host);
+		            
+		            
+		             // Send data
+		            conn = url.openConnection();
+		            conn.setDoOutput(true);
+		            //added back in since Authenticator isn't allways called and the user wasn't passed if the server didn't require auth
+		            if(!user.equals("")){
+		            	String authStr = user + ":" + pass;
+		            	//System.out.println("USER INFO: " + authStr);
+		            	BASE64Encoder encoder = new BASE64Encoder();
+		            	String encoded = encoder.encode(authStr.getBytes());
+		            	
+		            	
+		            	conn.setRequestProperty("Authorization","Basic "+encoded);
+		            }
+		            
+		            conn.setRequestProperty("Post", path + " HTTP/1.0");
+		            conn.setRequestProperty("Host", hostname);
+		            conn.setRequestProperty("Content-Length", ""+xmldata.length() );
+		            conn.setRequestProperty("Content-Type", "text/xml; charset=\"utf-8\"");
+		
+		            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+		            wr.write(xmldata);
+		            wr.flush();
+		            //wr.close();
+		           // if(conn.get)
+		            if(conn instanceof HttpURLConnection){
+		            	HttpURLConnection httpConn = (HttpURLConnection)conn;
+		            	int code = httpConn.getResponseCode();
+		            	System.out.println("Connection code: " + code);
+		            	if(code == 200){
+		            		is =  conn.getInputStream();
+		            		isSuccess = true;
+		            		System.out.println("Connection success code 200 ");
+		            	}else if (code == 401){
+		            		isSuccess = false;
+		            		isLogonFail = true;
+		            		System.out.println("Permission Denied");
+		            	}
+		            }
+		            //return conn.getInputStream();
+		            
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		            errorCnt++;
+		        }finally{
+		        	if(conn != null){
+		        		
+		        	}
+		        }
+		        if(!isSuccess){
+		        	try{
+		        		Thread.sleep(3500);
+		        	}catch (Exception e){
+		        		System.out.println("couldn't sleep thread");
+		        	}
+		        }
+	       }
+	       // return new HashMap<String, String>();
+	          return is;
+	    }
+	    
+	
+	public static ArrayList<String[]> fetchFileMeta(String fileName) throws Exception{
+		String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+				"		<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+				"		<soap:Body>" +
+				"			<DFUDefFile xmlns=\"urn:hpccsystems:ws:wsdfu\">" +
+				"				<Name>" + fileName + "</Name>" +
+				"				<Format>xml</Format>" +
+				"			</DFUDefFile>" +
+				"		</soap:Body>" +
+				"</soap:Envelope>";
+		//soap = new ECLSoap();
+		
+		//soap.setHostname(serverHost);
+		//soap.setPort(serverPort);
+		//soap.setUser(user);
+		//soap.setPass(pass);
+		
+		String path = "/WsDfu/DFUDefFile?ver_=1.2";
+		
+		InputStream is = doSoap(xml, path);
+		
+		//if(is != null){
+			//return processFileMeta(is);
+	//}
+				
+		try{
+			if(isLogonFail){
+				//isLogonFail = soap.isLogonFail;
+				System.out.println("Authentication Failed, or you don't have permissions to read this file");
+			}else{
+				if(is != null){
+					return processFileMeta(is);
+				}
+			}
+		}catch(Exception e){
+			System.out.println(e);
+			e.printStackTrace();
 		}
+		return null;
+	}
+	public static ArrayList<String[]> processFileMeta(InputStream is) throws Exception{
+		ArrayList<String[]> results = new ArrayList<String[]>();
+		String xml = "";
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        
+        Document dom = db.parse(is);
+
+        Element docElement = dom.getDocumentElement();
+        System.out.println(dom.getTextContent());
+        NodeList dfuResponse = docElement.getElementsByTagName("DFUDefFileResponse");
+        //DFUDefFileResponse
+        //	defFile
+        //  decode base64
+        
+        if (dfuResponse != null && dfuResponse.getLength() > 0) {
+        	
+           //ArrayList dsArray = new ArrayList();
+
+           //results = dsArray;
+
+            for (int i = 0; i < dfuResponse.getLength(); i++) {
+            	//System.out.println("Node:" + dsList.item(i).getNodeName());
+                Element ds = (Element) dfuResponse.item(i);
+                //System.out.println(ds.getFirstChild().getNodeName());
+                NodeList rowList = ds.getElementsByTagName("defFile");
+                NodeList errorList = ds.getElementsByTagName("Exceptions");
+                //System.out.println("Node:" + rowList.getLength());
+                if (rowList != null && rowList.getLength() > 0) {
+
+                    for (int j = 0; j < rowList.getLength(); j++) {
+                        Element row = (Element) rowList.item(j);
+                        String data = row.getTextContent();
+                        byte[] decoded = javax.xml.bind.DatatypeConverter.parseBase64Binary(data);
+                        xml =  new String(decoded);   
+                    }
+                }
+                
+                if (errorList != null && errorList.getLength() > 0) {
+                	System.out.println("Has ERROR");
+                	for (int j = 0; j < errorList.getLength(); j++) {
+                		System.out.println("Looping error");
+                        Element row = (Element) errorList.item(j);
+                        NodeList messages = row.getElementsByTagName("Code");
+                        if (messages != null && messages.getLength() > 0) {
+                        	System.out.println("Found Code");
+                        	for (int k = 0; k < messages.getLength(); k++) {
+                        		Element messageRow = (Element) messages.item(j);
+                        		String code = messageRow.getTextContent();
+                        		System.out.println("code: " + code);
+                        		if(code.equals("3")){
+                        			isLogonFail = true;
+                        		}
+                        	}
+                        }
+                    }
+                }
+
+            }
+        }
+        System.out.println("XML: " + xml);
+        if(!xml.equals("")){
+        	results = parseRecordXML(xml);
+        }
+       // Iterator iterator = results.iterator();
+        return results;
 	}
 	
-	public Shell createShell(final Display display) {
-		final Shell shell = new Shell(display);
-		FormLayout layout = new FormLayout();
-		layout.marginWidth = 25;
-		layout.marginHeight = 25;
-		shell.setLayout(layout);
-		shell.setText("Learning SWT");
-		
-		Label name = new Label(shell, SWT.NONE);
-		name.setText("MyLabel:");
-		Name = new Text(shell, SWT.SINGLE | SWT.BORDER);
-		
-		Label data = new Label(shell, SWT.NONE);
-		data.setText("Dataset:");
-		datasetName = new Combo(shell, SWT.NONE);
-		datasetName.setItems(new String[] {"DS1", "DS2", "DS3", "DS4"});
-		
-		Button add = new Button(shell, SWT.PUSH);
-		add.setText("Choose Columns");
-		
-		final Table table = new Table(shell, SWT.NONE | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
-		table.setItemCount(10);
-		TableColumn[] column = new TableColumn[1];
-		column[0] = new TableColumn(table, SWT.NONE);
-        column[0].setWidth(200);
-        column[0].setText("Fields");
-        
-        FormData dat = new FormData();
-        dat.top = new FormAttachment(Name, 0, SWT.CENTER);
-        name.setLayoutData(dat);
-        dat = new FormData();
-        dat.left = new FormAttachment(name, 75, SWT.LEFT);
-        dat.right = new FormAttachment(100, 0);
-        Name.setLayoutData(dat);
-        
-        dat = new FormData();
-        dat.top = new FormAttachment(datasetName, 0, SWT.CENTER);
-        data.setLayoutData(dat);
-        dat = new FormData();
-        dat.top = new FormAttachment(Name, 15);
-        dat.left = new FormAttachment(Name, 0, SWT.LEFT);
-        dat.right = new FormAttachment(100, 0);
-        datasetName.setLayoutData(dat);
-        
-        dat = new FormData();
-        dat.top = new FormAttachment(data, 25);
-        dat.left = new FormAttachment(data, 0, SWT.LEFT);
-        add.setLayoutData(dat);
-        	
-        dat = new FormData();
-        dat.top = new FormAttachment(add,25);
-        dat.left = new FormAttachment(add, 0, SWT.LEFT);
-        table.setLayoutData(dat);
-        
-        datasetName.addModifyListener(new ModifyListener(){
-        	
-            public void modifyText(ModifyEvent e){
-            	table.setRedraw(false);
-            	table.setItemCount(0);
-            	if(datasetName.getText().equalsIgnoreCase("ds1")){
-            		for(int i = 0; i<10; i++){
-            			TableItem item = new TableItem(table, SWT.NONE);
-            			item.setText("Keshav "+Integer.toString(i+1));
-            		}
-            		table.setRedraw(true);
-				}
-            	if(datasetName.getText().equalsIgnoreCase("ds2")){
-            		for(int i = 0; i<10; i++){
-            			TableItem item = new TableItem(table, SWT.NONE);
-            			item.setText("Batman "+Integer.toString(i+1));
-            		}
-            		table.setRedraw(true);
-				}
-            	if(datasetName.getText().equalsIgnoreCase("ds3")){
-            		for(int i = 0; i<10; i++){
-            			TableItem item = new TableItem(table, SWT.NONE);
-            			item.setText("Superman "+Integer.toString(i+1));
-            		}
-            		table.setRedraw(true);
-				}
-            	if(datasetName.getText().equalsIgnoreCase("ds4")){
-            		for(int i = 0; i<10; i++){
-            			TableItem item = new TableItem(table, SWT.NONE);
-            			item.setText("Darth Vader "+Integer.toString(i+1));
-            		}
-            		table.setRedraw(true);
-				}
-            	
-            }
-        });
-        
-        Listener addListener = new Listener(){
+	public static ArrayList<String[]> parseRecordXML(String xml) throws Exception{
+		ArrayList<String[]> results = new ArrayList<String[]>();
+		 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+	        DocumentBuilder db = dbf.newDocumentBuilder();
+	        InputSource is = new InputSource(new StringReader(xml));
+	        Document dom = db.parse(is);
+	        
+	        Element docElement = dom.getDocumentElement();
+	        //System.out.println(docElement.getTextContent());
+	        NodeList fields = docElement.getElementsByTagName("Field");
+	       //System.out.println(fields.getLength());
+	       if (fields != null && fields.getLength() > 0) {
+	    	   
+	    	   for (int i = 0; i < fields.getLength(); i++) {
+	    		   NamedNodeMap attributes = fields.item(i).getAttributes();
+	    		   String[] column = new String[5];
+	               	column[0] = "";//label
+	               	column[1] = "";//type
+	               	column[2] = "";//value
+	               	column[3] = "";//size
+	               	column[4] = "";//maxsize
+	    		   //<Field ecltype="decimal8_2" label="shelf_depth" name="shelf_depth" position="14" rawtype="327683" size="5" type="decimal8_"/>
+	    		  
+	    		   column[0] = attributes.getNamedItem("label").getTextContent();
+	    		   column[1] = attributes.getNamedItem("ecltype").getTextContent();
+	    		   column[2] = "";
+	    		   column[3] = attributes.getNamedItem("size").getTextContent();
+	    		   column[4] = attributes.getNamedItem("size").getTextContent();
+	    		   
+	    		   
+	    		   
+	    		   
+               		results.add(column);
+	    	   }
+	       }
+	       return results;
+	}
 
-			@Override
-			public void handleEvent(Event arg0) {
-				final Shell shell1 = new Shell(display);
-				FormLayout layout1 = new FormLayout();
-				layout1.marginWidth = 25;
-				layout1.marginHeight = 25;
-				shell1.setLayout(layout1);
-				shell1.setText("Learning SWT");
-				
-				Label name1 = new Label(shell1, SWT.NONE);
-				name1.setText("MyLabel:");
-				final Text Name1 = new Text(shell1, SWT.SINGLE | SWT.BORDER);
-				
-				final Table table1 = new Table(shell1, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
-				table1.setHeaderVisible(true);
-				table1.setLinesVisible(true);
-				TableColumn[] column1 = new TableColumn[1];
-				column1[0] = new TableColumn(table1, SWT.NONE);
-		        column1[0].setWidth(200);
-		        column1[0].setText("Fields");
-		        for(int i = 0; i<10; i++){
-        			TableItem item1 = new TableItem(table1, SWT.NONE);
-        			item1.setText(table.getItems()[i].getText());
-        		}
-		        table1.setRedraw(true);
-				
-				FormData dat = new FormData();
-		        dat.top = new FormAttachment(Name1, 0, SWT.CENTER);
-		        name1.setLayoutData(dat);
-		        dat = new FormData();
-		        dat.left = new FormAttachment(name1, 75, SWT.LEFT);
-		        dat.right = new FormAttachment(100, 0);
-		        Name1.setLayoutData(dat);
-		        
-		        dat = new FormData();
-		        dat.top = new FormAttachment(name1, 25);
-		        dat.left = new FormAttachment(name1, 0, SWT.LEFT);
-		        table1.setLayoutData(dat);
-				
-		        Name1.addModifyListener(new ModifyListener(){
-		        	
-		            public void modifyText(ModifyEvent e){
-		            		TableItem[] it = table1.getItems();
-		            		table1.setRedraw(false);		            		
-		            		for(int j = 0; j<it.length; j++){
-		            			if(it[j].getText().startsWith(Name1.getText())){
-		            				TableItem I = new TableItem(table1, SWT.NONE);
-		            				I.setText(it[j].getText());
-		            			}
-		            		}
-		            		table1.setRedraw(true);
-		            }
-		        });
-		        
-				shell1.pack();
-		        shell1.open();
-				while (!shell1.isDisposed()) {
-					if (!display.readAndDispatch())
-						display.sleep();
-				}
-				
+	public static ArrayList<String[]> fetchFileDetails(String fileName) throws Exception{
+		//FileInfoSoap c = new FileInfoSoap(hostname,port,user,pass);
+		ArrayList<String[]> file = fetchFileMeta(fileName);
+		if(file != null && file.size()==1){
+			if(file.get(0)[0].equals("line")){
+				//nor rec
+				file = new ArrayList<String[]>();
 			}
-        	
-        };
-        add.addListener(SWT.Selection, addListener);
-        
-        shell.pack();
-       
-		return shell;
+		}
+		//isLogonFail = isLogonFail;
+		return file;
+	}
+	*/
+	public static void main(String[] args) throws Exception{
+		/*ArrayList<String[]> list = fetchFileDetails("~thor::intro::ks::class::uidpersons");
+		for(Iterator<String[]> it = list.iterator(); it.hasNext();){
+			String[] S = it.next();*/
+			System.out.println("Next Record");
+			//System.out.println(S[0]);
+			//System.out.println(S[1]+"\n");			
+		//}
 	}
 }
+
+/*class ECLAuthenticator extends Authenticator {
+    public String user;
+    public String pass;
+    String hostname = getRequestingHost();
+    
+    public ECLAuthenticator(String kuser,String kpass){
+        //System.out.println("_________Hostname_______"+hostname);
+        user=kuser;
+        pass=kpass;
+    }
+    public PasswordAuthentication getPasswordAuthentication() {
+        // I haven't checked getRequestingScheme() here, since for NTLM
+        // and Negotiate, the usrname and password are all the same.
+       // System.err.println("Feeding username and password for " + getRequestingScheme() + " " + user + ":" + pass +"@"+hostname);
+        PasswordAuthentication p = new PasswordAuthentication(user, pass.toCharArray());
+       // System.out.println("_________Hostname_______"+hostname);
+        return p;
+    }
+}
+
+*/
