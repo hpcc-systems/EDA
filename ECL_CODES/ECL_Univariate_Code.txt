@@ -1,0 +1,134 @@
+// The following is the ECL code generated for Univariate Statistics
+
+Rec:= record 
+    unsigned8 rid;
+    real8 height;
+    real8 weight;
+    real8 age;
+    integer1 species;
+    integer1 gender;
+end; 
+DS:= dataset('~thor::keshav::univ::test',Rec,THOR); 
+URec := RECORD
+
+    UNSIGNED uid;
+
+    DS;
+
+END;
+
+URec Trans(DS L, INTEGER C) := TRANSFORM
+    
+SELF.uid := C;
+    
+SELF := L;
+
+END;
+
+
+MyDS := PROJECT(DS,Trans(LEFT,COUNTER));
+
+NumField := RECORD
+
+    UNSIGNED id;
+    
+UNSIGNED4 number;
+    
+REAL8 value;
+
+END;
+
+
+OutDS := NORMALIZE(MyDS,5, TRANSFORM(NumField,SELF.id:=LEFT.uid,SELF.number:=COUNTER;SELF.value:=CHOOSE                                (COUNTER,LEFT.height,LEFT.weight,LEFT.age,LEFT.species,LEFT.gender)));
+
+
+SingleField := RECORD
+
+    OutDS.number;
+
+    mean:=AVE(GROUP,OutDS.value);
+
+    Sd:=SQRT(VARIANCE(GROUP,OutDS.value));
+
+    Maxval:=MAX(GROUP,OutDS.value);
+
+    Minval:=MIN(GROUP,OutDS.value);
+
+END;
+
+
+SingleUni := TABLE(OutDS,SingleField,number);
+
+n := COUNT(MyDS);
+
+
+RankableField := RECORD
+
+    OutDS;
+    
+UNSIGNED pos:=0;
+
+END;
+
+
+T:=TABLE(SORT(OutDS,Number,Value),RankableField);
+
+
+TYPEOF(T) add_rank(T le, UNSIGNED c):=TRANSFORM
+
+    SELF.pos:=c;
+    
+SELF:=le;
+
+END;
+
+
+P:=PROJECT(T,add_rank(LEFT,COUNTER));
+
+RS:=RECORD
+
+    Seq:=MIN(GROUP,P.pos);
+    
+P.number;
+
+END;
+
+
+Splits := TABLE(P,RS,number,FEW);
+
+
+TYPEOF(T) to(P le, Splits ri):=TRANSFORM
+    
+SELF.pos:=1+le.pos-ri.Seq;
+    
+SELF:=le;
+
+END;
+
+
+outfile := JOIN(P,Splits,LEFT.number=RIGHT.number,to(LEFT,RIGHT),LOOKUP);
+
+
+MyT := TABLE(outfile,{number;SET OF UNSIGNED poso := IF(n%2=0,[n/2,n/2 + 1],[(n+1)/2]);},number);
+
+
+MedianValues:=JOIN(outfile,MyT,LEFT.number=RIGHT.number AND LEFT.pos IN RIGHT.poso);
+
+MedianTable := TABLE(MedianValues,{number;Median := AVE(GROUP, MedianValues.value);},number);
+
+UniStats := JOIN(SingleUni,Mediantable,LEFT.number = RIGHT.number);
+
+
+OUTPUT(UniStats,NAMED('UniVariateStats'));
+
+
+MTable := TABLE(outfile,{number;value;vals := COUNT(GROUP);},number,value);
+
+modT := TABLE(MTable,{number;cnt:=MAX(GROUP,vals)},number);
+
+Modes:=JOIN(MTable,ModT,LEFT.number=RIGHT.number AND LEFT.vals=RIGHT.cnt);
+
+ModeTable := TABLE(Modes,{number;mode:=value;cnt});
+
+
+OUTPUT(ModeTable,NAMED('Mode'));

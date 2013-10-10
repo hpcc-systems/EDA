@@ -1,0 +1,43 @@
+// The following is the ECL Code generated for computing frequencies for each column
+
+Rec:= record 
+    unsigned8 rid;
+    real8 height;
+    real8 weight;
+    real8 age;
+    integer1 species;
+    integer1 gender;
+end;
+ 
+DS:= dataset('~thor::keshav::univ::test',Rec,THOR); 
+
+MyTable0Format := RECORD 
+    DS.height;
+
+    fre0:= COUNT(GROUP);
+END; 
+
+MyTable0 := TABLE(DS,MyTable0Format,height);
+OUTPUT(MyTable0,NAMED('height'));
+
+
+MyTable1Format := RECORD 
+    DS.weight;
+
+    fre1:= COUNT(GROUP);
+END; 
+
+MyTable1 := TABLE(DS,MyTable1Format,weight);
+OUTPUT(MyTable1,NAMED('weight'));
+
+
+MyTable2Format := RECORD 
+    DS.age;
+    
+fre2:= COUNT(GROUP);
+END;
+ 
+MyTable2 := TABLE(DS,MyTable2Format,age,FEW);
+MyTable2s:=SORT(MyTable2,-age);
+
+OUTPUT(MyTable2s,NAMED('age'));
