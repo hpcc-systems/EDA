@@ -1,0 +1,27 @@
+//The following is the code for generating random numbers
+
+Rec:= record 
+unsigned8 rid:= '';
+real8 height:= '';
+real8 weight:= '';
+real8 age:= '';
+integer1 species:= '';
+integer1 gender:= '';
+
+end; 
+DS:= dataset('~thor::keshav::univ::test',Rec,THOR); 
+MyOutRec :=  RECORD 
+    INTEGER rand;
+
+    Rec;
+ 
+END;
+ 
+MyOutRec MyTrans(Rec L, INTEGER C) := TRANSFORM 
+    SELF.rand := C;
+
+    SELF :=L;
+ 
+END;
+ 
+DS_with_random := project(DS,MyTrans(LEFT, RANDOM()));
