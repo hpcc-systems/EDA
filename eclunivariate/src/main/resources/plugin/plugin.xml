@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin id="ECLUnivariate"
+	iconfile="univariate.png"
+	description="Univariate"
+	tooltip="Univariate" 
+	category="HPCC EDA"
+	classname="org.hpccsystems.pentaho.job.eclunivariate.ECLUnivariate">
+            
+    <libraries>
+	  <library name="../../hpcc-common/javaecl-0.1.0.jar"/>
+        <library name="../../hpcc-common/eclgui.jar"/>
+        <library name="eclunivariate.jar"/>
+    </libraries>            
+</plugin>
