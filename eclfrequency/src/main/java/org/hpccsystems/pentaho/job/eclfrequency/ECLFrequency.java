@@ -7,11 +7,7 @@ package org.hpccsystems.pentaho.job.eclfrequency;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.hpccsystems.javaecl.GetHeader;
-import org.hpccsystems.javaecl.Header;
 import org.hpccsystems.javaecl.Table;
-import org.hpccsystems.recordlayout.RecordBO;
-import org.hpccsystems.recordlayout.RecordList;
 import org.pentaho.di.cluster.SlaveServer;
 import org.pentaho.di.compatibility.Value;
 import org.pentaho.di.core.Const;
@@ -21,19 +17,14 @@ import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettleXMLException;
 import org.pentaho.di.core.xml.XMLHandler;
-import org.pentaho.di.job.JobMeta;
-import org.pentaho.di.job.entry.JobEntryBase;
-import org.pentaho.di.job.entry.JobEntryCopy;
-import org.pentaho.di.job.entry.JobEntryInterface;
 import org.pentaho.di.repository.ObjectId;
 import org.pentaho.di.repository.Repository;
 import org.w3c.dom.Node;
-import org.hpccsystems.eclguifeatures.AutoPopulate;
 import org.hpccsystems.ecljobentrybase.*;
 
 /**
  *
- * @author KeshavS 
+ * @author KeshavS [:P]
  */
 public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements Cloneable, JobEntryInterface {
 	
@@ -98,7 +89,7 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
     	
         Result result = prevResult;
         if(result.isStopped()){
-        	
+        	return result;
         }
         else{
         	//String sort = Sort;
@@ -111,14 +102,15 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 		        
 		        freq.setExpression(cols[0]);
 		        
-		        format = this.DatasetName+"."+cols[0]+";\nfre"+Integer.toString(i)+":= COUNT(GROUP);";
+		        format = this.DatasetName+"."+cols[0]+";\nfre"+Integer.toString(i)+":= COUNT(GROUP);\n" +
+		        		"percent"+Integer.toString(i)+":=(COUNT(GROUP)/COUNT("+this.DatasetName+"))*100;";
 		        
 		        freq.setFormat(format);
 		        
 		        format = new String();
 		        if(getSort().equals("NO") || getSort().equals("")){
-		        	freq.setSize("FEW");
-		        	frequency += freq.ecl() + "OUTPUT("+gettablename()+Integer.toString(i)+",NAMED(\'"+cols[0]+"\'));\n";
+		        	freq.setSize("FEW");		    
+		        	frequency += freq.ecl() +""+"OUTPUT("+gettablename()+Integer.toString(i)+",NAMED(\'"+cols[0]+"\'));\n";
 		        }
 		        else{
 		        if(cols[2].equals("NAME")){
@@ -137,7 +129,7 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 			       	}
 			       	
 			       }
-			       else if(cols[2].equals("VALUE")){
+			       else if(cols[2].equals("FREQUENCY")){
 			       		if(cols[1].equals("DESC")){
 			       			freq.setSize("FEW");
 			       			frequency += freq.ecl() +gettablename()+Integer.toString(i)+"s:="+ "SORT("+gettablename()+Integer.toString(i)+ ",-fre"+Integer.toString(i)+");\n";
@@ -242,10 +234,10 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
         
         retval += super.getXML();
         retval += "		<name><![CDATA[" + Name + "]]></name>" + Const.CR;
-        retval += "		<Sort eclIsDef=\"true\" eclType=\"frequency\"><![CDATA[" + Sort + "]]></Sort>" + Const.CR;
+        retval += "		<Sort ><![CDATA[" + Sort + "]]></Sort>" + Const.CR;
         retval += "		<tablename><![CDATA[" + tablename + "]]></tablename>" + Const.CR;
         retval += "		<normList><![CDATA[" + this.getnormList() + "]]></normList>" + Const.CR;
-        retval += "		<dataset_name eclIsDef=\"true\" eclType=\"frequency\"><![CDATA[" + DatasetName + "]]></dataset_name>" + Const.CR;
+        retval += "		<dataset_name><![CDATA[" + DatasetName + "]]></dataset_name>" + Const.CR;
         
         return retval;
 

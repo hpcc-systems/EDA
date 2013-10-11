@@ -146,7 +146,7 @@ public class ECLRandomDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
         
         ResultDataset = buildText("Result Dataset:", datasetName, lsMod, middle, margin, datasetGroup);
         
-        InRec = buildCombo("In Rec :", ResultDataset, lsMod, middle, margin, datasetGroup, recs);
+        //InRec = buildCombo("In Rec :", ResultDataset, lsMod, middle, margin, datasetGroup, recs);
         
         wOK = new Button(shell, SWT.PUSH);
         wOK.setText("OK");
