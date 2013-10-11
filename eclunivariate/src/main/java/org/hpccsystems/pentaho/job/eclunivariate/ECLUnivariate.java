@@ -79,7 +79,7 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
     public Result execute(Result prevResult, int k) throws KettleException {
     	Result result = prevResult;
         if(result.isStopped()){
-        	
+        	return result;
         }
         else{
         	String[] check = getCheckList().split(",");
@@ -163,8 +163,6 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
         	return result;
 
         }
-        
-        return null;
     }
     public String savePeople(){
     	String out = "";
@@ -226,8 +224,8 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
         retval += "		<fieldList><![CDATA[" + fieldList + "]]></fieldList>" + Const.CR;
         retval += "		<logical_file_name><![CDATA[" + logicalFileName + "]]></logical_file_name>" + Const.CR;
         retval += "		<checklist><![CDATA[" + checkList + "]]></checklist>" + Const.CR;
-        retval += "		<dataset_name eclIsDef=\"true\" eclType=\"dataset\"><![CDATA[" + datasetName + "]]></dataset_name>" + Const.CR;
-        
+        retval += "		<dataset_name><![CDATA[" + datasetName + "]]></dataset_name>" + Const.CR;		
+        //<dataset_name eclIsDef=\"true\" eclType=\"dataset\"><![CDATA[" + datasetName + "]]></dataset_name>" + Const.CR;
         return retval;
 
     }
