@@ -869,24 +869,24 @@ class PlayerContentProvider implements IStructuredContentProvider {
 }
 
 class SortOption {
-	  public static final String NONE = " ";
+	  //public static final String NONE = " ";
 	
 	  public static final String DESC = "DESC";
 	  
 	  public static final String ASC = "ASC";
 
-	  public final static String[] INSTANCES = { NONE, ASC, DESC };
+	  public final static String[] INSTANCES = { ASC, DESC };
 	
 }
 
 class ColOption {
-	  public static final String NONE = " ";
+	  //public static final String NONE = " ";
 	
 	  public static final String NAME = "NAME";
 	  
-	  public static final String VAL = "VALUE";
+	  public static final String VAL = "FREQUENCY";
 
-	  public final static String[] INSTANCES1 = { NONE, NAME, VAL };
+	  public final static String[] INSTANCES1 = { NAME, VAL };
 	
 }
 

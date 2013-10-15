@@ -72,7 +72,7 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
     public Result execute(Result prevResult, int k) throws KettleException {
     	Result result = prevResult;
         if(result.isStopped()){
-        	
+        	return result;
         }
         else{
         	String project = "";
@@ -96,7 +96,7 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
             
             sb.append(this.resultDataset).append(" := project(").append(datasetName).append(",").append(transform).append("(LEFT");
             
-            sb.append(", RANDOM())) : PERSIST(\'~INTRO::KS::CLASS::RAND"+resultDataset+"\'); \r\n");
+            sb.append(", RANDOM())); \r\n");
             
             project = sb.toString();
             logBasic("Random Job =" + project); 
@@ -112,9 +112,10 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
 	        String eclCode = parseEclFromRowData(list);
 	        result.setRows(list);
 	        result.setLogText("ECLRandom executed, ECL code added");
+	        return result;
         }
         
-        return result;
+        
     }
     @Override
     public void loadXML(Node node, List<DatabaseMeta> list, List<SlaveServer> list1, Repository rpstr) throws KettleXMLException {
@@ -139,9 +140,9 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
         
         retval += super.getXML();
       
-        retval += "		<inrecord_name eclIsDef=\"true\" eclType=\"record\"><![CDATA[" + inrecordName + "]]></inrecord_name>" + Const.CR;
+        retval += "		<inrecord_name ><![CDATA[" + inrecordName + "]]></inrecord_name>" + Const.CR;
         
-        retval += "		<dataset_name eclIsDef=\"true\" eclType=\"dataset\"><![CDATA[" + datasetName + "]]></dataset_name>" + Const.CR;
+        retval += "		<dataset_name ><![CDATA[" + datasetName + "]]></dataset_name>" + Const.CR;
         retval += "		<resultdataset eclIsDef=\"true\" eclType=\"dataset\"><![CDATA[" + resultDataset + "]]></resultdataset>" + Const.CR;
         
         return retval;
