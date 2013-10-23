@@ -26,7 +26,7 @@ import sun.misc.BASE64Encoder;
 @SuppressWarnings("restriction")
 public class test{// extends ApplicationWindow {
 	
-	/*private static String hostname = "192.168.115.128";
+	private static String hostname = "192.168.115.128";
 	private static int port = 8010;
 	private static String user = "";
 	private static String pass = "";
@@ -44,16 +44,6 @@ public class test{// extends ApplicationWindow {
 	       InputStream is = null;
 	       while(errorCnt < 5 && !isSuccess && !isLogonFail){
 		       try {
-		
-		
-		    	   	//System.out.println("ECLSoap doSoap -- User:"+user+ " " + "Pass:" + pass);
-		            
-		    	   	ECLAuthenticator eclauth = new ECLAuthenticator(user,pass);
-		    	   	
-		    	   	
-		    	   	Authenticator.setDefault(eclauth);
-		             
-		          
 		            //String encoding = new sun.misc.BASE64Encoder().encode ((user+":"+pass).getBytes());
 		            String host = "http://"+hostname+":"+port+path;
 		            //System.out.println("HOST: " + host);
@@ -279,36 +269,15 @@ public class test{// extends ApplicationWindow {
 		//isLogonFail = isLogonFail;
 		return file;
 	}
-	*/
+	
 	public static void main(String[] args) throws Exception{
-		/*ArrayList<String[]> list = fetchFileDetails("~thor::intro::ks::class::uidpersons");
+		ArrayList<String[]> list = fetchFileDetails("~thor::intro::ks::class::uidpersons");
 		for(Iterator<String[]> it = list.iterator(); it.hasNext();){
-			String[] S = it.next();*/
+			String[] S = it.next();
 			System.out.println("Next Record");
-			//System.out.println(S[0]);
-			//System.out.println(S[1]+"\n");			
-		//}
+			System.out.println(S[0]);
+			System.out.println(S[1]+"\n");			
+		}
 	}
 }
 
-/*class ECLAuthenticator extends Authenticator {
-    public String user;
-    public String pass;
-    String hostname = getRequestingHost();
-    
-    public ECLAuthenticator(String kuser,String kpass){
-        //System.out.println("_________Hostname_______"+hostname);
-        user=kuser;
-        pass=kpass;
-    }
-    public PasswordAuthentication getPasswordAuthentication() {
-        // I haven't checked getRequestingScheme() here, since for NTLM
-        // and Negotiate, the usrname and password are all the same.
-       // System.err.println("Feeding username and password for " + getRequestingScheme() + " " + user + ":" + pass +"@"+hostname);
-        PasswordAuthentication p = new PasswordAuthentication(user, pass.toCharArray());
-       // System.out.println("_________Hostname_______"+hostname);
-        return p;
-    }
-}
-
-*/

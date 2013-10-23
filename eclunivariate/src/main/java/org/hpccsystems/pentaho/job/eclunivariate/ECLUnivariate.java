@@ -79,24 +79,29 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
     public Result execute(Result prevResult, int k) throws KettleException {
     	Result result = prevResult;
         if(result.isStopped()){
-        	
+        	return result;
         }
         else{
         	String[] check = getCheckList().split(",");
         	String[] fieldNames = fieldList.split(",");
         	String normlist = "";int cnt = 0;
+        	String List = "";
         	for(int i = 0; i<fieldNames.length; i++){
-        		if(i!=fieldNames.length-1)
+        		if(i!=fieldNames.length-1){
         			normlist += "LEFT."+fieldNames[i]+",";
-        		else
+        			List += "\'"+fieldNames[i]+"\',";
+        		}
+        		else{
         			normlist += "LEFT."+fieldNames[i];
+        			List += "\'"+fieldNames[i]+"\'";
+        		}
         	}
 			String ecl = "URec := RECORD\nUNSIGNED uid;\n"+this.datasetName+";\nEND;\n";
         	ecl += "URec Trans("+this.datasetName+" L, INTEGER C) := TRANSFORM\nSELF.uid := C;\nSELF := L;\nEND;\n"; 
         	ecl += "MyDS := PROJECT("+datasetName+",Trans(LEFT,COUNTER));\n";
         	
-        	ecl += "NumField := RECORD\nUNSIGNED id;\nUNSIGNED4 number;\nREAL8 value;\nEND;\n";
-        	ecl += "OutDS := NORMALIZE(MyDS,"+fieldNames.length+", TRANSFORM(NumField,SELF.id:=LEFT.uid,SELF.number:=COUNTER;SELF.value:=CHOOSE" +
+        	ecl += "NumField := RECORD\nUNSIGNED id;\nSTRING number;\nREAL8 value;\nEND;\n";
+        	ecl += "OutDS := NORMALIZE(MyDS,"+fieldNames.length+", TRANSFORM(NumField,SELF.id:=LEFT.uid,SELF.number:=CHOOSE(COUNTER,"+List+");SELF.value:=CHOOSE" +
         			"(COUNTER,"+normlist+")));\n";
         	ecl += "SingleField := RECORD\nOutDS.number;\n";
         	if(check[0].equals("true"))
@@ -163,8 +168,6 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
         	return result;
 
         }
-        
-        return null;
     }
     public String savePeople(){
     	String out = "";
@@ -226,8 +229,8 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
         retval += "		<fieldList><![CDATA[" + fieldList + "]]></fieldList>" + Const.CR;
         retval += "		<logical_file_name><![CDATA[" + logicalFileName + "]]></logical_file_name>" + Const.CR;
         retval += "		<checklist><![CDATA[" + checkList + "]]></checklist>" + Const.CR;
-        retval += "		<dataset_name eclIsDef=\"true\" eclType=\"dataset\"><![CDATA[" + datasetName + "]]></dataset_name>" + Const.CR;
-        
+        retval += "		<dataset_name><![CDATA[" + datasetName + "]]></dataset_name>" + Const.CR;		
+        //<dataset_name eclIsDef=\"true\" eclType=\"dataset\"><![CDATA[" + datasetName + "]]></dataset_name>" + Const.CR;
         return retval;
 
     }

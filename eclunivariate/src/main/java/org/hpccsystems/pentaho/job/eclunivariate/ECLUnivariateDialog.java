@@ -5,21 +5,14 @@
 package org.hpccsystems.pentaho.job.eclunivariate;
 
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.CheckboxCellEditor;
-import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -30,7 +23,6 @@ import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -39,7 +31,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -56,7 +47,6 @@ import org.hpccsystems.eclguifeatures.AutoPopulate;
 import org.hpccsystems.eclguifeatures.ErrorNotices;
 import org.hpccsystems.ecljobentrybase.*;
 
-import org.hpccsystems.recordlayout.CreateTable;
 import org.hpccsystems.recordlayout.RecordLabels;
 import org.hpccsystems.recordlayout.RecordList;
 
@@ -116,6 +106,7 @@ public class ECLUnivariateDialog extends ECLJobEntryDialog{//extends JobEntryDia
 
         shell = new Shell(parentShell, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MIN | SWT.MAX);
         people = new ArrayList();
+        
         props.setLook(shell);
         JobDialog.setShellImage(shell, jobEntry);
         
@@ -131,10 +122,6 @@ public class ECLUnivariateDialog extends ECLJobEntryDialog{//extends JobEntryDia
         FormLayout formLayout = new FormLayout();
         formLayout.marginWidth = Const.FORM_MARGIN;
         formLayout.marginHeight = Const.FORM_MARGIN;
-
-
-        shell.setLayout(formLayout);
-        shell.setText("Sort");
 
         int middle = props.getMiddlePct();
         int margin = Const.MARGIN;
@@ -299,8 +286,7 @@ public class ECLUnivariateDialog extends ECLJobEntryDialog{//extends JobEntryDia
         tv.setInput(people);
         table.setRedraw(true);
 	    
-
-	    
+       
 	    del.addSelectionListener(new SelectionAdapter(){
 	    	public void widgetSelected(SelectionEvent event){
 	    		int cnt = 0;
@@ -415,7 +401,7 @@ public class ECLUnivariateDialog extends ECLJobEntryDialog{//extends JobEntryDia
 					}
 					if(people.isEmpty()){
 						for(int i = 0; i<items.length; i++){
-							if(rec.getRecords().get(i).getColumnType().equalsIgnoreCase("integer") || rec.getRecords().get(i).getColumnType().startsWith("real")){				
+							if(rec.getRecords().get(i).getColumnType().startsWith("integer") || rec.getRecords().get(i).getColumnType().startsWith("real") || rec.getRecords().get(i).getColumnType().startsWith("unsigned")){				
 								Cols obj = new Cols();
 								obj.setFirstName(items[i]);
 								people.add(obj);

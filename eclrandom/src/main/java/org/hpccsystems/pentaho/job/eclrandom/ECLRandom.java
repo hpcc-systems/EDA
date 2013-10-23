@@ -33,7 +33,7 @@ import org.hpccsystems.ecljobentrybase.*;
 
 /**
  *
- * @author ChambersJ
+ * @author Keshavs
  */
 public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Cloneable, JobEntryInterface {
     
@@ -72,16 +72,16 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
     public Result execute(Result prevResult, int k) throws KettleException {
     	Result result = prevResult;
         if(result.isStopped()){
-        	
+        	return result;
         }
         else{
         	String project = "";
         	StringBuilder sb = new StringBuilder();
         	outrecordName = "MyOutRec";
         	transform = "MyTrans"; 
-        	String outRecordFormat = "INTEGER rand;\n"+this.inrecordName+";\n";
+        	String outRecordFormat = "UNSIGNED DECIMAL5_2 rand;\n"+this.inrecordName+";\n";
         	String parameterName = "L";
-        	String transformFormat = "SELF.rand := C;\n SELF :="+parameterName+";\n";
+        	String transformFormat = "SELF.rand := C/1000;\n SELF :="+parameterName+";\n";
 
             sb.append(this.outrecordName).append(" := ").append(" RECORD \r\n");
             sb.append(outRecordFormat).append(" \r\n");
@@ -89,14 +89,14 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
 
             sb.append(this.outrecordName).append(" ").append(this.transform).append("(").append(this.inrecordName).append(" ").append(parameterName);
             
-            sb.append(", INTEGER C) := TRANSFORM \r\n");
+            sb.append(", UNSIGNED DECIMAL5_2 C) := TRANSFORM \r\n");
             
             sb.append(transformFormat).append(" \r\n");
             sb.append("END; \r\n");
             
             sb.append(this.resultDataset).append(" := project(").append(datasetName).append(",").append(transform).append("(LEFT");
             
-            sb.append(", RANDOM())) : PERSIST(\'~INTRO::KS::CLASS::RAND"+resultDataset+"\'); \r\n");
+            sb.append(", RANDOM())); \r\n");
             
             project = sb.toString();
             logBasic("Random Job =" + project); 
@@ -112,9 +112,10 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
 	        String eclCode = parseEclFromRowData(list);
 	        result.setRows(list);
 	        result.setLogText("ECLRandom executed, ECL code added");
+	        return result;
         }
         
-        return result;
+        
     }
     @Override
     public void loadXML(Node node, List<DatabaseMeta> list, List<SlaveServer> list1, Repository rpstr) throws KettleXMLException {
@@ -139,9 +140,9 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
         
         retval += super.getXML();
       
-        retval += "		<inrecord_name eclIsDef=\"true\" eclType=\"record\"><![CDATA[" + inrecordName + "]]></inrecord_name>" + Const.CR;
+        retval += "		<inrecord_name ><![CDATA[" + inrecordName + "]]></inrecord_name>" + Const.CR;
         
-        retval += "		<dataset_name eclIsDef=\"true\" eclType=\"dataset\"><![CDATA[" + datasetName + "]]></dataset_name>" + Const.CR;
+        retval += "		<dataset_name ><![CDATA[" + datasetName + "]]></dataset_name>" + Const.CR;
         retval += "		<resultdataset eclIsDef=\"true\" eclType=\"dataset\"><![CDATA[" + resultDataset + "]]></resultdataset>" + Const.CR;
         
         return retval;
