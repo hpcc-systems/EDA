@@ -102,8 +102,8 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 		        
 		        freq.setExpression(cols[0]);
 		        
-		        format = this.DatasetName+"."+cols[0]+";\nfre"+Integer.toString(i)+":= COUNT(GROUP);\n" +
-		        		"percent"+Integer.toString(i)+":=(COUNT(GROUP)/COUNT("+this.DatasetName+"))*100;";
+		        format = this.DatasetName+"."+cols[0]+";\nfre:= COUNT(GROUP);\n" +
+		        		"percent:=(COUNT(GROUP)/COUNT("+this.DatasetName+"))*100;";
 		        
 		        freq.setFormat(format);
 		        
@@ -120,11 +120,10 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 			       		frequency +="OUTPUT("+gettablename()+Integer.toString(i)+"s,NAMED(\'"+cols[0]+"\'));\n";
 			       	}
 			       	else{
-			       		if(cols[1].equals("ASC"))
-			       			frequency += freq.ecl() + "OUTPUT("+gettablename()+Integer.toString(i)+",NAMED(\'"+cols[0]+"\'));\n";
-			       		else{
+			       		if(cols[1].equals("ASC")){
 			       			freq.setSize("FEW");
-				        	frequency += freq.ecl() + "OUTPUT("+gettablename()+Integer.toString(i)+",NAMED(\'"+cols[0]+"\'));\n";
+	       					frequency += freq.ecl() +gettablename()+Integer.toString(i)+"s:="+ "SORT("+gettablename()+Integer.toString(i)+ ", "+cols[0]+");\n";
+	       					frequency += "OUTPUT("+gettablename()+Integer.toString(i)+"s,NAMED(\'"+cols[0]+"\'));\n";
 			       		}
 			       	}
 			       	
@@ -141,10 +140,7 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 			       				frequency += freq.ecl() +gettablename()+Integer.toString(i)+"s:="+ "SORT("+gettablename()+Integer.toString(i)+ ",fre"+Integer.toString(i)+");\n";
 			       				frequency += "OUTPUT("+gettablename()+Integer.toString(i)+"s,NAMED(\'"+cols[0]+"\'));\n";
 			       			}
-			       			else{
-				       			freq.setSize("FEW");
-					        	frequency += freq.ecl() + "OUTPUT("+gettablename()+Integer.toString(i)+",NAMED(\'"+cols[0]+"\'));\n";
-				       		}
+			       			
 			       		}
 			       	}
 			        else{

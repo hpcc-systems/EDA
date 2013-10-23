@@ -33,7 +33,7 @@ import org.hpccsystems.ecljobentrybase.*;
 
 /**
  *
- * @author ChambersJ
+ * @author Keshavs
  */
 public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Cloneable, JobEntryInterface {
     
@@ -79,9 +79,9 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
         	StringBuilder sb = new StringBuilder();
         	outrecordName = "MyOutRec";
         	transform = "MyTrans"; 
-        	String outRecordFormat = "INTEGER rand;\n"+this.inrecordName+";\n";
+        	String outRecordFormat = "UNSIGNED DECIMAL5_2 rand;\n"+this.inrecordName+";\n";
         	String parameterName = "L";
-        	String transformFormat = "SELF.rand := C;\n SELF :="+parameterName+";\n";
+        	String transformFormat = "SELF.rand := C/1000;\n SELF :="+parameterName+";\n";
 
             sb.append(this.outrecordName).append(" := ").append(" RECORD \r\n");
             sb.append(outRecordFormat).append(" \r\n");
@@ -89,7 +89,7 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
 
             sb.append(this.outrecordName).append(" ").append(this.transform).append("(").append(this.inrecordName).append(" ").append(parameterName);
             
-            sb.append(", INTEGER C) := TRANSFORM \r\n");
+            sb.append(", UNSIGNED DECIMAL5_2 C) := TRANSFORM \r\n");
             
             sb.append(transformFormat).append(" \r\n");
             sb.append("END; \r\n");
