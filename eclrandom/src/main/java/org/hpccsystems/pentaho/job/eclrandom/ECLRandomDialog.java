@@ -34,7 +34,7 @@ import org.hpccsystems.eclguifeatures.ErrorNotices;
 import org.hpccsystems.ecljobentrybase.*;
 /**
  *
- * @author KeshavS
+ * @author ChambersJ
  */
 public class ECLRandomDialog extends ECLJobEntryDialog{//extends JobEntryDialog implements JobEntryDialogInterface {
 
