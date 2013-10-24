@@ -24,7 +24,7 @@ import org.hpccsystems.ecljobentrybase.*;
 
 /**
  *
- * @author KeshavS [:P]
+ * @author KeshavS
  */
 public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements Cloneable, JobEntryInterface {
 	
@@ -131,13 +131,13 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 			       else if(cols[2].equals("FREQUENCY")){
 			       		if(cols[1].equals("DESC")){
 			       			freq.setSize("FEW");
-			       			frequency += freq.ecl() +gettablename()+Integer.toString(i)+"s:="+ "SORT("+gettablename()+Integer.toString(i)+ ",-fre"+Integer.toString(i)+");\n";
+			       			frequency += freq.ecl() +gettablename()+Integer.toString(i)+"s:="+ "SORT("+gettablename()+Integer.toString(i)+ ",-fre);\n";
 			       			frequency +="OUTPUT("+gettablename()+Integer.toString(i)+"s,NAMED(\'"+cols[0]+"\'));\n";
 			       		}
 			       		else{
 			       			if(cols[1].equals("ASC")){
 			       				freq.setSize("FEW");
-			       				frequency += freq.ecl() +gettablename()+Integer.toString(i)+"s:="+ "SORT("+gettablename()+Integer.toString(i)+ ",fre"+Integer.toString(i)+");\n";
+			       				frequency += freq.ecl() +gettablename()+Integer.toString(i)+"s:="+ "SORT("+gettablename()+Integer.toString(i)+ ",fre);\n";
 			       				frequency += "OUTPUT("+gettablename()+Integer.toString(i)+"s,NAMED(\'"+cols[0]+"\'));\n";
 			       			}
 			       			
