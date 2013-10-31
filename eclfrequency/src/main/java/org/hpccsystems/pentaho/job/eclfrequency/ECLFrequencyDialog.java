@@ -61,6 +61,7 @@ import org.pentaho.di.ui.trans.step.BaseStepDialog;
 import org.hpccsystems.eclguifeatures.AutoPopulate;
 import org.hpccsystems.eclguifeatures.ErrorNotices;
 import org.hpccsystems.recordlayout.RecordLabels;
+import org.hpccsystems.recordlayout.RecordList;
 import org.hpccsystems.ecljobentrybase.*;
 /**
  *
@@ -71,12 +72,15 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 	public static final String NAME = "Name";
 	public static final String OPTION = "Sort Option";
 	public static final String COLUMN = "Column";
+	public static final String TYPE = "Type";
+	public static final String SORTNUM = "Sort as Numeric";
   
-	public static final String[] PROP = { NAME, OPTION, COLUMN};
+	public static final String[] PROP = { NAME, OPTION, COLUMN, TYPE, SORTNUM};
 	
 	java.util.List people;
 	
 	private String normlist = "";
+	private String data_type = "";
     private ECLFrequency jobEntry;
     private Text jobEntryName;
     private Text TableName;
@@ -187,16 +191,16 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
         FormData datasetGroupFormat = new FormData();
         datasetGroupFormat.top = new FormAttachment(generalGroup, margin);
         datasetGroupFormat.width = 400;
-        datasetGroupFormat.height = 120;
+        datasetGroupFormat.height = 100;
         datasetGroupFormat.left = new FormAttachment(middle, 0);
         datasetGroup.setLayoutData(datasetGroupFormat);
 		
 		
         datasetName = buildCombo("Dataset :    ", jobEntryName, lsMod, middle, margin, datasetGroup, datasets);
 		
-        TableName = buildText("OutTablename :", datasetName, lsMod, middle, margin, datasetGroup);
         
-        sort = buildCombo("Sort :", TableName, lsMod, middle, margin, datasetGroup, new String[]{"NO", "YES"});
+        
+        sort = buildCombo("Sort :", datasetName, lsMod, middle, margin, datasetGroup, new String[]{"NO", "YES"});
         
         item1.setControl(compForGrp);
         /**
@@ -232,8 +236,8 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 	    table.setLayoutData(new GridData(GridData.FILL_BOTH));
 	    
 	    final TableColumn tc0 = new TableColumn(table, SWT.LEFT);
-	    tc0.setText("First Name");
-	    tc0.setWidth(100);
+	    tc0.setText("Column Name");
+	    tc0.setWidth(150);
 	    tc0.setImage(RecordLabels.getImage("unchecked"));
 	    tc0.addListener(SWT.Selection, new Listener() {
 			@Override
@@ -267,10 +271,113 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 	    tc.setText("Sort Option");
 	    tc.setWidth(0);
 	    tc.setResizable(false);
+	    tc.setImage(RecordLabels.getImage("unchecked"));
+	    tc.addListener(SWT.Selection, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+		        boolean checkBoxFlag = false;
+		        for (int i = 0; i < table.getItemCount(); i++) {
+		            if (table.getItems()[i].getText(1).equals("ASC")) {
+		                checkBoxFlag = true;
+		                
+		            }
+		        }
+		        if (checkBoxFlag) {
+		        	people = new ArrayList();
+		            for (int m = 0; m < table.getItemCount(); m++) {
+		            	Player p = new Player();
+						p.setFirstName(table.getItems()[m].getText(0));
+						p.setSort(Integer.valueOf("1"));
+						if(table.getItems()[m].getText(2).equals("NAME"))
+							p.setColumns(Integer.valueOf("0"));
+						else
+							p.setColumns(Integer.valueOf("1"));
+						p.setType(table.getItems()[m].getText(3));
+						people.add(p);
+						tc.setImage(RecordLabels.getImage("checked"));
+		            }
+		        } else {
+		        	people = new ArrayList();
+		            for (int m = 0; m < table.getItemCount(); m++) {
+		            	Player p = new Player();
+						p.setFirstName(table.getItems()[m].getText(0));
+						p.setSort(Integer.valueOf("0"));
+						if(table.getItems()[m].getText(2).equals("NAME"))
+							p.setColumns(Integer.valueOf("0"));
+						else
+							p.setColumns(Integer.valueOf("1"));
+						p.setType(table.getItems()[m].getText(3));
+						people.add(p);
+						tc.setImage(RecordLabels.getImage("unchecked"));
+		            }
+		        } 	
+		        tv.refresh();
+		        tv.setInput(people);
+		        table.redraw();
+		    } 
+		});
+
 	    final TableColumn tc1 = new TableColumn(table, SWT.CENTER);
 	    tc1.setText("Column Option");
 	    tc1.setWidth(0);
 	    tc1.setResizable(false);
+	    tc1.setImage(RecordLabels.getImage("unchecked"));
+	    tc1.addListener(SWT.Selection, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+		        boolean checkBoxFlag = false;
+		        for (int i = 0; i < table.getItemCount(); i++) {
+		            if (table.getItems()[i].getText(2).equals("NAME")) {
+		                checkBoxFlag = true;
+		                
+		            }
+		        }
+		        if (checkBoxFlag) {
+		        	people = new ArrayList();
+		            for (int m = 0; m < table.getItemCount(); m++) {
+		            	Player p = new Player();
+						p.setFirstName(table.getItems()[m].getText(0));
+						p.setColumns(Integer.valueOf("1"));
+						if(table.getItems()[m].getText(1).equals("ASC"))
+							p.setSort(Integer.valueOf("0"));
+						else
+							p.setSort(Integer.valueOf("1"));
+						p.setType(table.getItems()[m].getText(3));
+						people.add(p);
+						tc1.setImage(RecordLabels.getImage("checked"));
+		            }
+		        } else {
+		        	people = new ArrayList();
+		            for (int m = 0; m < table.getItemCount(); m++) {
+		            	Player p = new Player();
+						p.setFirstName(table.getItems()[m].getText(0));
+						p.setColumns(Integer.valueOf("0"));
+						if(table.getItems()[m].getText(1).equals("ASC"))
+							p.setSort(Integer.valueOf("0"));
+						else
+							p.setSort(Integer.valueOf("1"));
+						p.setType(table.getItems()[m].getText(3));
+						people.add(p);
+						tc1.setImage(RecordLabels.getImage("unchecked"));
+		            }
+		        } 	
+		        tv.refresh();
+		        tv.setInput(people);
+		        table.redraw();
+		    } 
+		});
+
+	    
+	    final TableColumn tc2 = new TableColumn(table, SWT.CENTER);
+	    tc2.setText("Type");
+	    tc2.setWidth(0);
+	    tc2.setResizable(false);
+	    
+	    final TableColumn tc3 = new TableColumn(table, SWT.CENTER);
+	    tc3.setText("Sort Numeric?");
+	    tc3.setWidth(150);
+	    tc3.setResizable(false);
+	    
 	    if(jobEntry.getPeople() != null)
             people = jobEntry.getPeople();
 	    tv.setInput(people);
@@ -339,6 +446,12 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 			    column1.setText("Fields");
 			    column1.setWidth(200);
 			    column1.setImage(RecordLabels.getImage("unchecked"));
+			    
+			    final TreeColumn column2 = new TreeColumn(tab, SWT.LEFT);
+			    column2.setText("Type");
+			    column2.setWidth(0);
+			    
+			    
 			    column1.addListener(SWT.Selection, new Listener() {
 					@Override
 					public void handleEvent(Event event) {
@@ -365,6 +478,7 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 				        for(int m = 0; m<tab.getItemCount(); m++){
 				        	if(tab.getItem(m).getChecked()){
 				        		String st = tab.getItem(m).getText();
+				        		String type = tab.getItem(m).getText(1);
 				        		int idx = 0; 
 				 	   	      	 for(Iterator<String[]> it2 = field.iterator(); it2.hasNext(); ){
 				 	   	     	 	 String[] s = it2.next();
@@ -374,11 +488,12 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 				 	   	     		 }
 				 	   	     	 }
 				 	   	     	 field.remove(idx);
-				 	   	     	 field.add(idx,new String[]{st,"true"});
+				 	   	     	 field.add(idx,new String[]{st,"true",type});
 				 	   	     	 // to find index of the selected item in the original field array list
 				        	}
 				        	if(!tab.getItem(m).getChecked()){
 				        		String st = tab.getItem(m).getText();
+				        		String type = tab.getItem(m).getText(1);
 				        		int idx = 0; 
 				 	   	      	 for(Iterator<String[]> it2 = field.iterator(); it2.hasNext(); ){
 				 	   	     	 	 String[] s = it2.next();
@@ -388,7 +503,7 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 				 	   	     		 }
 				 	   	     	 }
 				 	   	     	 field.remove(idx);
-				 	   	     	 field.add(idx,new String[]{st,"false"});
+				 	   	     	 field.add(idx,new String[]{st,"false",type});
 				 	   	     	 // to find index of the selected item in the original field array list
 				        	}
 				        }
@@ -405,11 +520,13 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
               try{
           		
                   String[] items = ap.fieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
+                  RecordList rec = ap.rawFieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
                   
                   for(int i = 0; i < items.length; i++){
               		TreeItem item = new TreeItem(tab, SWT.NONE);
-              		item.setText(items[i].toLowerCase());
-              		field.add(new String[]{items[i].toLowerCase(),"false"});
+              		item.setText(0,items[i].toLowerCase());
+              		item.setText(1,rec.getRecords().get(i).getColumnType()+rec.getRecords().get(i).getColumnWidth());
+              		field.add(new String[]{items[i].toLowerCase(),"false",rec.getRecords().get(i).getColumnType()+rec.getRecords().get(i).getColumnWidth()});
               	}
                   
                   
@@ -465,6 +582,7 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 		        tab.addListener(SWT.Selection, new Listener() {
 		    	     public void handleEvent(Event event) {
 		    	    	 String st = ((TreeItem)event.item).getText();
+		    	    	 String type = ((TreeItem)event.item).getText(1);
 		    	    	 boolean f = ((TreeItem)event.item).getChecked();
 		 	   	      	 int idx = 0; 
 		 	   	      	 for(Iterator<String[]> it2 = field.iterator(); it2.hasNext(); ){
@@ -476,9 +594,9 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 		 	   	     	 }
 		 	   	     	 field.remove(idx);
 		 	   	     	 if(f)
-		 	   	     		 field.add(idx,new String[]{st,"true"});
+		 	   	     		 field.add(idx,new String[]{st,"true",type});
 		 	   	     	 else
-		 	   	     		 field.add(idx,new String[]{st,"false"});
+		 	   	     		 field.add(idx,new String[]{st,"false",type});
 		    	   	}
 		       });
 		        
@@ -491,6 +609,7 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 								check.add(table.getItem(i).getText());
 							}
 						}
+						
 						for(Iterator<String[]> it = field.iterator(); it.hasNext();){
 							String[] S = it.next();
 							if(S[1].equalsIgnoreCase("True") && !check.contains(S[0])){
@@ -498,7 +617,10 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 								p.setFirstName(S[0]);
 								p.setSort(Integer.valueOf("0"));
 								p.setColumns(Integer.valueOf("0"));
+								p.setType(S[2]);
+								p.setSortNumeric(Integer.valueOf("0"));
 								people.add(p);
+								
 								
 							}
 							
@@ -547,12 +669,14 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
             }
         });
 
-	    final CellEditor[] editors = new CellEditor[3];
+	    final CellEditor[] editors = new CellEditor[5];
 	    editors[0] = new TextCellEditor(table);
 	    
 	    editors[1] = new ComboBoxCellEditor(table, SortOption.INSTANCES, SWT.READ_ONLY);
 	   
 	    editors[2] = new ComboBoxCellEditor(table, ColOption.INSTANCES1, SWT.READ_ONLY);
+	    editors[3] = new TextCellEditor(table);
+	    editors[4] = new ComboBoxCellEditor(table, SortAsNumeric.INSTANCES, SWT.READ_ONLY);
 	    // Set the editors, cell modifier, and column properties
 	    tv.setColumnProperties(PROP);
 	    tv.setCellModifier(new PersonCellModifier(tv));
@@ -569,16 +693,20 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 			@Override
 			public void modifyText(ModifyEvent arg0) {
 				if(sort.getText().equals("YES")){
-					tc1.setWidth(100);
+					tc1.setWidth(150);
 					tc1.setResizable(true);
-					tc.setWidth(100);
+					tc.setWidth(150);
 					tc.setResizable(true);
+					tc3.setWidth(150);
+					tc3.setResizable(true);
 				}
 				if(sort.getText().equals("NO")){
 					tc1.setWidth(0);
 					tc1.setResizable(false);
 					tc.setWidth(0);
 					tc.setResizable(false);
+					tc3.setWidth(0);
+					tc3.setResizable(false);
 				}
 			}
 	    	
@@ -602,10 +730,11 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
             public void handleEvent(Event e) {
             	
             	normlist = new String();
+            	data_type = new String();
 				for(int i = 0; i<table.getItemCount(); i++){
-					String s1 = table.getItem(i).getText(0)+","+table.getItem(i).getText(1)+","+table.getItem(i).getText(2)+"-";
-					//String s2 = table.getItem(i).getText(1);
+					String s1 = table.getItem(i).getText(0)+","+table.getItem(i).getText(1)+","+table.getItem(i).getText(2)+","+table.getItem(i).getText(4)+"-"; 
 					normlist += s1;
+					data_type += table.getItem(i).getText(3)+",";
 					
 				}
 				ok();
@@ -650,8 +779,8 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
         	sort.setText(jobEntry.getSort());
         }
         
-        if (jobEntry.gettablename() != null) {
-        	TableName.setText(jobEntry.gettablename());
+        if (jobEntry.getDataType() != null) {
+        	data_type = jobEntry.getDataType();
         }
         
         if(jobEntry.getPeople() != null){
@@ -678,10 +807,6 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
     	if(this.jobEntryName.getText().equals("")){
     		isValid = false;
     		errors += "\"Job Entry Name\" is a required field!\r\n";
-    	}
-    	if(this.TableName.getText().equals("")){
-    		isValid = false;
-    		errors += "\"Table Name\" is a required field!\r\n";
     	}
    		if(this.datasetName.getText().equals("")){
    			isValid = false;
@@ -715,8 +840,8 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
         jobEntry.setDatasetName(this.datasetName.getText());
         jobEntry.setnormList(this.normlist);
         jobEntry.setSort(this.sort.getText());
-        jobEntry.settablename(this.TableName.getText());
         jobEntry.setPeople(this.people);
+        jobEntry.setDataType(this.data_type);
 
         dispose();
     }
@@ -748,6 +873,10 @@ class PersonCellModifier implements ICellModifier {
 	      return p.getSort();
 	    else if (ECLFrequencyDialog.COLUMN.equals(property))
 		      return p.getColumns();
+	    if (ECLFrequencyDialog.TYPE.equals(property))
+		      return p.getType();
+	    else if (ECLFrequencyDialog.SORTNUM.equals(property))
+		      return p.getSortNumeric();	    
 	    else
 	      return null;
 	  }
@@ -763,6 +892,10 @@ class PersonCellModifier implements ICellModifier {
 	      p.setSort((Integer) value);
 	    else if (ECLFrequencyDialog.COLUMN.equals(property))
 		      p.setColumns((Integer) value);
+	    if (ECLFrequencyDialog.TYPE.equals(property))
+		      p.setType((String) value);
+	    else if (ECLFrequencyDialog.SORTNUM.equals(property))
+		      p.setSortNumeric((Integer) value);
 	    // Force the viewer to refresh
 	    viewer.refresh();
 	  }
@@ -773,7 +906,8 @@ class Player {
 	  private String firstName;
 	  private Integer sortoption;
 	  private Integer Column;
-
+	  private String type;
+	  private Integer SortNumeric;
 
 	  public String getFirstName() {
 		  return firstName;
@@ -781,6 +915,22 @@ class Player {
 
 	  public void setFirstName(String firstName) {
 		  this.firstName = firstName;
+	  }
+
+	  public String getType() {
+		  return type;
+	  }
+
+	  public void setType(String type) {
+		  this.type = type;
+	  }
+
+	  public Integer getSortNumeric() {
+		  return SortNumeric;
+	  }
+
+	  public void setSortNumeric(Integer SortNumeric) {
+		  this.SortNumeric = SortNumeric;
 	  }
 
 	  public Integer getSort() {
@@ -829,6 +979,10 @@ class PlayerLabelProvider implements ITableLabelProvider {
 		  return SortOption.INSTANCES[values.getSort().intValue()];//text = values[1];
 	  case 2:
 		  return ColOption.INSTANCES1[values.getColumns().intValue()];
+	  case 3:
+		  return values.getType();
+	  case 4:
+		  return SortAsNumeric.INSTANCES[values.getSortNumeric().intValue()];
 	  	//break;
 	  }
 	  return null;
@@ -890,3 +1044,13 @@ class ColOption {
 	
 }
 
+class SortAsNumeric {
+	  //public static final String NONE = " ";
+	
+	  public static final String NO = "NO";
+	  
+	  public static final String YES = "YES";
+
+	  public final static String[] INSTANCES = { NO, YES };
+	
+}
