@@ -275,6 +275,7 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
         
         retval += super.getXML();
         retval += "		<name><![CDATA[" + Name + "]]></name>" + Const.CR;
+        retval += "		<people><![CDATA[" + this.savePeople() + "]]></people>" + Const.CR;
         retval += "		<data_type><![CDATA[" + data_type + "]]></data_type>" + Const.CR;
         retval += "		<Sort ><![CDATA[" + Sort + "]]></Sort>" + Const.CR;
         retval += "		<normList><![CDATA[" + this.getnormList() + "]]></normList>" + Const.CR;
