@@ -110,28 +110,32 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
         			notstr++;
         		}
 	        }
-	        valueStr = valueStr.substring(0, valueStr.length()-1);
-	        valueNum = valueNum.substring(0, valueNum.length()-1);
-	        fieldStr = fieldStr.substring(0, fieldStr.length()-1);
-	        fieldNum = fieldNum.substring(0, fieldNum.length()-1);
-	        
-	        frequency += "NumField:=RECORD\nSTRING field;\nREAL value;\nEND;\n";
-	        frequency += "NumFieldStr:=RECORD\nSTRING field;\nSTRING value;\nEND;\n";
-	        frequency += "OutDSStr := NORMALIZE("+this.getDatasetName()+","+str+", TRANSFORM(NumFieldStr,SELF.field:=CHOOSE(COUNTER,"+fieldStr+");SELF.value:=CHOOSE" +
-        			"(COUNTER,"+valueStr+")));\n";
-	        frequency += "OutDSNum := NORMALIZE("+this.getDatasetName()+","+notstr+", TRANSFORM(NumField,SELF.field:=CHOOSE(COUNTER,"+fieldNum+");SELF.value:=CHOOSE" +
-        			"(COUNTER,"+valueNum+")));\n";
-	        frequency += "FreqRecStr:=RECORD\nOutDSStr.field;\nOutDSStr.value;\nINTEGER frequency:=COUNT(GROUP);\n" +
+	        if(valueStr.length()>0){
+	        	valueStr = valueStr.substring(0, valueStr.length()-1);
+	        	fieldStr = fieldStr.substring(0, fieldStr.length()-1);
+	        	frequency += "NumFieldStr:=RECORD\nSTRING field;\nSTRING value;\nEND;\n";
+	        	frequency += "OutDSStr := NORMALIZE("+this.getDatasetName()+","+str+", TRANSFORM(NumFieldStr,SELF.field:=CHOOSE(COUNTER,"+fieldStr+");SELF.value:=CHOOSE" +
+	        			"(COUNTER,"+valueStr+")));\n";
+	        	 frequency += "FreqRecStr:=RECORD\nOutDSStr.field;\nOutDSStr.value;\nINTEGER frequency:=COUNT(GROUP);\n" +
 	        		     "REAL8 Percent:=(COUNT(GROUP)/COUNT("+this.DatasetName+"))*100;\n" +
 	        		     "END;\n";
-	        frequency += "FreqRecNum:=RECORD\nOutDSNum.field;\nOutDSNum.value;\nINTEGER frequency:=COUNT(GROUP);\n" +
-       		     "REAL8 Percent:=(COUNT(GROUP)/COUNT("+this.DatasetName+"))*100;\n" +
-       		     "END;\n";
+	        	 
+	        	 frequency += "Frequency1 := TABLE(OutDSStr,FreqRecStr,field,value,MERGE);\n";
+	        }
+	        if(valueNum.length()>0){
+	        	valueNum = valueNum.substring(0, valueNum.length()-1);		        
+		        fieldNum = fieldNum.substring(0, fieldNum.length()-1);
+		        frequency += "NumField:=RECORD\nSTRING field;\nREAL value;\nEND;\n";
+		        frequency += "OutDSNum := NORMALIZE("+this.getDatasetName()+","+notstr+", TRANSFORM(NumField,SELF.field:=CHOOSE(COUNTER,"+fieldNum+");SELF.value:=CHOOSE" +
+	        			"(COUNTER,"+valueNum+")));\n";
+		        frequency += "FreqRecNum:=RECORD\nOutDSNum.field;\nOutDSNum.value;\nINTEGER frequency:=COUNT(GROUP);\n" +
+	       		     "REAL8 Percent:=(COUNT(GROUP)/COUNT("+this.DatasetName+"))*100;\n" +
+	       		     "END;\n";
+		        frequency += "Frequency2 := TABLE(OutDSNum,FreqRecNum,field,value,MERGE);\n";
+
+	        }
 	        
 	        
-	        
-	        frequency += "Frequency1 := TABLE(OutDSStr,FreqRecStr,field,value,MERGE);\n";
-	        frequency += "Frequency2 := TABLE(OutDSNum,FreqRecNum,field,value,MERGE);\n";
 	        for(int j = 0; j<norm.length; j++){
 	        	String[] cols = norm[j].split(",");
 	        	if(getSort().equals("NO") || getSort().equals("")){
