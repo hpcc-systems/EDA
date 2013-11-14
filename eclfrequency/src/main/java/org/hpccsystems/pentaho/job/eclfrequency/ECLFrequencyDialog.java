@@ -375,7 +375,7 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 	    
 	    final TableColumn tc3 = new TableColumn(table, SWT.CENTER);
 	    tc3.setText("Sort Numeric?");
-	    tc3.setWidth(150);
+	    tc3.setWidth(0);
 	    tc3.setResizable(false);
 	    
 	    if(jobEntry.getPeople() != null)
