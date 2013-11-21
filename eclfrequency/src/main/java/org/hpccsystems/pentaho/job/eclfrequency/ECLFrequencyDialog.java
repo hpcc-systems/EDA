@@ -293,6 +293,10 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 						else
 							p.setColumns(Integer.valueOf("1"));
 						p.setType(table.getItems()[m].getText(3));
+						if(table.getItems()[m].getText(4).equals("NO"))
+							p.setSortNumeric(Integer.valueOf("0"));
+						else
+							p.setSortNumeric(Integer.valueOf("1"));
 						people.add(p);
 						tc.setImage(RecordLabels.getImage("checked"));
 		            }
@@ -307,6 +311,10 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 						else
 							p.setColumns(Integer.valueOf("1"));
 						p.setType(table.getItems()[m].getText(3));
+						if(table.getItems()[m].getText(4).equals("NO"))
+							p.setSortNumeric(Integer.valueOf("0"));
+						else
+							p.setSortNumeric(Integer.valueOf("1"));
 						people.add(p);
 						tc.setImage(RecordLabels.getImage("unchecked"));
 		            }
@@ -343,6 +351,11 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 						else
 							p.setSort(Integer.valueOf("1"));
 						p.setType(table.getItems()[m].getText(3));
+						if(table.getItems()[m].getText(4).equals("NO"))
+							p.setSortNumeric(Integer.valueOf("0"));
+						else
+							p.setSortNumeric(Integer.valueOf("1"));
+						
 						people.add(p);
 						tc1.setImage(RecordLabels.getImage("checked"));
 		            }
@@ -357,6 +370,10 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 						else
 							p.setSort(Integer.valueOf("1"));
 						p.setType(table.getItems()[m].getText(3));
+						if(table.getItems()[m].getText(4).equals("NO"))
+							p.setSortNumeric(Integer.valueOf("0"));
+						else
+							p.setSortNumeric(Integer.valueOf("1"));
 						people.add(p);
 						tc1.setImage(RecordLabels.getImage("unchecked"));
 		            }
