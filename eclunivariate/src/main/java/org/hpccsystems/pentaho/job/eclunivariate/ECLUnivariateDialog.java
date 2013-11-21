@@ -149,7 +149,7 @@ public class ECLUnivariateDialog extends ECLJobEntryDialog{//extends JobEntryDia
         int margin = Const.MARGIN;
         
 		shell.setLayout(layout);
-		shell.setText("Compute Frequencies");
+		shell.setText("Univariate Stats");
 		
 		FormLayout groupLayout = new FormLayout();
         groupLayout.marginWidth = 10;
