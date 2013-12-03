@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin id="ECLGraph"
+	iconfile="graph.png"
+	description="Graph"
+	tooltip="Graph" 
+	category="HPCC EDA"
+	classname="org.hpccsystems.pentaho.job.eclgraph.ECLGraph">
+            
+    <libraries>
+	  <library name="../../hpcc-common/javaecl-0.1.0.jar"/>
+        <library name="../../hpcc-common/eclgui.jar"/>
+        <library name="eclgraph.jar"/>
+    </libraries>            
+</plugin>
