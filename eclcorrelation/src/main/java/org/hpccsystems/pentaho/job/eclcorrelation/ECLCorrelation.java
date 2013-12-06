@@ -214,7 +214,7 @@ public class ECLCorrelation extends ECLJobEntry{//extends JobEntryBase implement
         retval += "		<method><![CDATA[" + method + "]]></method>" + Const.CR;
         retval += "		<fieldList><![CDATA[" + fieldList + "]]></fieldList>" + Const.CR;
         retval += "		<fields><![CDATA[" + this.saveFields() + "]]></fields>" + Const.CR;
-        retval += "		<dataset_name eclIsDef=\"true\" eclType=\"dataset\"><![CDATA[" + datasetName + "]]></dataset_name>" + Const.CR;
+        retval += "		<dataset_name><![CDATA[" + datasetName + "]]></dataset_name>" + Const.CR;
 
         
         return retval;

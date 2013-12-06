@@ -137,7 +137,7 @@ public class ECLCorrelationDialog extends ECLJobEntryDialog{//extends JobEntryDi
         int margin = Const.MARGIN;
         
 		shell.setLayout(layout);
-		shell.setText("Compute Frequencies");
+		shell.setText("Correlation");
 		
 		FormLayout groupLayout = new FormLayout();
         groupLayout.marginWidth = 10;
