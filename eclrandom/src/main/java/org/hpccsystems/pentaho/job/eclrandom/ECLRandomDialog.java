@@ -42,7 +42,7 @@ public class ECLRandomDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
     private ECLRandom jobEntry;
     private Text jobEntryName;
     private Text ResultDataset;
-    private Combo InRec;
+    //private Combo InRec;
     private Combo datasetName;
     private Button wOK, wCancel;
     private boolean backupChanged;
@@ -53,7 +53,7 @@ public class ECLRandomDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
         super(parent, jobEntryInt, rep, jobMeta);
         jobEntry = (ECLRandom) jobEntryInt;
         if (this.jobEntry.getName() == null) {
-            this.jobEntry.setName("Dataset");
+            this.jobEntry.setName("Random Generator");
         }
     }
 
@@ -62,23 +62,18 @@ public class ECLRandomDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
         Display display = parentShell.getDisplay();
         
         String datasets[] = null;
-        String recs[] = null;
         AutoPopulate ap = new AutoPopulate();
         try{
             //Object[] jec = this.jobMeta.getJobCopies().toArray();
         	
             datasets = ap.parseDatasetsRecordsets(this.jobMeta.getJobCopies());
-            recs = ap.parseRecords(this.jobMeta.getJobCopies());
         }catch (Exception e){
             System.out.println("Error Parsing existing Datasets");
             System.out.println(e.toString());
             datasets = new String[]{""};
-            System.out.println("Error Parsing existing Records");
-            System.out.println(e.toString());
-            recs = new String[]{""};
         }
 
-
+        
         shell = new Shell(parentShell, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MIN | SWT.MAX);
 
         props.setLook(shell);
@@ -146,8 +141,6 @@ public class ECLRandomDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
         
         ResultDataset = buildText("Result Dataset:", datasetName, lsMod, middle, margin, datasetGroup);
         
-        InRec = buildCombo("In Rec :", ResultDataset, lsMod, middle, margin, datasetGroup, recs);
-        
         wOK = new Button(shell, SWT.PUSH);
         wOK.setText("OK");
         wCancel = new Button(shell, SWT.PUSH);
@@ -155,20 +148,18 @@ public class ECLRandomDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
 
         BaseStepDialog.positionBottomButtons(shell, new Button[]{wOK, wCancel}, margin, datasetGroup);
         
-        //ResultDataset.setEnabled(false);
-        
         datasetName.addModifyListener(new ModifyListener (){
 			@Override
 			public void modifyText(ModifyEvent arg0) {
 				if(datasetName.getText()!=null || !datasetName.getText().equals("")){
-					ResultDataset.setText(datasetName.getText()+"_with_random");
+					ResultDataset.setText(datasetName.getText()+"_with_random");					
 				}
+				
 			}
         	
         });
         
         
-
         // Add listeners
         Listener cancelListener = new Listener() {
 
@@ -215,11 +206,6 @@ public class ECLRandomDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
             ResultDataset.setText(jobEntry.getresultDatasetName());
         }
         
-        if (jobEntry.getInRecordName() != null) {
-            InRec.setText(jobEntry.getInRecordName());
-        }
-        
-        
         
         shell.pack();
         shell.open();
@@ -248,10 +234,6 @@ public class ECLRandomDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
     		isValid = false;
     		errors += "\"Dataset Name\" is a required field!\r\n";
     	}
-    	if(this.InRec.getText().equals("")){
-    		isValid = false;
-    		errors += "\"Incoming RecordSet Name\" is a required field!\r\n";
-    	}
     	
     	if(!isValid){
     		ErrorNotices en = new ErrorNotices();
@@ -269,8 +251,7 @@ public class ECLRandomDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
     	}
     	
         jobEntry.setName(jobEntryName.getText());
-        jobEntry.setDatasetName(datasetName.getText());
-        jobEntry.setInRecordName(this.InRec.getText());
+        jobEntry.setDatasetName(datasetName.getText());      
         jobEntry.setresultDatasetName(this.ResultDataset.getText());
         dispose();
     }

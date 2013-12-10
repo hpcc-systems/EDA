@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin id="ECLPercentile"
+	iconfile="percentile.png"
+	description="Percentile"
+	tooltip="Percentile" 
+	category="HPCC EDA"
+	classname="org.hpccsystems.pentaho.job.eclpercentile.ECLPercentile">
+            
+    <libraries>
+	  <library name="../../hpcc-common/javaecl-0.1.0.jar"/>
+        <library name="../../hpcc-common/eclgui.jar"/>
+        <library name="eclpercentile.jar"/>
+    </libraries>            
+</plugin>

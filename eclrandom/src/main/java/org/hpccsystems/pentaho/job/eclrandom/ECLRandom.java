@@ -38,7 +38,6 @@ import org.hpccsystems.ecljobentrybase.*;
 public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Cloneable, JobEntryInterface {
     
     private String datasetName = "";
-    private String inrecordName = "";
     private String outrecordName = "";
     private String transform = "";
     private String resultDataset = "";
@@ -59,15 +58,6 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
         this.resultDataset = resultDataset;
     }
 
-    
-    public String getInRecordName() {
-        return inrecordName;
-    }
-
-    public void setInRecordName(String inrecordName) {
-        this.inrecordName = inrecordName;
-    }
-
     @Override
     public Result execute(Result prevResult, int k) throws KettleException {
     	Result result = prevResult;
@@ -75,11 +65,12 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
         	return result;
         }
         else{
+        	
         	String project = "";
         	StringBuilder sb = new StringBuilder();
         	outrecordName = "MyOutRec";
         	transform = "MyTrans"; 
-        	String outRecordFormat = "UNSIGNED DECIMAL8_8 rand;\n"+this.inrecordName+";\n";
+        	String outRecordFormat = "UNSIGNED DECIMAL8_8 rand;\n"+this.getDatasetName()+";\n";
         	String parameterName = "L";
         	String transformFormat = "SELF.rand := C/4294967295;\n SELF :="+parameterName+";\n";
 
@@ -87,7 +78,7 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
             sb.append(outRecordFormat).append(" \r\n");
             sb.append("END; \r\n");
 
-            sb.append(this.outrecordName).append(" ").append(this.transform).append("(").append(this.inrecordName).append(" ").append(parameterName);
+            sb.append(this.outrecordName).append(" ").append(this.transform).append("(").append(this.getDatasetName()).append(" ").append(parameterName);
             
             sb.append(", UNSIGNED4 C) := TRANSFORM \r\n");
             
@@ -99,6 +90,7 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
             sb.append(", RANDOM())); \r\n");
             
             project = sb.toString();
+            project += "OUTPUT("+this.getDatasetName()+"_with_random,NAMED('RandomGenerated'));\n";
             logBasic("Random Job =" + project); 
 	        
 	        result.setResult(true);
@@ -122,8 +114,6 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
         try {
             super.loadXML(node, list, list1);
             
-            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "inrecord_name")) != null)
-                setInRecordName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "inrecord_name")));
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "dataset_name")) != null)
                 setDatasetName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "dataset_name")));
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "resultDataset")) != null)
@@ -140,10 +130,8 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
         
         retval += super.getXML();
       
-        retval += "		<inrecord_name ><![CDATA[" + inrecordName + "]]></inrecord_name>" + Const.CR;
-        
         retval += "		<dataset_name ><![CDATA[" + datasetName + "]]></dataset_name>" + Const.CR;
-        retval += "		<resultdataset eclIsDef=\"true\" eclType=\"dataset\"><![CDATA[" + resultDataset + "]]></resultdataset>" + Const.CR;
+        retval += "		<resultdataset><![CDATA[" + resultDataset + "]]></resultdataset>" + Const.CR;
         
         return retval;
 
@@ -156,8 +144,6 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
                 datasetName = rep.getStepAttributeString(id_jobentry, "datasetName"); //$NON-NLS-1$
             if(rep.getStepAttributeString(id_jobentry, "resultdataset") != null)
                 resultDataset = rep.getStepAttributeString(id_jobentry, "resultdataset"); //$NON-NLS-1$
-            if(rep.getStepAttributeString(id_jobentry, "inrecordName") != null)
-                inrecordName = rep.getStepAttributeString(id_jobentry, "inrecordName"); //$NON-NLS-1$
         } catch (Exception e) {
             throw new KettleException("Unexpected Exception", e);
         }
@@ -167,8 +153,6 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
         try {
             rep.saveStepAttribute(id_job, getObjectId(), "datasetName", datasetName); //$NON-NLS-1$
             rep.saveStepAttribute(id_job, getObjectId(), "resultdataset", resultDataset); //$NON-NLS-1$
-            
-            rep.saveStepAttribute(id_job, getObjectId(), "inrecordName", inrecordName); //$NON-NLS-1$
             
         } catch (Exception e) {
             throw new KettleException("Unable to save info into repository" + id_job, e);
