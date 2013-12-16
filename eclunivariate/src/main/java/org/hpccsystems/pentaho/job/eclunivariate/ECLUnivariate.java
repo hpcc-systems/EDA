@@ -100,10 +100,10 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
         	ecl += "URec Trans("+this.datasetName+" L, INTEGER C) := TRANSFORM\nSELF.uid := C;\nSELF := L;\nEND;\n"; 
         	ecl += "MyDS := PROJECT("+datasetName+",Trans(LEFT,COUNTER));\n";
         	
-        	ecl += "NumField := RECORD\nUNSIGNED id;\nSTRING number;\nREAL8 value;\nEND;\n";
-        	ecl += "OutDS := NORMALIZE(MyDS,"+fieldNames.length+", TRANSFORM(NumField,SELF.id:=LEFT.uid,SELF.number:=CHOOSE(COUNTER,"+List+");SELF.value:=CHOOSE" +
+        	ecl += "NumField := RECORD\nUNSIGNED id;\nSTRING field;\nREAL8 value;\nEND;\n";
+        	ecl += "OutDS := NORMALIZE(MyDS,"+fieldNames.length+", TRANSFORM(NumField,SELF.id:=LEFT.uid,SELF.field:=CHOOSE(COUNTER,"+List+");SELF.value:=CHOOSE" +
         			"(COUNTER,"+normlist+")));\n";
-        	ecl += "SingleField := RECORD\nOutDS.number;\n";
+        	ecl += "SingleField := RECORD\nOutDS.field;\n";
         	if(check[0].equals("true"))
         		{ecl += "mean:=AVE(GROUP,OutDS.value);\n";cnt++;}
         	if(check[3].equals("true"))
@@ -114,37 +114,37 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
         		{ecl += "Minval:=MIN(GROUP,OutDS.value);\n";cnt++;}
         	ecl += "END;\n";
     		if(cnt>0)
-        		ecl += "SingleUni := TABLE(OutDS,SingleField,number);\n";
+        		ecl += "SingleUni := TABLE(OutDS,SingleField,field);\n";
         	
         	
         	if(check[1].equals("true") || check[2].equals("true")){
         	// this can be reused
         		ecl += "n := COUNT(MyDS);\n";
 	        	ecl += "RankableField := RECORD\nOutDS;\nUNSIGNED pos:=0;\nEND;\n";
-	        	ecl += "T:=TABLE(SORT(OutDS,Number,Value),RankableField);\n";
+	        	ecl += "T:=TABLE(SORT(OutDS,field,Value),RankableField);\n";
 	        	ecl += "TYPEOF(T) add_rank(T le, UNSIGNED c):=TRANSFORM\nSELF.pos:=c;\nSELF:=le;\nEND;\n";
 	        	ecl += "P:=PROJECT(T,add_rank(LEFT,COUNTER));\n";
-	        	ecl += "RS:=RECORD\nSeq:=MIN(GROUP,P.pos);\nP.number;\nEND;\n";
-	        	ecl += "Splits := TABLE(P,RS,number,FEW);\n";
+	        	ecl += "RS:=RECORD\nSeq:=MIN(GROUP,P.pos);\nP.field;\nEND;\n";
+	        	ecl += "Splits := TABLE(P,RS,field,FEW);\n";
 	        	ecl += "TYPEOF(T) to(P le, Splits ri):=TRANSFORM\nSELF.pos:=1+le.pos-ri.Seq;\nSELF:=le;\nEND;\n";
-	        	ecl += "outfile := JOIN(P,Splits,LEFT.number=RIGHT.number,to(LEFT,RIGHT),LOOKUP);\n";
+	        	ecl += "outfile := JOIN(P,Splits,LEFT.field=RIGHT.field,to(LEFT,RIGHT),LOOKUP);\n";
 	        	if(check[1].equals("true")){
-	        		ecl += "MyT := TABLE(outfile,{number;SET OF UNSIGNED poso := IF(n%2=0,[n/2,n/2 + 1],[(n+1)/2]);},number);\n";
-	        		ecl += "MedianValues:=JOIN(outfile,MyT,LEFT.number=RIGHT.number AND LEFT.pos IN RIGHT.poso);\n";
-	        		ecl += "MedianTable := TABLE(MedianValues,{number;Median := AVE(GROUP, MedianValues.value);},number);\n";
+	        		ecl += "MyT := TABLE(outfile,{field;SET OF UNSIGNED poso := IF(n%2=0,[n/2,n/2 + 1],[(n+1)/2]);},field);\n";
+	        		ecl += "MedianValues:=JOIN(outfile,MyT,LEFT.field=RIGHT.field AND LEFT.pos IN RIGHT.poso);\n";
+	        		ecl += "MedianTable := TABLE(MedianValues,{field;Median := AVE(GROUP, MedianValues.value);},field);\n";
 	        		if(cnt == 0)
 	        			ecl += "OUTPUT(MedianTable,NAMED('Median'));\n";
 	        		else{
-	        			ecl += "UniStats := JOIN(SingleUni,Mediantable,LEFT.number = RIGHT.number);\n";
+	        			ecl += "UniStats := JOIN(SingleUni,Mediantable,LEFT.field = RIGHT.field);\n";
 	        			ecl += "OUTPUT(UniStats,NAMED('UniVariateStats'));\n";
 	        		}
 	        	}
 	        	
 	        	if(check[2].equals("true")){
-	        		ecl += "MTable := TABLE(outfile,{number;value;vals := COUNT(GROUP);},number,value);\n";
-	        		ecl += "modT := TABLE(MTable,{number;cnt:=MAX(GROUP,vals)},number);\n";
-	        		ecl += "Modes:=JOIN(MTable,ModT,LEFT.number=RIGHT.number AND LEFT.vals=RIGHT.cnt);\n";
-	        		ecl += "ModeTable := TABLE(Modes,{number;mode:=value;cnt});\n";
+	        		ecl += "MTable := TABLE(outfile,{field;value;vals := COUNT(GROUP);},field,value);\n";
+	        		ecl += "modT := TABLE(MTable,{field;cnt:=MAX(GROUP,vals)},field);\n";
+	        		ecl += "Modes:=JOIN(MTable,ModT,LEFT.field=RIGHT.field AND LEFT.vals=RIGHT.cnt);\n";
+	        		ecl += "ModeTable := TABLE(Modes,{field;mode:=value;cnt});\n";
 	        		ecl += "OUTPUT(ModeTable,NAMED('Mode'));\n";
 	        	}
 	        	
