@@ -67,20 +67,22 @@ import org.hpccsystems.ecljobentrybase.*;
 public class ECLGraphDialog extends ECLJobEntryDialog{
 	
 	public static final String NAME = "Name";
-	public static final String OPTION = "Colour Option";
+	public static final String OPTION = "Color Option";
 	public static final String DATTYPE = "DataType";
   
 	public static final String[] PROP = { NAME, OPTION};
 	
 	java.util.List people;	
-	
+	private String filePath;
 	private String normlist = "";
     private ECLGraph jobEntry;
     private Text jobEntryName;
     private Combo datasetName;
+    private Combo datasetNameOriginal;
     private Combo GraphType;
     ArrayList<String> Fieldfilter = new ArrayList<String>();
-
+    
+    String checkList[] = null;
    
     private Button wOK, wCancel;
     private boolean backupChanged;
@@ -106,21 +108,28 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         final Display display = parentShell.getDisplay();
         
         String datasets[] = null;
+        String datasets1[] = null;
         
         AutoPopulate ap = new AutoPopulate();
         try{
             //Object[] jec = this.jobMeta.getJobCopies().toArray();
         	
-            datasets = ap.parseDatasetsRecordsets(this.jobMeta.getJobCopies());
-            
+            datasets1 = ap.parseDatasetsRecordsets(this.jobMeta.getJobCopies());
+            datasets = ap.parseGraphableDefinitions(this.jobMeta.getJobCopies());
+            checkList = ap.parseUnivariate(this.jobMeta.getJobCopies());
+            filePath = ap.getGlobalVariable(this.jobMeta.getJobCopies(), "compileFlags"); 
         }catch (Exception e){
             System.out.println("Error Parsing existing Datasets");
             System.out.println(e.toString());
             datasets = new String[]{""};
+            //System.out.println("Error Parsing existing Datasets");
+            //System.out.println(e.toString());
+            datasets1 = new String[]{""};
         }
 
         shell = new Shell(parentShell, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MIN | SWT.MAX);
         people = new ArrayList();
+        
 
         TabFolder tab = new TabFolder(shell, SWT.FILL | SWT.RESIZE | SWT.MIN | SWT.MAX);
         FormData datatab = new FormData();
@@ -184,15 +193,15 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         FormData datasetGroupFormat = new FormData();
         datasetGroupFormat.top = new FormAttachment(generalGroup, margin);
         datasetGroupFormat.width = 400;
-        datasetGroupFormat.height = 100;
+        datasetGroupFormat.height = 120;
         datasetGroupFormat.left = new FormAttachment(middle, 0);
         datasetGroup.setLayoutData(datasetGroupFormat);
 		
 		
-        datasetName = buildCombo("Dataset :    ", jobEntryName, lsMod, middle, margin, datasetGroup, datasets);
+        datasetNameOriginal = buildCombo("Original Dataset : ", jobEntryName, lsMod, middle, margin, datasetGroup, datasets1);
+        
+        datasetName = buildCombo("Dataset :    ", datasetNameOriginal, lsMod, middle, margin, datasetGroup, datasets);
 		
-        
-        
         GraphType = buildCombo("Graph Type :", datasetName, lsMod, middle, margin, datasetGroup, new String[]{"PieChart", "LineChart","ScatterChart","BarChart"});
         
         item1.setControl(compForGrp);
@@ -261,12 +270,12 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 		});
 	    
 	    final TableColumn tc1 = new TableColumn(table, SWT.CENTER);
-	    tc1.setText("Colour-Axis Option");
+	    tc1.setText("Color-Axis Option");
 	    tc1.setWidth(0);
 	    tc1.setResizable(false);
 	    final TableColumn tc2 = new TableColumn(table, SWT.CENTER);
 	    tc2.setText("Type");
-	    tc2.setWidth(0);
+	    tc2.setWidth(150);
 	    tc2.setResizable(true);
 	    
 	    if(jobEntry.getPeople() != null)
@@ -313,24 +322,116 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 	    });
 
 	    button.setText("Add Columns");
-
 	    // Add a listener to change the tableviewer's input
 	    button.addSelectionListener(new SelectionAdapter() {
 	      public void widgetSelected(SelectionEvent event) {
 	    	  AutoPopulate ap = new AutoPopulate();
 	    	  AddColumnsDialog obj = new AddColumnsDialog(display);
 	    	  RecordList rec = null;
-	    	  
-	    	  
+	    	  String[] items = null;
+	    	  String[] types = null;
+	    	 
               try{          		
-                  String[] items = ap.fieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
-                  rec = ap.rawFieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
-                  obj.setItems(items);
+                  //String[] items = ap.fieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
+                  rec = ap.rawFieldsByDataset( datasetNameOriginal.getText(),jobMeta.getJobCopies());
+                  
+                  //obj.setItems(items);
               }catch (Exception ex){
                   System.out.println("failed to load record definitions");
                   System.out.println(ex.toString());
                   ex.printStackTrace();
               }
+              if(!datasetNameOriginal.getText().equals("") && datasetName.getText().equals("")){
+            	  try {
+					items = ap.fieldsByDataset( datasetNameOriginal.getText(),jobMeta.getJobCopies());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            	  int i = 0;types = new String[items.length];
+            	  for(Iterator<RecordBO> I = rec.getRecords().iterator();I.hasNext();){
+						RecordBO ob = (RecordBO) I.next();						
+						types[i] = ob.getColumnType();
+						i++;
+						
+					}
+              }
+              else{//(datasetName.getText() != null){
+		    	  if(datasetName.getText().split("_")[1].equalsIgnoreCase("Percentile")){
+		    		  items = new String[]{"field","percentile","value"};
+		    		  types = new String[]{"STRING","REAL","REAL"};
+		    	  }
+		    	  else if(datasetName.getText().split("_")[1].equalsIgnoreCase("Frequency")){
+		    		  String type = "";
+		    		  for(Iterator<RecordBO> I = rec.getRecords().iterator();I.hasNext();){
+							RecordBO ob = (RecordBO) I.next();
+							if(ob.getColumnName().equalsIgnoreCase(datasetName.getText().split("_")[0])){
+								type = ob.getColumnType();
+								break;
+							}
+						}
+		    		  items = new String[]{datasetName.getText().split("_")[0],"frequency","percent"};
+		    		  types = new String[]{type,"REAL","REAL"};
+		    	  }
+		    	  else if(datasetName.getText().split("_")[1].startsWith("Univariate")){
+		    		  
+		    		 if(datasetName.getText().split("_")[0].equalsIgnoreCase("UniStats")){
+		    			 String[] stats = new String[]{"Mean","Median","Mode","Sd","Maxval","Minval"};
+		    			 int num = Integer.parseInt(datasetName.getText().split("_")[1].substring(10)); 
+		    			 
+		    			 
+		    			 String[] check = checkList[num-1].split(",");
+		    			 String[] items1 = new String[check.length];
+		    			 String[] types1 = new String[check.length];
+		    			 items1[0] = "field"; types1[0] = "STRING";int j = 1;
+		    			 for(int i = 0; i<check.length; i++){
+		    				 if(check[i].equalsIgnoreCase("true") && i != 2)
+		    					 {
+		    					 	items1[j] = stats[i];
+		    					 	types1[j] = "REAL";
+		    					 	j++;
+		    					 }	    				 
+		    			 }
+		    			 
+		    			 items = new String[j];
+		    			 types = new String[j];
+		    			 for(int i = 0; i<j; i++){
+		    				 items[i] = items1[i];
+		    				 types[i] = types1[i];
+		    			 }
+					}
+		    		 else if(datasetName.getText().split("_")[0].equalsIgnoreCase("ModeTable")){
+		    			 items = new String[]{"field","mode","cnt"};
+		    			 types = new String[]{"STRING","REAL","UNSIGNED"};
+		    		 }
+		    	  }
+		    	  else if(datasetName.getText().split("_")[2].equalsIgnoreCase("random")){
+		    		  
+		    		  try {
+						String[] item = ap.fieldsByDataset( datasetNameOriginal.getText(),jobMeta.getJobCopies());
+						items = new String[item.length+1];
+						types = new String[item.length];
+						for(int i = 0; i<item.length+1; i++){
+							if(i == 0)
+								items[i] = "rand";
+							else
+								items[i] = item[i-1];
+						} 
+						int i = 0;
+						types[i] = "UNSIGNED DECIMAL8_8";
+						i++;
+						for(Iterator<RecordBO> I = rec.getRecords().iterator();I.hasNext();){
+							RecordBO ob = (RecordBO) I.next();
+							types[i] = ob.getColumnType();
+							i++;
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+		    		  
+		    	  }
+	          }
+	    	  obj.setItems(items);
               obj.setSelectedColumns(null);
               obj.run();
               ArrayList<String> check = new ArrayList<String>();
@@ -340,19 +441,24 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
             	  }
               }
               for(Iterator<String> it = obj.getSelectedColumns().iterator(); it.hasNext();){
-					String S = it.next(); String type = "";
-					for(Iterator<RecordBO> I = rec.getRecords().iterator();I.hasNext();){
+					String S = it.next();
+					/*for(Iterator<RecordBO> I = rec.getRecords().iterator();I.hasNext();){
 						RecordBO ob = (RecordBO) I.next();
 						if(ob.getColumnName().equalsIgnoreCase(S)){
 							type = ob.getColumnType();
 							break;
 						}
+					}*/
+					int idx = 0;
+					for(int i = 0; i<items.length; i++){
+						if(S.equalsIgnoreCase(items[i]))
+							{idx = i;break;}
 					}
 					if(!check.contains(S)){
 						Player p = new Player();
 						p.setFirstName(S);
-						p.setTy(type);
-						p.setColour(Integer.valueOf("0"));
+						p.setTy(types[idx]);
+						p.setColor(Integer.valueOf("0"));
 						people.add(p);
 						
 						
@@ -394,7 +500,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 	    final CellEditor[] editors = new CellEditor[3];
 	    editors[0] = new TextCellEditor(table);
 	    
-	    editors[1] = new ComboBoxCellEditor(table, ColourOption.INSTANCES, SWT.READ_ONLY);
+	    editors[1] = new ComboBoxCellEditor(table, ColorOption.INSTANCES, SWT.READ_ONLY);
 	    editors[2] = new TextCellEditor(table);
 	   
 	    // Set the editors, cell modifier, and column properties
@@ -430,7 +536,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 				for(int i = 0; i<table.getItemCount(); i++){
 					String s1 = table.getItem(i).getText(0)+","+table.getItem(i).getText(1)+","+table.getItem(i).getText(2)+"-"; 
 					normlist += s1;					
-				}
+				}				
 				ok();
             }
         };
@@ -464,7 +570,11 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         if (jobEntry.getDatasetName() != null) {
             datasetName.setText(jobEntry.getDatasetName());
         }
-        
+
+        if (jobEntry.getDatasetNameOriginal() != null) {
+            datasetNameOriginal.setText(jobEntry.getDatasetNameOriginal());
+        }
+
         if (jobEntry.getnormList() != null) {
         	normlist = jobEntry.getnormList();
         }
@@ -476,8 +586,11 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         if(jobEntry.getPeople() != null){
         	people = jobEntry.getPeople();
         	tv.setInput(people);
-        }
+        }               
         
+        if(jobEntry.getFilePath() != null){
+        	filePath = jobEntry.getFilePath();
+        }
         shell.pack();
         shell.open();
         while (!shell.isDisposed()) {
@@ -498,9 +611,9 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
     		isValid = false;
     		errors += "\"Job Entry Name\" is a required field!\r\n";
     	}
-   		if(this.datasetName.getText().equals("")){
+   		if(this.datasetNameOriginal.getText().equals("")){
    			isValid = false;
-       		errors += "\"Dataset Name\" is a required field!\r\n";
+       		errors += "\"Original Dataset Name\" is a required field!\r\n";
    		}
    		if(this.GraphType.getText().equals("")){
    			isValid = false;
@@ -508,7 +621,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
    		}
    		if(this.normlist.equals("")){
    			isValid = false;
-   			errors += "You need to Enter Some Field to compute Frequency\r\n";
+   			errors += "You need to Enter Some Field to produce Graph\r\n";
    		}
    		
     	if(!isValid){
@@ -529,10 +642,13 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
     	}
         jobEntry.setName(jobEntryName.getText());
         jobEntry.setDatasetName(this.datasetName.getText());
+        jobEntry.setDatasetNameOriginal(this.datasetNameOriginal.getText());
         jobEntry.setnormList(this.normlist);
         jobEntry.setTyp(this.GraphType.getText());
         jobEntry.setPeople(this.people);
-
+        jobEntry.setFilePath(this.filePath);
+        if(checkList.length>0)
+        	jobEntry.setTest(this.checkList[0]);// Only when one needs to plot Univariate statistics
         dispose();
     }
 
@@ -560,7 +676,7 @@ class PersonCellModifier implements ICellModifier {
 	    if (ECLGraphDialog.NAME.equals(property))
 	      return p.getFirstName();
 	    else if (ECLGraphDialog.OPTION.equals(property))
-	      return p.getColour();
+	      return p.getColor();
 	    if (ECLGraphDialog.DATTYPE.equals(property))
 		      return p.getTy();
 		    	    
@@ -576,7 +692,7 @@ class PersonCellModifier implements ICellModifier {
 	    if (ECLGraphDialog.NAME.equals(property))
 	      p.setFirstName((String) value);
 	    else if (ECLGraphDialog.OPTION.equals(property))
-	      p.setColour((Integer) value);
+	      p.setColor((Integer) value);
 	    if (ECLGraphDialog.DATTYPE.equals(property))
 		      p.setTy((String) value);
 		    
@@ -588,7 +704,7 @@ class PersonCellModifier implements ICellModifier {
 
 class Player {
 	  private String firstName;
-	  private Integer colouroption;
+	  private Integer coloroption;
 	  private String type;
 
 	  public String getFirstName() {
@@ -607,12 +723,12 @@ class Player {
 		  this.type = type;
 	  }
 	  
-	  public Integer getColour() {
-		  return colouroption;
+	  public Integer getColor() {
+		  return coloroption;
 	  }
 
-	  public void setColour(Integer colouroption) {
-		  this.colouroption = colouroption;
+	  public void setColor(Integer coloroption) {
+		  this.coloroption = coloroption;
 	  }
 }
 
@@ -642,7 +758,7 @@ class PlayerLabelProvider implements ITableLabelProvider {
 	  	  return values.getFirstName();//text = values[0];
 	  	//break;
 	  case 1:
-		  return ColourOption.INSTANCES[values.getColour().intValue()];//text = values[1];
+		  return ColorOption.INSTANCES[values.getColor().intValue()];//text = values[1];
 		  
 	  case 2:
 		  return values.getTy();
@@ -685,8 +801,8 @@ class PlayerContentProvider implements IStructuredContentProvider {
 	}
 }
 
-class ColourOption {
-	  public static final String NONE = "Colour";
+class ColorOption {
+	  public static final String NONE = "Color";
 	  
 	  public static final String AXIS = "XAxis";
 	

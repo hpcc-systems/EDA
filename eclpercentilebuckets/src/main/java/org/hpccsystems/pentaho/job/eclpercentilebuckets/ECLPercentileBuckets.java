@@ -34,7 +34,8 @@ public class ECLPercentileBuckets extends ECLJobEntry{//extends JobEntryBase imp
 	private String normList = "";
 	private java.util.List people = new ArrayList();
 	
-	public void setPeople(java.util.List people){
+	
+    public void setPeople(java.util.List people){
 		this.people = people;
 	}
 	
@@ -146,8 +147,19 @@ public class ECLPercentileBuckets extends ECLJobEntry{//extends JobEntryBase imp
         	ecl += "Orig := PROJECT(MyDS,transfo(LEFT,COUNTER));\n";
         	ecl += "new_record denorm(Orig L, Tab3 R, INTEGER C):=TRANSFORM\n"+ mytrans;
         	ecl += "SELF := L;\nEND;\n";
-        	ecl += "Denormed:=DENORMALIZE(Orig,Tab3,LEFT.uid=RIGHT.id,denorm(LEFT,RIGHT,COUNTER));\n";
-        	ecl += "OUTPUT(Denormed,NAMED('Buckets'));\n";
+        	
+            String out = "";
+            	
+            Iterator it = people.iterator();
+            boolean isFirst = true;
+            while(it.hasNext()){
+            	if(!isFirst){out+="_";}
+            	Player p = (Player) it.next();
+            	out +=  p.getFirstName();
+                   isFirst = false;
+            }
+            ecl += "Denormed:=DENORMALIZE(Orig,Tab3,LEFT.uid=RIGHT.id,denorm(LEFT,RIGHT,COUNTER));\n";
+        	ecl += "OUTPUT(Denormed,THOR);\n";
         	ecl += "Reco := RECORD\nTab2.Field;\nTab2.bucket;\nminval := MIN(GROUP,Tab3.value);\nmaxval := MAX(GROUP,Tab3.value);\nEND;\n";
         	ecl += "TabRec := TABLE(Tab2,Reco,field,bucket);\n";
         	for(int i = 0;i <norm.length; i++){
@@ -222,7 +234,8 @@ public class ECLPercentileBuckets extends ECLJobEntry{//extends JobEntryBase imp
             
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "people")) != null)
                 openPeople(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "people")));
-            
+
+    
         } catch (Exception e) {
             throw new KettleXMLException("ECL Dataset Job Plugin Unable to read step info from XML node", e);
         }
@@ -260,7 +273,7 @@ public class ECLPercentileBuckets extends ECLJobEntry{//extends JobEntryBase imp
             
             if(rep.getStepAttributeString(id_jobentry, "people") != null)
                 this.openPeople(rep.getStepAttributeString(id_jobentry, "people")); //$NON-NLS-1$
-            
+    
         } catch (Exception e) {
             throw new KettleException("Unexpected Exception", e);
         }
@@ -277,7 +290,6 @@ public class ECLPercentileBuckets extends ECLJobEntry{//extends JobEntryBase imp
         	rep.saveStepAttribute(id_job, getObjectId(), "normList", this.getnormList()); //$NON-NLS-1$
         	
             rep.saveStepAttribute(id_job, getObjectId(), "people", this.savePeople()); //$NON-NLS-1$
-                        
         } catch (Exception e) {
             throw new KettleException("Unable to save info into repository" + id_job, e);
         }

@@ -76,10 +76,12 @@ public class ECLUnivariateDialog extends ECLJobEntryDialog{//extends JobEntryDia
     private Text jobEntryName;
     private Combo datasetName;
     private String fieldList;
-   
+    //private String single = "";
     private Button wOK, wCancel;
     private boolean backupChanged;
-    
+    private String test = "";
+    private int number = 1;
+    private String flag = "true";
     
 	private SelectionAdapter lsDef;
 
@@ -115,6 +117,11 @@ public class ECLUnivariateDialog extends ECLJobEntryDialog{//extends JobEntryDia
 
         shell = new Shell(parentShell, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MIN | SWT.MAX);
         people = new ArrayList();
+        test = jobEntry.getName().substring(jobEntry.getName().length()-1); 
+        if(Character.isDigit(test.toCharArray()[0]) && flag.equals("true")){
+        	number = Integer.parseInt(test);        	
+        	flag = "false";
+        }
         
         TabFolder tab = new TabFolder(shell, SWT.FILL | SWT.RESIZE | SWT.MIN | SWT.MAX);
         FormData datatab = new FormData();
@@ -759,6 +766,14 @@ public class ECLUnivariateDialog extends ECLJobEntryDialog{//extends JobEntryDia
         	
         }
         
+        if(jobEntry.getflag()!= null){
+        	flag = jobEntry.getflag();
+        }
+        
+        if(jobEntry.getNumber().length()>=1){
+        	number = Integer.parseInt(jobEntry.getNumber());
+        }
+        
         shell.pack();
         shell.open();
         while (!shell.isDisposed()) {
@@ -813,7 +828,11 @@ public class ECLUnivariateDialog extends ECLJobEntryDialog{//extends JobEntryDia
         jobEntry.setPeople(people);
         jobEntry.setCheckList(flags[0]+","+flags[1]+","+flags[2]+","+flags[3]+","+flags[4]+","+flags[5]);
         jobEntry.setFieldList(this.fieldList);
-
+        jobEntry.setflag(flag);
+        jobEntry.setNumber(Integer.toString(number));
+       	jobEntry.setSingle("UniStats_"+"Univariate"+number);
+        jobEntry.setMode("ModeTable_"+"Univariate"+number);
+        
         dispose();
     }
 

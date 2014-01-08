@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -21,7 +22,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.hpccsystems.javaecl.Table;
+
 import org.pentaho.di.cluster.SlaveServer;
 import org.pentaho.di.compatibility.Value;
 import org.pentaho.di.core.Const;
@@ -49,7 +50,10 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
 	private String Typ = "";
 	private String DatasetName = "";
 	private String normList = "";
+	private String DatasetNameOriginal = "";
 	private java.util.List people = new ArrayList();
+	private String Test = "";
+	private String FilePath;
 	
 	public void setPeople(java.util.List people){
 		this.people = people;
@@ -66,7 +70,23 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
 	public void setName(String Name){
 		this.Name = Name;
 	}
-	
+
+	public String getTest(){
+		return Test;
+	}
+    
+	public void setTest(String Test){
+		this.Test = Test;
+	}
+
+	public String getFilePath(){
+		return FilePath;
+	}
+    
+	public void setFilePath(String FilePath){
+		this.FilePath = FilePath;
+	}
+
 	public String getTyp(){
 		return Typ;
 	}
@@ -83,7 +103,15 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
 	public void setDatasetName(String DatasetName){
 		this.DatasetName = DatasetName;
 	}
-	
+
+	public String getDatasetNameOriginal(){
+		return DatasetNameOriginal;
+	}
+    
+	public void setDatasetNameOriginal(String DatasetNameOriginal){
+		this.DatasetNameOriginal = DatasetNameOriginal;
+	}
+
 	public String getnormList(){
 		return normList;
 	}
@@ -100,11 +128,13 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         if(result.isStopped()){
         	return result;
         }
-        else{
+        else{        		
+        		String[] path = FilePath.split("\"");
+        		logBasic(path[1].replaceAll("manifest.xml", "")); 
         		Player axis = new Player();
         		String Colours = "colors : ["; String fields = ""; String graph = "";
         	
-	        	logBasic(normList);
+	        	
 	        	if(this.getTyp().equals("PieChart")){
 	        		String[] norm = normList.split("-");
 	        		for(int i = 0; i<norm.length; i++){
@@ -119,13 +149,16 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
 	        		}
 	        		for(int i = 0; i<norm.length; i++){
 	        			String[] S = norm[i].split(",");
-	        			fields += this.getDatasetName()+"."+S[0]+";\n";
+	        			if(this.getDatasetName().equals(""))	        				
+	        				fields += this.getDatasetNameOriginal()+"."+S[0]+";\n";
+	        			else
+	        				fields += this.getDatasetName()+"."+S[0]+";\n";
 	        		}
 	        	}
 	        	else{
 	        		for(Iterator it = people.iterator(); it.hasNext();){
 		        		Player P = (Player) it.next();
-		        		if(P.getColour() == 1)
+		        		if(P.getColor() == 1)
 		        			axis = P;        				
 		        	}
 		        	people.remove(axis);
@@ -135,23 +168,29 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
 		        	for(Iterator it = people.iterator(); it.hasNext();){
 		        		if(f){
 		        			Player p = (Player) it.next();
-		        			fields += this.getDatasetName()+"."+p.getFirstName()+";\n";
+		        			if(this.getDatasetName().equals(""))
+		        				fields += this.getDatasetNameOriginal()+"."+p.getFirstName()+";\n";
+		        			else
+		        				fields += this.getDatasetName()+"."+p.getFirstName()+";\n";
 		        			i++;
 		        			f = false;
 		        			continue;
 		        		}
 		        		Player P = (Player) it.next();
-		        		fields += this.getDatasetName()+"."+P.getFirstName()+";\n";
+		        		if(this.getDatasetName().equals(""))
+	        				fields += this.getDatasetNameOriginal()+"."+P.getFirstName()+";\n";
+	        			else
+	        				fields += this.getDatasetName()+"."+P.getFirstName()+";\n";
 		        		if(i != people.size() - 1)
-		        			Colours += "\""+ColourOption.INSTANCES[P.getColour()]+"\",";
+		        			Colours += "\""+ColorOption.INSTANCES[P.getColor()]+"\",";
 		        		else
-		        			Colours += "\""+ColourOption.INSTANCES[P.getColour()]+"\"]";
+		        			Colours += "\""+ColorOption.INSTANCES[P.getColor()]+"\"]";
 		        		i++;
 		        	}	
 		        	
 			        try {
 			        	logBasic(Colours + getTyp());        	
-						Change(Colours, this.getTyp());
+						Change(Colours, this.getTyp(), path[1].replaceAll("manifest.xml", ""));
 						logBasic("File Changed?");
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
@@ -161,7 +200,10 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
 	        	}
         	
 	        	graph += "MyRec:=RECORD\n"+fields+"END;\n";
-	        	graph += "MyTable:=TABLE("+getDatasetName()+",MyRec);\n";
+	        	if(this.getDatasetName().equals(""))
+	        		graph += "MyTable:=TABLE("+getDatasetNameOriginal()+",MyRec);\n";
+	        	else
+	        		graph += "MyTable:=TABLE("+getDatasetName()+",MyRec);\n";
 	        	graph += "OUTPUT(MyTable,named(\'"+this.getTyp()+"_MyChart\'));\n";
 	        	
 		        logBasic("graph Job =" + graph);//{Dataset Job} 
@@ -189,7 +231,7 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
     	while(it.hasNext()){
     		if(!isFirst){out+="|";}
     		Player p = (Player) it.next();
-    		out +=  p.getFirstName()+","+p.getColour().toString()+","+p.getTy();
+    		out +=  p.getFirstName()+","+p.getColor().toString()+","+p.getTy();
             isFirst = false;
     	}
     	return out;
@@ -204,7 +246,7 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         		String[] S = strLine[i].split(",");
         		Player P = new Player();
         		P.setFirstName(S[0]);
-        		P.setColour(Integer.parseInt(S[1]));
+        		P.setColor(Integer.parseInt(S[1]));
         		P.setTy(S[2]);
         		people.add(P);
         	}
@@ -217,10 +259,18 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         try {
             super.loadXML(node, list, list1);
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "name")) != null)
-                setDatasetName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "name")));
+                setName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "name")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "Test")) != null)
+                setTest(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "Test")));
+            
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "FilePath")) != null)
+                setFilePath(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "FilePath")));
             
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "dataset_name")) != null)
                 setDatasetName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "dataset_name")));
+            
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "dataset_name_original")) != null)
+                setDatasetNameOriginal(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "dataset_name_original")));
 
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "Typ")) != null)
                 setTyp(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "Typ")));
@@ -245,8 +295,11 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         retval += "		<name><![CDATA[" + Name + "]]></name>" + Const.CR;
         retval += "		<people><![CDATA[" + this.savePeople() + "]]></people>" + Const.CR;
         retval += "		<Typ><![CDATA[" + Typ + "]]></Typ>" + Const.CR;
+        retval += "		<Test><![CDATA[" + Test + "]]></Test>" + Const.CR;
+        retval += "		<FilePath><![CDATA[" + FilePath + "]]></FilePath>" + Const.CR;
         retval += "		<normList><![CDATA[" + this.getnormList() + "]]></normList>" + Const.CR;
         retval += "		<dataset_name><![CDATA[" + DatasetName + "]]></dataset_name>" + Const.CR;
+        retval += "		<dataset_name_original><![CDATA[" + DatasetNameOriginal + "]]></dataset_name_original>" + Const.CR;
         
         return retval;
 
@@ -258,8 +311,17 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         	if(rep.getStepAttributeString(id_jobentry, "Name") != null)
                 Name = rep.getStepAttributeString(id_jobentry, "Name"); //$NON-NLS-1$
         	
+        	if(rep.getStepAttributeString(id_jobentry, "Test") != null)
+        		Test = rep.getStepAttributeString(id_jobentry, "Test"); //$NON-NLS-1$
+
+        	if(rep.getStepAttributeString(id_jobentry, "FilePath") != null)
+        		FilePath = rep.getStepAttributeString(id_jobentry, "FilePath"); //$NON-NLS-1$
+
         	if(rep.getStepAttributeString(id_jobentry, "datasetName") != null)
                 DatasetName = rep.getStepAttributeString(id_jobentry, "datasetName"); //$NON-NLS-1$
+        	
+        	if(rep.getStepAttributeString(id_jobentry, "datasetNameOriginal") != null)
+                DatasetNameOriginal = rep.getStepAttributeString(id_jobentry, "datasetNameOriginal"); //$NON-NLS-1$
 
             if(rep.getStepAttributeString(id_jobentry, "Typ") != null)
             	Typ = rep.getStepAttributeString(id_jobentry, "Typ"); //$NON-NLS-1$
@@ -280,7 +342,13 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         try {
         	rep.saveStepAttribute(id_job, getObjectId(), "datasetName", DatasetName); //$NON-NLS-1$
         	
+        	rep.saveStepAttribute(id_job, getObjectId(), "datasetNameOriginal", DatasetNameOriginal); //$NON-NLS-1$
+        	
         	rep.saveStepAttribute(id_job, getObjectId(), "Typ", Typ); //$NON-NLS-1$
+        	
+        	rep.saveStepAttribute(id_job, getObjectId(), "Test", Test); //$NON-NLS-1$
+        	
+        	rep.saveStepAttribute(id_job, getObjectId(), "FilePath", FilePath); //$NON-NLS-1$
         	
         	rep.saveStepAttribute(id_job, getObjectId(), "Name", Name); //$NON-NLS-1$
         	
@@ -301,8 +369,8 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         return true;
     }
     
-    public void Change(String Colours, String Chart) throws Exception,FileNotFoundException, TransformerException {
-        File xmlFile = new File("D:\\Users\\Public\\Documents\\HPCC Systems\\ECL\\MY\\visualizations\\google_charts\\files\\"+Chart.toLowerCase()+".xslt");
+    public void Change(String Colours, String Chart, String path) throws Exception,FileNotFoundException, TransformerException {
+        File xmlFile = new File(path+Chart.toLowerCase()+".xslt");//"D:\\Users\\Public\\Documents\\HPCC Systems\\ECL\\MY\\visualizations\\google_charts\\files\\"
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();

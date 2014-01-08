@@ -76,7 +76,7 @@ public class ECLPercentileDialog extends ECLJobEntryDialog{
 	private String normlist = "";
     private ECLPercentile jobEntry;
     private Text jobEntryName;
-    
+    private String outTables[] = null;
     private Combo datasetName;
     
     ArrayList<String> Fieldfilter = new ArrayList<String>();
@@ -119,6 +119,7 @@ public class ECLPercentileDialog extends ECLJobEntryDialog{
 
 
         shell = new Shell(parentShell, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MIN | SWT.MAX);
+        
         
         TabFolder tab = new TabFolder(shell, SWT.FILL | SWT.RESIZE | SWT.MIN | SWT.MAX);
         FormData datatab = new FormData();
@@ -513,14 +514,12 @@ public class ECLPercentileDialog extends ECLJobEntryDialog{
 								p.setFirstName(S[0]);
 								p.setNumber(" ");
 								fields.add(p);
-								
-								
 							}
 							
 						}
 						
 						tv.setInput(fields);
-						
+							
 						shellFilter.dispose();
 						
 					}
@@ -567,7 +566,6 @@ public class ECLPercentileDialog extends ECLJobEntryDialog{
 
         BaseStepDialog.positionBottomButtons(shell, new Button[]{wOK, wCancel}, margin, tab);
         
-        
         // Add listeners
         Listener cancelListener = new Listener() {
 
@@ -578,12 +576,14 @@ public class ECLPercentileDialog extends ECLJobEntryDialog{
         Listener okListener = new Listener() {
 
             public void handleEvent(Event e) {
+            	outTables = new String[table.getItemCount()];
             	normlist = new String();
             	for(int i = 0; i<table.getItemCount(); i++){
             		if(i == table.getItemCount()-1)
             			normlist += table.getItem(i).getText()+"-"+table.getItem(i).getText(1);
             		else
             			normlist += table.getItem(i).getText()+"-"+table.getItem(i).getText(1)+"#";
+            		outTables[i] = table.getItem(i).getText()+"_"+jobEntryName.getText();
             	}
                 ok();
             }
@@ -617,12 +617,14 @@ public class ECLPercentileDialog extends ECLJobEntryDialog{
             datasetName.setText(jobEntry.getDatasetName());
         }
         
+        //if(jobEntry.getoutTables() != null){
+        	//outTables = jobEntry.getoutTables();
+        //}
+        
         if(!jobEntry.getnormList().equals("")){
-        	normlist = jobEntry.getnormList();
-        	String[] S = normlist.split(",");
+        	normlist = jobEntry.getnormList();        	
         	table.setItemCount(0);
-        	for(int i = 0; i<S.length; i++){
-        		
+        	for(int i = 0; i<1; i++){
         	}
         }
 
@@ -683,6 +685,7 @@ public class ECLPercentileDialog extends ECLJobEntryDialog{
         jobEntry.setDatasetName(this.datasetName.getText());
         jobEntry.setnormList(this.normlist);
         jobEntry.setFields(fields);
+        jobEntry.setoutTables(outTables);
         dispose();
     }
 

@@ -131,7 +131,7 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
         retval += super.getXML();
       
         retval += "		<dataset_name ><![CDATA[" + datasetName + "]]></dataset_name>" + Const.CR;
-        retval += "		<resultdataset><![CDATA[" + resultDataset + "]]></resultdataset>" + Const.CR;
+        retval += "		<resultdataset eclIsGraphable=\"true\"><![CDATA[" + resultDataset + "]]></resultdataset>" + Const.CR;
         
         return retval;
 
