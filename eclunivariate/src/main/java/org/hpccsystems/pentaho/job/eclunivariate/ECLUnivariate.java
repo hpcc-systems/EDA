@@ -20,7 +20,7 @@ import org.pentaho.di.repository.ObjectId;
 import org.pentaho.di.repository.Repository;
 import org.w3c.dom.Node;
 import org.hpccsystems.ecljobentrybase.*;
-//import org.hpccsystems.pentaho.job.eclunivariate.Cols;
+
 
 
 /**
@@ -34,7 +34,10 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
     private java.util.List people = new ArrayList();
     private String checkList = "";
     private String fieldList = "";
-    
+    private String single = "";
+    private String mode = "";
+    private String flag = "";
+    private String Number = "";
 	public void setPeople(java.util.List people){
 		this.people = people;
 	}
@@ -49,6 +52,38 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
 
     public void setDatasetName(String datasetName) {
         this.datasetName = datasetName;
+    }
+
+    public String getSingle() {
+        return single;
+    }
+
+    public void setSingle(String single) {
+        this.single = single;
+    }
+
+    public String getNumber() {
+        return Number;
+    }
+
+    public void setNumber(String Number) {
+        this.Number = Number;
+    }
+
+    public String getflag() {
+        return flag;
+    }
+
+    public void setflag(String flag) {
+        this.flag = flag;
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 
     public String getCheckList() {
@@ -82,6 +117,7 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
         	return result;
         }
         else{
+        	logBasic(Number);
         	String[] check = getCheckList().split(",");
         	String[] fieldNames = fieldList.split(",");
         	String normlist = "";int cnt = 0;
@@ -132,11 +168,13 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
 	        		ecl += "MyT := TABLE(outfile,{field;SET OF UNSIGNED poso := IF(n%2=0,[n/2,n/2 + 1],[(n+1)/2]);},field);\n";
 	        		ecl += "MedianValues:=JOIN(outfile,MyT,LEFT.field=RIGHT.field AND LEFT.pos IN RIGHT.poso);\n";
 	        		ecl += "MedianTable := TABLE(MedianValues,{field;Median := AVE(GROUP, MedianValues.value);},field);\n";
-	        		if(cnt == 0)
-	        			ecl += "OUTPUT(MedianTable,NAMED('Median'));\n";
+	        		if(cnt == 0){
+	        			ecl += getSingle()+" := MedianTable;\n";
+	        			ecl += "OUTPUT("+getSingle()+",NAMED('UnivariateStats'));\n";
+	        		}
 	        		else{
-	        			ecl += "UniStats := JOIN(SingleUni,Mediantable,LEFT.field = RIGHT.field);\n";
-	        			ecl += "OUTPUT(UniStats,NAMED('UniVariateStats'));\n";
+	        			ecl += getSingle()+" := JOIN(SingleUni,Mediantable,LEFT.field = RIGHT.field);\n";
+	        			ecl += "OUTPUT("+getSingle()+",NAMED('UniVariateStats'));\n";
 	        		}
 	        	}
 	        	
@@ -144,14 +182,15 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
 	        		ecl += "MTable := TABLE(outfile,{field;value;vals := COUNT(GROUP);},field,value);\n";
 	        		ecl += "modT := TABLE(MTable,{field;cnt:=MAX(GROUP,vals)},field);\n";
 	        		ecl += "Modes:=JOIN(MTable,ModT,LEFT.field=RIGHT.field AND LEFT.vals=RIGHT.cnt);\n";
-	        		ecl += "ModeTable := TABLE(Modes,{field;mode:=value;cnt});\n";
-	        		ecl += "OUTPUT(ModeTable,NAMED('Mode'));\n";
+	        		ecl += getMode()+" := TABLE(Modes,{field;mode:=value;cnt});\n";
+	        		ecl += "OUTPUT("+getMode()+",NAMED('Mode'));\n";
 	        	}
 	        	
         	}
-        	if(cnt>0 && check[1].equals("false"))
-        		ecl += "OUTPUT(SingleUni,NAMED('UnivariateStats'));\n";
-        	
+        	if(cnt>0 && check[1].equals("false")){
+        		ecl += getSingle()+" := SingleUni;\n";
+        		ecl += "OUTPUT("+getSingle()+",NAMED('UnivariateStats'));\n";
+        	}
 
         	
         	result.setResult(true);
@@ -205,6 +244,10 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
             
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "dataset_name")) != null)
                 setDatasetName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "dataset_name")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "flag")) != null)
+                setflag(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "flag")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "Number")) != null)
+                setNumber(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "Number")));
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "checklist")) != null)
                 setCheckList(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "checklist")));
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "logical_file_name")) != null)
@@ -213,8 +256,13 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
                 openPeople(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "people")));
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "fieldList")) != null)
                 setFieldList(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "fieldList")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "single")) != null)
+                setSingle(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "single")));
+            //if(getCheckList().split(",")[2].equals("true")){
+            	if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "mode")) != null)
+                    setMode(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "mode")));
+            //}
             
-
         } catch (Exception e) {
             throw new KettleXMLException("ECL Dataset Job Plugin Unable to read step info from XML node", e);
         }
@@ -227,10 +275,16 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
         retval += super.getXML();
         retval += "		<people><![CDATA[" + this.savePeople() + "]]></people>" + Const.CR;
         retval += "		<fieldList><![CDATA[" + fieldList + "]]></fieldList>" + Const.CR;
+        retval += "		<flag><![CDATA[" + flag + "]]></flag>" + Const.CR;
+        retval += "		<Number><![CDATA[" + Number + "]]></Number>" + Const.CR;
         retval += "		<logical_file_name><![CDATA[" + logicalFileName + "]]></logical_file_name>" + Const.CR;
-        retval += "		<checklist><![CDATA[" + checkList + "]]></checklist>" + Const.CR;
+        retval += "		<checklist eclIsUniv=\"true\"><![CDATA[" + checkList + "]]></checklist>" + Const.CR;
         retval += "		<dataset_name><![CDATA[" + datasetName + "]]></dataset_name>" + Const.CR;		
-        //<dataset_name eclIsDef=\"true\" eclType=\"dataset\"><![CDATA[" + datasetName + "]]></dataset_name>" + Const.CR;
+        retval += "		<single eclIsGraphable=\"true\"><![CDATA[" + single + "]]></single>" + Const.CR;
+        if(getCheckList().length() > 0){
+        	if(getCheckList().split(",")[2].equals("true"))
+        		retval += "		<mode eclIsGraphable=\"true\"><![CDATA[" + mode + "]]></mode>" + Const.CR;
+        }
         return retval;
 
     }
@@ -240,6 +294,10 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
         try {
             if(rep.getStepAttributeString(id_jobentry, "datasetName") != null)
                 datasetName = rep.getStepAttributeString(id_jobentry, "datasetName"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "flag") != null)
+            	flag = rep.getStepAttributeString(id_jobentry, "flag"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "Number") != null)
+            	Number = rep.getStepAttributeString(id_jobentry, "Number"); //$NON-NLS-1$
             if(rep.getStepAttributeString(id_jobentry, "checklist") != null)
                 checkList = rep.getStepAttributeString(id_jobentry, "checklist"); //$NON-NLS-1$
             if(rep.getStepAttributeString(id_jobentry, "logicalFileName") != null)
@@ -248,6 +306,10 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
                 this.openPeople(rep.getStepAttributeString(id_jobentry, "people")); //$NON-NLS-1$
             if(rep.getStepAttributeString(id_jobentry, "fieldList") != null)
                 fieldList = rep.getStepAttributeString(id_jobentry, "fieldList"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "single") != null)
+                single = rep.getStepAttributeString(id_jobentry, "single"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "mode") != null)
+            	mode = rep.getStepAttributeString(id_jobentry, "mode"); //$NON-NLS-1$
         } catch (Exception e) {
             throw new KettleException("Unexpected Exception", e);
         }
@@ -260,6 +322,10 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
             rep.saveStepAttribute(id_job, getObjectId(), "logicalFileName", logicalFileName); //$NON-NLS-1$
             rep.saveStepAttribute(id_job, getObjectId(), "people", this.savePeople()); //$NON-NLS-1$
             rep.saveStepAttribute(id_job, getObjectId(), "fieldList", fieldList); //$NON-NLS-1$
+            rep.saveStepAttribute(id_job, getObjectId(), "single", single); //$NON-NLS-1$
+            rep.saveStepAttribute(id_job, getObjectId(), "mode", mode); //$NON-NLS-1$
+            rep.saveStepAttribute(id_job, getObjectId(), "flag", flag); //$NON-NLS-1$
+            rep.saveStepAttribute(id_job, getObjectId(), "Number", Number); //$NON-NLS-1$
         } catch (Exception e) {
             throw new KettleException("Unable to save info into repository" + id_job, e);
         }

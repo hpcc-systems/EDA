@@ -34,7 +34,10 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	private String normList = "";
 	private String data_type = "";
 	private java.util.List people = new ArrayList();
-	
+	private String outTables[] = null;
+	private String flag = "";
+    private String Number = "";
+    
 	public void setPeople(java.util.List people){
 		this.people = people;
 	}
@@ -42,11 +45,34 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	public java.util.List getPeople(){
 		return people;
 	}
+
+	public void setoutTables(String[] outTables){
+		this.outTables = outTables;
+	}
+	
+	public String[] getoutTables(){
+		return outTables;
+	}
 	
 	public String getName(){
 		return Name;
 	}
     
+	public String getNumber() {
+        return Number;
+    }
+
+    public void setNumber(String Number) {
+        this.Number = Number;
+    }
+
+    public String getflag() {
+        return flag;
+    }
+
+    public void setflag(String flag) {
+        this.flag = flag;
+    }
 	public void setName(String Name){
 		this.Name = Name;
 	}
@@ -96,7 +122,7 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
         else{
         	//String sort = Sort;
 	        String fieldStr = ""; String frequency = "";String[] norm = this.normList.split("-");String valueStr = "";String[] dataT = data_type.split(",");
-	        String fieldNum = "";String valueNum = "";int str = 0;int notstr = 0;
+	        String fieldNum = "";String valueNum = "";int str = 0;int notstr = 0;outTables = new String[norm.length];
 	        for(int i = 0; i < norm.length; i++){
 	        	String[] cols = norm[i].split(",");
 	        	if(dataT[i].startsWith("string")){ 
@@ -139,59 +165,70 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        for(int j = 0; j<norm.length; j++){
 	        	String[] cols = norm[j].split(",");
 	        	if(getSort().equals("NO") || getSort().equals("")){
-	        		if(dataT[j].startsWith("string")) 
-	        			frequency += "OUTPUT(TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),NAMED(\'"+cols[0]+"\'));\n";
-	        		else
-	        			frequency += "OUTPUT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),NAMED(\'"+cols[0]+"\'));\n";
+	        		if(dataT[j].startsWith("string")) {
+	        			frequency += cols[0]+"_Frequency"+getNumber()+":= TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent});\n";
+	        			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED(\'"+cols[0]+"\'));\n";
+	        			
+	        		}
+	        		else{
+	        			frequency += cols[0]+"_Frequency"+getNumber()+":=TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent});\n";
+	        			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED(\'"+cols[0]+"\'));\n";
+	        			
+	        		}
 	        	}
 	        	else{
 	        		if(cols[1].equals("ASC")){
 	        			if(cols[2].equals("NAME")){
 	        				if(cols[3].equals("YES")){
 	        					if(dataT[j].startsWith("string"))
-	        						frequency += cols[0]+"sor:=SORT(TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),(REAL)"+cols[0]+");\n";
+	        						frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),(REAL)"+cols[0]+");\n";
 	        					else	        						
-	        						frequency += cols[0]+"sor:=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),(REAL)"+cols[0]+");\n";
+	        						frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),(REAL)"+cols[0]+");\n";
 	        				}
 	        				else{
 	        					if(dataT[j].startsWith("string"))
-	        						frequency += cols[0]+"sor:=SORT(TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),"+cols[0]+");\n";
+	        						frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),"+cols[0]+");\n";
 	        					else
-	        						frequency += cols[0]+"sor:=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),"+cols[0]+");\n";
+	        						frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),"+cols[0]+");\n";
 	        				}
 	        					
-	        				frequency += "OUTPUT("+cols[0]+"sor,NAMED(\'"+cols[0]+"\'));\n";
+	        				frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED(\'"+cols[0]+"\'));\n";
+	        				
 	        			}
 	        			else{
 	        				if(dataT[j].startsWith("string"))
-	        					frequency += cols[0]+"sor:=SORT(TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),frequency);\n";
+	        					frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),frequency);\n";
 	        				else
-	        					frequency += cols[0]+"sor:=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),frequency);\n";
-	        				frequency += "OUTPUT("+cols[0]+"sor,NAMED(\'"+cols[0]+"\'));\n";
+	        					frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),frequency);\n";
+	        				frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED(\'"+cols[0]+"\'));\n";
+
+
 	        			}
 	        		}
 	        		else if(cols[1].equals("DESC")){
 	        			if(cols[2].equals("NAME")){
 	        				if(cols[3].equals("YES")){
 	        					if(dataT[j].startsWith("string"))
-	        						frequency += cols[0]+"sor:=SORT(TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),-(REAL)"+cols[0]+");\n";
+	        						frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),-(REAL)"+cols[0]+");\n";
 	        					else
-	        						frequency += cols[0]+"sor:=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),-(REAL)"+cols[0]+");\n";
+	        						frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),-(REAL)"+cols[0]+");\n";
 	        				}
 	        				else{
 	        					if(dataT[j].startsWith("string"))
-	        						frequency += cols[0]+"sor:=SORT(TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),-"+cols[0]+");\n";
+	        						frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),-"+cols[0]+");\n";
 	        					else
-	        						frequency += cols[0]+"sor:=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),-"+cols[0]+");\n";
+	        						frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),-"+cols[0]+");\n";
 	        				}
-	        				frequency += "OUTPUT("+cols[0]+"sor,NAMED(\'"+cols[0]+"\'));\n";
+	        				frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED(\'"+cols[0]+"\'));\n";
+	        				
 	        			}
 	        			else{
 	        				if(dataT[j].startsWith("string"))
-	        					frequency += cols[0]+"sor:=SORT(TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),-frequency);\n";
+	        					frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),-frequency);\n";
 	        				else
-	        					frequency += cols[0]+"sor:=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),-frequency);\n";
-	        				frequency += "OUTPUT("+cols[0]+"sor,NAMED(\'"+cols[0]+"\'));\n";
+	        					frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),-frequency);\n";
+	        				frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED(\'"+cols[0]+"\'));\n";
+	        				
 	        			}
 	        		}
 	        	}
@@ -246,6 +283,32 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
         	}
         }
     }
+
+    public String saveOutTables(){
+    	String out = "";int i = 0;    	
+    	boolean isFirst = true;
+    	if(outTables!=null){
+	    	while(i < outTables.length){
+	    		if(!isFirst){out+="|";}
+	    		
+	    		out +=  outTables[i];
+	    		i++;
+	            isFirst = false;
+	    	}
+    	}
+    	return out;
+    }
+
+    public void openOutTables(String in){
+    	String[] strLine = in.split("[|]");
+    	int len = strLine.length;
+    	if(len>0){
+    		outTables = new String[len];
+    		for(int i = 0; i<len; i++){
+    			outTables[i] = strLine[i];
+    		}
+    	}
+    }
     
     @Override
     public void loadXML(Node node, List<DatabaseMeta> list, List<SlaveServer> list1, Repository rpstr) throws KettleXMLException {
@@ -253,6 +316,11 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
             super.loadXML(node, list, list1);
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "name")) != null)
                 setDatasetName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "name")));
+            
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "flag")) != null)
+                setflag(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "flag")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "Number")) != null)
+                setNumber(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "Number")));
             
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "dataset_name")) != null)
                 setDatasetName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "dataset_name")));
@@ -267,6 +335,15 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
                 openPeople(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "people")));
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "data_type")) != null)
             	data_type = (XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "data_type")));
+            //if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "outTables")) != null)
+              //  openOutTables(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "outTables")));
+            String[] S = normList.split("-");
+        	this.outTables = new String[S.length];        	
+        	for(int i = 0; i<S.length; i++){
+        		String[] s = S[i].split(",");
+        		this.outTables[i] = s[0]+"_Frequency"+getNumber();
+        	}
+
             
         } catch (Exception e) {
             throw new KettleXMLException("ECL Dataset Job Plugin Unable to read step info from XML node", e);
@@ -280,11 +357,15 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
         retval += super.getXML();
         retval += "		<name><![CDATA[" + Name + "]]></name>" + Const.CR;
         retval += "		<people><![CDATA[" + this.savePeople() + "]]></people>" + Const.CR;
+        for(int i = 0; i<saveOutTables().split("[|]").length; i++){
+        	retval += "		<outTables eclIsGraphable=\"true\"><![CDATA[" + saveOutTables().split("[|]")[i] + "]]></outTables>" + Const.CR;
+        }
         retval += "		<data_type><![CDATA[" + data_type + "]]></data_type>" + Const.CR;
         retval += "		<Sort ><![CDATA[" + Sort + "]]></Sort>" + Const.CR;
         retval += "		<normList><![CDATA[" + this.getnormList() + "]]></normList>" + Const.CR;
         retval += "		<dataset_name><![CDATA[" + DatasetName + "]]></dataset_name>" + Const.CR;
-        
+        retval += "		<flag><![CDATA[" + flag + "]]></flag>" + Const.CR;
+        retval += "		<Number><![CDATA[" + Number + "]]></Number>" + Const.CR;
         return retval;
 
     }
@@ -298,6 +379,11 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
         	if(rep.getStepAttributeString(id_jobentry, "datasetName") != null)
                 DatasetName = rep.getStepAttributeString(id_jobentry, "datasetName"); //$NON-NLS-1$
 
+        	if(rep.getStepAttributeString(id_jobentry, "flag") != null)
+            	flag = rep.getStepAttributeString(id_jobentry, "flag"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "Number") != null)
+            	Number = rep.getStepAttributeString(id_jobentry, "Number"); //$NON-NLS-1$
+            
             if(rep.getStepAttributeString(id_jobentry, "Sort") != null)
             	Sort = rep.getStepAttributeString(id_jobentry, "Sort"); //$NON-NLS-1$
             
@@ -308,7 +394,9 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
                 this.openPeople(rep.getStepAttributeString(id_jobentry, "people")); //$NON-NLS-1$
             if(rep.getStepAttributeString(id_jobentry, "data_type") != null)
             	data_type = (rep.getStepAttributeString(id_jobentry, "data_type")); //$NON-NLS-1$
-
+            //if(rep.getStepAttributeString(id_jobentry, "outTables") != null)
+                //this.openOutTables(rep.getStepAttributeString(id_jobentry, "outTables")); //$NON-NLS-1$
+            
             
         } catch (Exception e) {
             throw new KettleException("Unexpected Exception", e);
@@ -328,7 +416,9 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
             rep.saveStepAttribute(id_job, getObjectId(), "people", this.savePeople()); //$NON-NLS-1$
             
             rep.saveStepAttribute(id_job, getObjectId(), "data_type", data_type); //$NON-NLS-1$
-            
+            rep.saveStepAttribute(id_job, getObjectId(), "outTables", this.saveOutTables()); //$NON-NLS-1$
+            rep.saveStepAttribute(id_job, getObjectId(), "flag", flag); //$NON-NLS-1$
+            rep.saveStepAttribute(id_job, getObjectId(), "Number", Number); //$NON-NLS-1$
             
         } catch (Exception e) {
             throw new KettleException("Unable to save info into repository" + id_job, e);
