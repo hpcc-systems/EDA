@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin id="ECLOutliers"
+	iconfile="outliers.png"
+	description="Outliers"
+	tooltip="Outliers" 
+	category="HPCC EDA"
+	classname="org.hpccsystems.pentaho.job.ecloutliers.ECLOutliers">
+            
+    <libraries>
+	  <library name="../../hpcc-common/javaecl-0.1.0.jar"/>
+        <library name="../../hpcc-common/eclgui.jar"/>
+        <library name="ecloutliers.jar"/>
+    </libraries>            
+</plugin>
