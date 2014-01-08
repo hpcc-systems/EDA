@@ -76,7 +76,6 @@ public class ECLPercentileBucketsDialog extends ECLJobEntryDialog{
 	public static final String[] PROP = { NAME, BUCKETS};
 	
 	java.util.List people;
-	
 	private String normlist = "";
     private ECLPercentileBuckets jobEntry;
     private Text jobEntryName;
@@ -108,7 +107,7 @@ public class ECLPercentileBucketsDialog extends ECLJobEntryDialog{
         Shell parentShell = getParent();
         final Display display = parentShell.getDisplay();
         
-        String datasets[] = null;
+        String datasets[] = null;//contains datasets
         
         AutoPopulate ap = new AutoPopulate();
         try{
@@ -196,7 +195,7 @@ public class ECLPercentileBucketsDialog extends ECLJobEntryDialog{
 		
         TiesBreak = buildCombo("Break Tie :    ", datasetName, lsMod, middle, margin, datasetGroup, new String[]{"HI", "LOW"});
         
-
+        
         
         item1.setControl(compForGrp);
         /**
@@ -516,7 +515,7 @@ public class ECLPercentileBucketsDialog extends ECLJobEntryDialog{
 							if(S[1].equalsIgnoreCase("True") && !check.contains(S[0])){
 								Player p = new Player();
 								p.setFirstName(S[0]);
-								p.setBuckets(" ");
+								p.setBuckets("");
 								people.add(p);
 								
 								
@@ -603,7 +602,6 @@ public class ECLPercentileBucketsDialog extends ECLJobEntryDialog{
 				for(int i = 0; i<table.getItemCount(); i++){
 					String s1 = table.getItem(i).getText(0)+","+table.getItem(i).getText(1)+"-"; 
 					normlist += s1;
-					
 				}
 				ok();
             }
@@ -642,6 +640,8 @@ public class ECLPercentileBucketsDialog extends ECLJobEntryDialog{
         if (jobEntry.getnormList() != null) {
         	normlist = jobEntry.getnormList();
         }
+        
+        
 
         if (jobEntry.getTies() != null) {
         	TiesBreak.setText(jobEntry.getTies());
@@ -680,6 +680,16 @@ public class ECLPercentileBucketsDialog extends ECLJobEntryDialog{
    			isValid = false;
    			errors += "You need to Enter Some Field to compute Frequency";
    		}
+   		if(this.people.size()>0){
+   			for(Iterator it = people.iterator(); it.hasNext();){
+   				Player P = (Player) it.next();
+   				if(P.getBuckets().length()<1){
+   					isValid = false;
+   					errors += "Number of \"Buckets\" is a required field!\r\n";
+   					break;
+   				}
+   			}
+   		}
     	if(!isValid){
     		ErrorNotices en = new ErrorNotices();
     		errors += "\r\n";
@@ -701,7 +711,6 @@ public class ECLPercentileBucketsDialog extends ECLJobEntryDialog{
         jobEntry.setnormList(this.normlist);
         jobEntry.setPeople(this.people);
         jobEntry.setTies(this.TiesBreak.getText());
-
         dispose();
     }
 

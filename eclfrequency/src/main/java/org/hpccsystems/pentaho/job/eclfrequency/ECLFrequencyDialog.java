@@ -86,8 +86,11 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
     private Text TableName;
     private Combo datasetName;
     private Combo sort;
+    private String outTables[] = null;
     ArrayList<String> Fieldfilter = new ArrayList<String>();
-
+    private String test = "";
+    private int number = 1;
+    private static String flag = "true";
    
     private Button wOK, wCancel;
     private boolean backupChanged;
@@ -128,7 +131,12 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 
         shell = new Shell(parentShell, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MIN | SWT.MAX);
         people = new ArrayList();
-
+        test = jobEntry.getName().substring(jobEntry.getName().length()-1); 
+        if(Character.isDigit(test.toCharArray()[0]) && flag.equals("true")){
+        	number = Integer.parseInt(test);
+        	number = number - 1;
+        	flag = "false";
+        }
         TabFolder tab = new TabFolder(shell, SWT.FILL | SWT.RESIZE | SWT.MIN | SWT.MAX);
         FormData datatab = new FormData();
         
@@ -745,14 +753,14 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
         Listener okListener = new Listener() {
 
             public void handleEvent(Event e) {
-            	
+            	outTables = new String[table.getItemCount()];
             	normlist = new String();
             	data_type = new String();
 				for(int i = 0; i<table.getItemCount(); i++){
 					String s1 = table.getItem(i).getText(0)+","+table.getItem(i).getText(1)+","+table.getItem(i).getText(2)+","+table.getItem(i).getText(4)+"-"; 
 					normlist += s1;
 					data_type += table.getItem(i).getText(3)+",";
-					
+					outTables[i] = table.getItem(i).getText(0)+"_"+jobEntryName.getText();
 				}
 				ok();
             }
@@ -804,6 +812,13 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
         	people = jobEntry.getPeople();
         	tv.setInput(people);
         }
+        if(jobEntry.getflag()!= null){
+        	flag = jobEntry.getflag();
+        }
+        
+        if(jobEntry.getNumber().length()>=1){
+        	number = Integer.parseInt(jobEntry.getNumber());
+        }
         
         shell.pack();
         shell.open();
@@ -833,7 +848,7 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
    			isValid = false;
        		errors += "\"Choice of Sort\" is a required field!\r\n";
    		}
-   		if(this.normlist.equals("")){
+   		if(this.normlist.equals("") || this.outTables == null){
    			isValid = false;
    			errors += "You need to Enter Some Field to compute Frequency";
    		}
@@ -859,7 +874,9 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
         jobEntry.setSort(this.sort.getText());
         jobEntry.setPeople(this.people);
         jobEntry.setDataType(this.data_type);
-
+        jobEntry.setoutTables(outTables);
+        jobEntry.setflag(flag);
+        jobEntry.setNumber(Integer.toString(number));
         dispose();
     }
 
