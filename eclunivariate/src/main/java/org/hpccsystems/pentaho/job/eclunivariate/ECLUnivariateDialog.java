@@ -174,7 +174,7 @@ public class ECLUnivariateDialog extends ECLJobEntryDialog{//extends JobEntryDia
         generalGroupFormat.left = new FormAttachment(middle-20, 0);
         generalGroup.setLayoutData(generalGroupFormat);
 		
-		jobEntryName = buildText("Job Name :", null, lsMod, middle, margin, generalGroup);
+		jobEntryName = buildText("Job Entry Name :", null, lsMod, middle, margin, generalGroup);
 		
         Group datasetGroup = new Group(compForGrp, SWT.SHADOW_NONE);
         props.setLook(datasetGroup);
@@ -188,7 +188,7 @@ public class ECLUnivariateDialog extends ECLJobEntryDialog{//extends JobEntryDia
         datasetGroup.setLayoutData(datasetGroupFormat);
 		
 		item1.setControl(compForGrp);
-        datasetName = buildCombo("Dataset :", jobEntryName, lsMod, middle, margin, datasetGroup, datasets);
+        datasetName = buildCombo("Dataset Name :", jobEntryName, lsMod, middle, margin, datasetGroup, datasets);
 
 	    final Button Mean = new Button(datasetGroup, SWT.CHECK);
 	    Mean.setText("Mean");
@@ -519,7 +519,7 @@ public class ECLUnivariateDialog extends ECLJobEntryDialog{//extends JobEntryDia
             		TreeItem item = new TreeItem(tab, SWT.NONE);
             		item.setText(0,items[i].toLowerCase());
             		item.setText(1, rec.getRecords().get(i).getColumnType());
-            		if(rec.getRecords().get(i).getColumnType().startsWith("string")){
+            		if(rec.getRecords().get(i).getColumnType().startsWith("String")){
             			item.setBackground(0, new Color(null,211,211,211));
             			//item.setGrayed(true);
             		}
@@ -543,6 +543,7 @@ public class ECLUnivariateDialog extends ECLJobEntryDialog{//extends JobEntryDia
 		        dat = new FormData(200,200);
 		        dat.top = new FormAttachment(filter, 25);
 		        dat.left = new FormAttachment(filter, 0, SWT.LEFT);
+		        dat.right = new FormAttachment(100, 0);
 		        tab.setLayoutData(dat);
 		        
 		        dat = new FormData();

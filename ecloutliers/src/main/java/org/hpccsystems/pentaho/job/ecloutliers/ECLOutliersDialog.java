@@ -154,7 +154,7 @@ public class ECLOutliersDialog extends ECLJobEntryDialog{
         int margin = Const.MARGIN;
         
 		shell.setLayout(layout);
-		shell.setText("Percentile Buckets");
+		shell.setText("Outliers");
 		
 		FormLayout groupLayout = new FormLayout();
         groupLayout.marginWidth = 10;
@@ -172,7 +172,7 @@ public class ECLOutliersDialog extends ECLJobEntryDialog{
         generalGroupFormat.left = new FormAttachment(middle, 0);
         generalGroup.setLayoutData(generalGroupFormat);
 		
-		jobEntryName = buildText("Job Name :    ", null, lsMod, middle, margin, generalGroup);
+		jobEntryName = buildText("Job Entry Name :    ", null, lsMod, middle, margin, generalGroup);
 		
 		//All other contols
         //Dataset Declaration
@@ -188,7 +188,7 @@ public class ECLOutliersDialog extends ECLJobEntryDialog{
         datasetGroup.setLayoutData(datasetGroupFormat);
 		
 		
-        datasetName = buildCombo("Dataset :    ", jobEntryName, lsMod, middle, margin, datasetGroup, datasets);		       
+        datasetName = buildCombo("Dataset Name:    ", jobEntryName, lsMod, middle, margin, datasetGroup, datasets);		       
         
         item1.setControl(compForGrp);
         /**
@@ -411,7 +411,7 @@ public class ECLOutliersDialog extends ECLJobEntryDialog{
         		TreeItem item = new TreeItem(tab, SWT.NONE);
         		item.setText(0,items[i].toLowerCase());
         		item.setText(1, rec.getRecords().get(i).getColumnType());
-        		if(rec.getRecords().get(i).getColumnType().startsWith("string")){
+        		if(rec.getRecords().get(i).getColumnType().startsWith("String")){
         			item.setBackground(0, new Color(null,211,211,211));
         			//item.setGrayed(true);
         		}
@@ -435,6 +435,7 @@ public class ECLOutliersDialog extends ECLJobEntryDialog{
 		        dat = new FormData(200,200);
 		        dat.top = new FormAttachment(filter, 25);
 		        dat.left = new FormAttachment(filter, 0, SWT.LEFT);
+		        dat.right = new FormAttachment(100, 0);
 		        tab.setLayoutData(dat);
 		        
 		        dat = new FormData();
@@ -660,7 +661,7 @@ public class ECLOutliersDialog extends ECLJobEntryDialog{
    		}
    		if(this.people.size() == 0){
    			isValid = false;
-   			errors += "Need to select at least one Field to filter\r\n";
+   			errors += "You need to select at least one field\r\n";
    		}
     	if(!isValid){
     		ErrorNotices en = new ErrorNotices();

@@ -157,7 +157,7 @@ public class ECLCorrelationDialog extends ECLJobEntryDialog{//extends JobEntryDi
         generalGroupFormat.right = new FormAttachment(100, 0);
         generalGroup.setLayoutData(generalGroupFormat);
 		
-		jobEntryName = buildText("Job Name :", null, lsMod, middle, margin, generalGroup);
+		jobEntryName = buildText("Job Entry Name :", null, lsMod, middle, margin, generalGroup);
 		
         
 		
@@ -177,7 +177,7 @@ public class ECLCorrelationDialog extends ECLJobEntryDialog{//extends JobEntryDi
 
         item1.setControl(compForGrp);
         Method = buildCombo("Method:", jobEntryName, lsMod, middle, margin, fieldsGroup, new String[]{"Pearson", "Spearman"});
-        datasetName = buildCombo("Dataset:", Method, lsMod, middle, margin, fieldsGroup, datasets);
+        datasetName = buildCombo("Dataset Name:", Method, lsMod, middle, margin, fieldsGroup, datasets);
         
         TabItem item2 = new TabItem(tab, SWT.NULL);
         item2.setText("Fields Selected");
@@ -396,7 +396,7 @@ public class ECLCorrelationDialog extends ECLJobEntryDialog{//extends JobEntryDi
           		TreeItem item = new TreeItem(tab, SWT.NONE);
           		item.setText(0,items[i].toLowerCase());
           		item.setText(1, rec.getRecords().get(i).getColumnType());
-          		if(rec.getRecords().get(i).getColumnType().startsWith("string")){
+          		if(rec.getRecords().get(i).getColumnType().startsWith("String")){
           			item.setBackground(0, new Color(null,211,211,211));
           			//item.setGrayed(true);
           		}
@@ -420,6 +420,7 @@ public class ECLCorrelationDialog extends ECLJobEntryDialog{//extends JobEntryDi
 		        dat = new FormData(200,200);
 		        dat.top = new FormAttachment(filter, 25);
 		        dat.left = new FormAttachment(filter, 0, SWT.LEFT);
+		        dat.right = new FormAttachment(100, 0);
 		        tab.setLayoutData(dat);
 		        
 		        dat = new FormData();
@@ -623,6 +624,11 @@ public class ECLCorrelationDialog extends ECLJobEntryDialog{//extends JobEntryDi
     	if(this.jobEntryName.getText().equals("")){
     		isValid = false;
     		errors += "\"Job Entry Name\" is a required field!\r\n";
+    	}
+    	
+    	if(this.Method.getText().equals("")){
+    		isValid = false;
+    		errors += "\"Method\" is a required field!\r\n";
     	}
     	
     	if(this.datasetName.getText().equals("")){
