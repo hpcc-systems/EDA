@@ -175,7 +175,7 @@ public class ECLPercentileBucketsDialog extends ECLJobEntryDialog{
         generalGroupFormat.left = new FormAttachment(middle, 0);
         generalGroup.setLayoutData(generalGroupFormat);
 		
-		jobEntryName = buildText("Job Name :    ", null, lsMod, middle, margin, generalGroup);
+		jobEntryName = buildText("Job Entry Name :    ", null, lsMod, middle, margin, generalGroup);
 		
 		//All other contols
         //Dataset Declaration
@@ -191,7 +191,7 @@ public class ECLPercentileBucketsDialog extends ECLJobEntryDialog{
         datasetGroup.setLayoutData(datasetGroupFormat);
 		
 		
-        datasetName = buildCombo("Dataset :    ", jobEntryName, lsMod, middle, margin, datasetGroup, datasets);
+        datasetName = buildCombo("Dataset Name :    ", jobEntryName, lsMod, middle, margin, datasetGroup, datasets);
 		
         TiesBreak = buildCombo("Break Tie :    ", datasetName, lsMod, middle, margin, datasetGroup, new String[]{"HI", "LOW"});
         
@@ -415,9 +415,8 @@ public class ECLPercentileBucketsDialog extends ECLJobEntryDialog{
         		TreeItem item = new TreeItem(tab, SWT.NONE);
         		item.setText(0,items[i].toLowerCase());
         		item.setText(1, rec.getRecords().get(i).getColumnType());
-        		if(rec.getRecords().get(i).getColumnType().startsWith("string")){
+        		if(rec.getRecords().get(i).getColumnType().startsWith("String")){
         			item.setBackground(0, new Color(null,211,211,211));
-        			//item.setGrayed(true);
         		}
         		field.add(new String[]{items[i].toLowerCase(),"false",rec.getRecords().get(i).getColumnType()});
         	}
@@ -439,6 +438,7 @@ public class ECLPercentileBucketsDialog extends ECLJobEntryDialog{
 		        dat = new FormData(200,200);
 		        dat.top = new FormAttachment(filter, 25);
 		        dat.left = new FormAttachment(filter, 0, SWT.LEFT);
+		        dat.right = new FormAttachment(100, 0);
 		        tab.setLayoutData(dat);
 		        
 		        dat = new FormData();
@@ -676,9 +676,13 @@ public class ECLPercentileBucketsDialog extends ECLJobEntryDialog{
    			isValid = false;
        		errors += "\"Dataset Name\" is a required field!\r\n";
    		}
+   		if(this.TiesBreak.getText().equals("")){
+   			isValid = false;
+       		errors += "\"Break Tie\" is a required field!\r\n";
+   		}
    		if(this.normlist.equals("")){
    			isValid = false;
-   			errors += "You need to Enter Some Field to compute Frequency";
+   			errors += "You need to select atleast one field";
    		}
    		if(this.people.size()>0){
    			for(Iterator it = people.iterator(); it.hasNext();){

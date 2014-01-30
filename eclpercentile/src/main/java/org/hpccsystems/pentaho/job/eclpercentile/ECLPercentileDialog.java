@@ -174,7 +174,7 @@ public class ECLPercentileDialog extends ECLJobEntryDialog{
         generalGroupFormat.right = new FormAttachment(100, 0);
         generalGroup.setLayoutData(generalGroupFormat);
 		
-		jobEntryName = buildText("Job Name :", null, lsMod, middle, margin, generalGroup);
+		jobEntryName = buildText("Job Entry Name :", null, lsMod, middle, margin, generalGroup);
 		
 
         Group fieldsGroup = new Group(compForGrp, SWT.SHADOW_NONE);
@@ -190,7 +190,7 @@ public class ECLPercentileDialog extends ECLJobEntryDialog{
         fieldsGroup.setLayoutData(fieldsGroupFormat);
 
         item1.setControl(compForGrp);
-        datasetName = buildCombo("Dataset:", jobEntryName, lsMod, middle, margin, fieldsGroup, datasets);
+        datasetName = buildCombo("Dataset Name :", jobEntryName, lsMod, middle, margin, fieldsGroup, datasets);
         
         TabItem item2 = new TabItem(tab, SWT.NULL);
         item2.setText("Fields Selected");
@@ -412,9 +412,8 @@ public class ECLPercentileDialog extends ECLJobEntryDialog{
           		TreeItem item = new TreeItem(tab, SWT.NONE);
           		item.setText(0,items[i].toLowerCase());
           		item.setText(1, rec.getRecords().get(i).getColumnType());
-          		if(rec.getRecords().get(i).getColumnType().startsWith("string")){
+          		if(rec.getRecords().get(i).getColumnType().startsWith("String")){
           			item.setBackground(0, new Color(null,211,211,211));
-          			//item.setGrayed(true);
           		}
           		field.add(new String[]{items[i].toLowerCase(),"false",rec.getRecords().get(i).getColumnType()});
           	}
@@ -436,6 +435,7 @@ public class ECLPercentileDialog extends ECLJobEntryDialog{
 		        dat = new FormData(200,200);
 		        dat.top = new FormAttachment(filter, 25);
 		        dat.left = new FormAttachment(filter, 0, SWT.LEFT);
+		        dat.right = new FormAttachment(100, 0);
 		        tab.setLayoutData(dat);
 		        
 		        dat = new FormData();
@@ -662,7 +662,7 @@ public class ECLPercentileDialog extends ECLJobEntryDialog{
    		}
    		if(this.normlist.equals("")){
    			isValid = false;
-       		errors += "Need to Select at least one field\r\n";
+       		errors += "You need to select at least one field\r\n";
    		}
    		
     	if(!isValid){
