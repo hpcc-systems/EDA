@@ -154,7 +154,7 @@ public class ECLTabulateBucketsDialog extends ECLJobEntryDialog{
         generalGroupFormat.right = new FormAttachment(100, 0);
         generalGroup.setLayoutData(generalGroupFormat);
 		
-		jobEntryName = buildText("Job Name :", null, lsMod, middle-15, margin, generalGroup);
+		jobEntryName = buildText("Job Entry Name :", null, lsMod, middle-10, margin, generalGroup);
 		
 		//All other contols
         //Dataset Declaration
@@ -171,7 +171,7 @@ public class ECLTabulateBucketsDialog extends ECLJobEntryDialog{
         datasetGroup.setLayoutData(datasetGroupFormat);
 		
 		
-        datasetName = buildCombo("Dataset :", jobEntryName, lsMod, middle-20, margin, datasetGroup, datasets);
+        datasetName = buildCombo("Dataset Name :", jobEntryName, lsMod, middle-10, margin, datasetGroup, datasets);
 
         final TableViewer tv = new TableViewer(datasetGroup,  SWT.CHECK | SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 
@@ -329,10 +329,15 @@ public class ECLTabulateBucketsDialog extends ECLJobEntryDialog{
 	    			if(table.getItem(i).getChecked()){
 	    				Player P = new Player();
 	    				P.setFirstName(table.getItem(i).getText());
+	    				P.setIndex(i);
 	    				P.setBuckets("0");
-	    				rows.add(P);
-	    				fields.remove(Math.abs(cnt - i));
-						cnt++;
+	    				if(rows.isEmpty() && (!columns.contains(P)) &&(!layers.contains(P))){
+	    					rows.add(P);
+	    				}
+	    				else if((!rows.contains(P)) && (!columns.contains(P)) &&(!layers.contains(P))){
+	    					rows.add(P);
+	    				}
+	    				table.getItem(i).setChecked(false);
 					}
 	    		}
 	    		tv.refresh();
@@ -357,10 +362,6 @@ public class ECLTabulateBucketsDialog extends ECLJobEntryDialog{
 				int cnt = 0;
 				for(int i = 0; i<RowTable.getItemCount(); i++){
 					if(RowTable.getItem(i).getChecked()){
-	    				Player P = new Player();
-	    				P.setFirstName(RowTable.getItem(i).getText());
-	    				P.setBuckets(" ");
-	    				fields.add(P);
 	    				rows.remove(Math.abs(cnt - i));
 						cnt++;
 					}
@@ -376,15 +377,19 @@ public class ECLTabulateBucketsDialog extends ECLJobEntryDialog{
 	    InLayer.addListener(SWT.Selection, new Listener(){
 			@Override
 			public void handleEvent(Event arg0) {
-				int cnt = 0;
 	    		for(int i = 0; i<table.getItemCount(); i++){
 	    			if(table.getItem(i).getChecked()){
 	    				Player P = new Player();
 	    				P.setFirstName(table.getItem(i).getText());
 	    				P.setBuckets("");
-	    				layers.add(P);
-	    				fields.remove(Math.abs(cnt - i));
-						cnt++;
+	    				P.setIndex(i);
+	    				if(layers.isEmpty() && (!rows.contains(P)) && (!columns.contains(P))){
+	    					layers.add(P);
+	    				}
+	    				else if((!rows.contains(P)) && (!columns.contains(P)) &&(!layers.contains(P))){
+	    					layers.add(P);
+	    				}
+	    				table.getItem(i).setChecked(false);
 					}
 	    		}
 	    		tv.refresh();
@@ -400,10 +405,6 @@ public class ECLTabulateBucketsDialog extends ECLJobEntryDialog{
 				int cnt = 0;
 				for(int i = 0; i<LayerTable.getItemCount(); i++){
 					if(LayerTable.getItem(i).getChecked()){
-	    				Player P = new Player();
-	    				P.setFirstName(LayerTable.getItem(i).getText());
-	    				P.setBuckets(" ");
-	    				fields.add(P);
 	    				layers.remove(Math.abs(cnt - i));
 						cnt++;
 					}
@@ -512,7 +513,7 @@ public class ECLTabulateBucketsDialog extends ECLJobEntryDialog{
    		}
    		if(this.rows.size() <= 1){
    			isValid = false;
-   			errors += "Need to Select at least 2 fields!\r\n";
+   			errors += "You need to select at least 2 fields!\r\n";
    		}
     	if(!isValid){
     		ErrorNotices en = new ErrorNotices();
@@ -584,10 +585,12 @@ class PersonCellModifier implements ICellModifier {
 
 
 class Player {
-	  private String firstName;
-	  private String buckets;
 
-	  public String getFirstName() {
+	private String firstName;
+	  private String buckets;
+	  private int index;
+
+      public String getFirstName() {
 		  return firstName;
 	  }
 
@@ -602,8 +605,43 @@ class Player {
 	  public void setBuckets(String buckets) {
 		  this.buckets = buckets;
 	  }
+	  
+	  public int getIndex() {
+			return index;
+	  }
 
+	  public void setIndex(int index) {
+			this.index = index;
+	  }
+	  
+	  @Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result
+					+ ((firstName == null) ? 0 : firstName.hashCode());
+			result = prime * result + index;
+			return result;
+		}
 
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Player other = (Player) obj;
+			if (firstName == null) {
+				if (other.firstName != null)
+					return false;
+			} else if (!firstName.equals(other.firstName))
+				return false;
+			if (index != other.index)
+				return false;
+			return true;
+		}
 }
 
 
