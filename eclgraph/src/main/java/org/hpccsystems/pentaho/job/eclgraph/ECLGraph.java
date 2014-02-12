@@ -128,8 +128,15 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         if(result.isStopped()){
         	return result;
         }
-        else{        		
-        		String[] path = FilePath.split("\"");
+        else{        	
+        		String[] path = null;
+        		String[] flag = FilePath.split("-");
+        		for(int i = 0; i<flag.length; i++){
+        			if(flag[i].startsWith("manifest")){
+        				path = flag[i].split("\"");
+        			} 
+        		}
+        		//String[] path = FilePath.split("\"");
         		logBasic(path[1].replaceAll("manifest.xml", "")); 
         		Player axis = new Player();
         		String Colours = "colors : ["; String fields = ""; String graph = "";

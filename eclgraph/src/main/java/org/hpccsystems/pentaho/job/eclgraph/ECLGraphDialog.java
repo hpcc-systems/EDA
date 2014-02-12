@@ -182,7 +182,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         generalGroupFormat.left = new FormAttachment(middle, 0);
         generalGroup.setLayoutData(generalGroupFormat);
 		
-		jobEntryName = buildText("Job Name :    ", null, lsMod, middle, margin, generalGroup);
+		jobEntryName = buildText("Job Entry Name :    ", null, lsMod, middle, margin, generalGroup);
 		
 		//All other contols
         //Dataset Declaration
@@ -198,9 +198,9 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         datasetGroup.setLayoutData(datasetGroupFormat);
 		
 		
-        datasetNameOriginal = buildCombo("Original Dataset : ", jobEntryName, lsMod, middle, margin, datasetGroup, datasets1);
+        datasetNameOriginal = buildCombo("Original Dataset Name : ", jobEntryName, lsMod, middle, margin, datasetGroup, datasets1);
         
-        datasetName = buildCombo("Dataset :    ", datasetNameOriginal, lsMod, middle, margin, datasetGroup, datasets);
+        datasetName = buildCombo("Dataset Name :    ", datasetNameOriginal, lsMod, middle, margin, datasetGroup, datasets);
 		
         GraphType = buildCombo("Graph Type :", datasetName, lsMod, middle, margin, datasetGroup, new String[]{"PieChart", "LineChart","ScatterChart","BarChart"});
         
@@ -617,11 +617,11 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
    		}
    		if(this.GraphType.getText().equals("")){
    			isValid = false;
-       		errors += "\"Choice of Type\" is a required field!\r\n";
+       		errors += "\"Graph Type\" is a required field!\r\n";
    		}
    		if(this.normlist.equals("")){
    			isValid = false;
-   			errors += "You need to Enter Some Field to produce Graph\r\n";
+   			errors += "You need to select a field to produce Graph\r\n";
    		}
    		
     	if(!isValid){
