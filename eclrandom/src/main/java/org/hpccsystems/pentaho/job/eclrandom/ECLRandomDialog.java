@@ -120,7 +120,7 @@ public class ECLRandomDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
         generalGroupFormat.right = new FormAttachment(100, 0);
         generalGroup.setLayoutData(generalGroupFormat);
 		
-		jobEntryName = buildText("Job Name :", null, lsMod, middle, margin, generalGroup);
+		jobEntryName = buildText("Job Entry Name :", null, lsMod, middle, margin, generalGroup);
 		
 		//All other contols
         //Dataset Declaration
@@ -137,9 +137,9 @@ public class ECLRandomDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
         datasetGroup.setLayoutData(datasetGroupFormat);
 		
 		
-        datasetName = buildCombo("Dataset :", jobEntryName, lsMod, middle, margin, datasetGroup, datasets);
+        datasetName = buildCombo("Dataset Name :", jobEntryName, lsMod, middle, margin, datasetGroup, datasets);
         
-        ResultDataset = buildText("Result Dataset:", datasetName, lsMod, middle, margin, datasetGroup);
+        ResultDataset = buildText("Result Dataset Name :", datasetName, lsMod, middle, margin, datasetGroup);
         
         wOK = new Button(shell, SWT.PUSH);
         wOK.setText("OK");

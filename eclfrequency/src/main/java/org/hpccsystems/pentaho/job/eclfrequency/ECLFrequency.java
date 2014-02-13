@@ -167,12 +167,12 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        	if(getSort().equals("NO") || getSort().equals("")){
 	        		if(dataT[j].startsWith("string")) {
 	        			frequency += cols[0]+"_Frequency"+getNumber()+":= TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent});\n";
-	        			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED(\'"+cols[0]+"\'));\n";
+	        			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
 	        			
 	        		}
 	        		else{
 	        			frequency += cols[0]+"_Frequency"+getNumber()+":=TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent});\n";
-	        			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED(\'"+cols[0]+"\'));\n";
+	        			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
 	        			
 	        		}
 	        	}
@@ -192,7 +192,7 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        						frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),"+cols[0]+");\n";
 	        				}
 	        					
-	        				frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED(\'"+cols[0]+"\'));\n";
+	        				frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
 	        				
 	        			}
 	        			else{
@@ -200,7 +200,7 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        					frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),frequency);\n";
 	        				else
 	        					frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),frequency);\n";
-	        				frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED(\'"+cols[0]+"\'));\n";
+	        				frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
 
 
 	        			}
@@ -219,7 +219,7 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        					else
 	        						frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),-"+cols[0]+");\n";
 	        				}
-	        				frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED(\'"+cols[0]+"\'));\n";
+	        				frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
 	        				
 	        			}
 	        			else{
@@ -227,7 +227,7 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        					frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),-frequency);\n";
 	        				else
 	        					frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),-frequency);\n";
-	        				frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED(\'"+cols[0]+"\'));\n";
+	        				frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
 	        				
 	        			}
 	        		}

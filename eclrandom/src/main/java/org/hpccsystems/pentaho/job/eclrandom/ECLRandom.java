@@ -90,7 +90,7 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
             sb.append(", RANDOM())); \r\n");
             
             project = sb.toString();
-            project += "OUTPUT("+this.getDatasetName()+"_with_random,NAMED('RandomGenerated'));\n";
+            project += "OUTPUT("+this.getDatasetName()+"_with_random,THOR);\n";
             logBasic("Random Job =" + project); 
 	        
 	        result.setResult(true);
