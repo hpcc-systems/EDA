@@ -164,7 +164,7 @@ public class ECLPercentileBuckets extends ECLJobEntry{//extends JobEntryBase imp
         	ecl += "TabRec := TABLE(Tab2,Reco,field,bucket);\n";
         	for(int i = 0;i <norm.length; i++){
         		String[] S = norm[i].split(",");
-        		ecl += "OUTPUT(TabRec(field='"+S[0]+"'),NAMED('"+S[0]+"Buckets_min_max'));\n";
+        		ecl += "OUTPUT(TabRec(field='"+S[0]+"'),THOR);\n";
         	}
         	
         	

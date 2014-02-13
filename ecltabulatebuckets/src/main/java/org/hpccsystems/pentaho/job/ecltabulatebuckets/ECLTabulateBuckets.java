@@ -163,14 +163,14 @@ public class ECLTabulateBuckets extends ECLJobEntry{//extends JobEntryBase imple
         				smoking +
         				"INTEGER cnt := COUNT(GROUP);\nEND;\n";
         		ecl += "MyTable := TABLE(Smokin,MyRec,left_bucket,right_bucket,left_field,right_field,"+group+");\n";
-        		ecl += "OUTPUT(MyTable,NAMED('BucketedTabulate'));\n";
+        		ecl += "OUTPUT(MyTable,THOR);\n";
         	}
         	else{
         	      	
 	        	ecl += "MyRec := RECORD\nJhakaas.left_bucket;\nJhakaas.right_bucket;\nJhakaas.left_field;\nJhakaas.right_field;\nINTEGER cnt := COUNT(GROUP);\nEND;\n";
 	        	ecl += "MyTable := SORT(TABLE(Jhakaas,MyRec,left_bucket,right_bucket,left_field,right_field),left_field,right_field);\n";
 	        	
-	        	ecl += "OUTPUT(MyTable,NAMED('BucketedTabulate'));\n";        	
+	        	ecl += "OUTPUT(MyTable,THOR);\n";        	
         	}
         	result.setResult(true);
             

@@ -170,11 +170,11 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
 	        		ecl += "MedianTable := TABLE(MedianValues,{field;Median := AVE(GROUP, MedianValues.value);},field);\n";
 	        		if(cnt == 0){
 	        			ecl += getSingle()+" := MedianTable;\n";
-	        			ecl += "OUTPUT("+getSingle()+",NAMED('UnivariateStats'));\n";
+	        			ecl += "OUTPUT("+getSingle()+",THOR);\n";
 	        		}
 	        		else{
 	        			ecl += getSingle()+" := JOIN(SingleUni,Mediantable,LEFT.field = RIGHT.field);\n";
-	        			ecl += "OUTPUT("+getSingle()+",NAMED('UniVariateStats'));\n";
+	        			ecl += "OUTPUT("+getSingle()+",THOR);\n";
 	        		}
 	        	}
 	        	
@@ -183,13 +183,13 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
 	        		ecl += "modT := TABLE(MTable,{field;cnt:=MAX(GROUP,vals)},field);\n";
 	        		ecl += "Modes:=JOIN(MTable,ModT,LEFT.field=RIGHT.field AND LEFT.vals=RIGHT.cnt);\n";
 	        		ecl += getMode()+" := TABLE(Modes,{field;mode:=value;cnt});\n";
-	        		ecl += "OUTPUT("+getMode()+",NAMED('Mode'));\n";
+	        		ecl += "OUTPUT("+getMode()+",THOR);\n";
 	        	}
 	        	
         	}
         	if(cnt>0 && check[1].equals("false")){
         		ecl += getSingle()+" := SingleUni;\n";
-        		ecl += "OUTPUT("+getSingle()+",NAMED('UnivariateStats'));\n";
+        		ecl += "OUTPUT("+getSingle()+",THOR);\n";
         	}
 
         	
