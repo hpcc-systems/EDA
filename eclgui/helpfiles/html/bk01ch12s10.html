@@ -1,0 +1,35 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>#FOR</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch12.html" title="Template Language"><link rel="prev" href="bk01ch12s09.html" title="#EXPORTXML"><link rel="next" href="bk01ch12s11.html" title="#GETDATATYPE"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">#FOR</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch12s09.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Template Language</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch12s11.html">Next</a></td></tr></table><hr></div><div class="sect1" title="#FOR"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_FOR"></a>#FOR</h2></div></div></div><p><span class="bold"><strong>#FOR<a class="indexterm" name="d4e14462"></a>( </strong></span><span class="emphasis"><em> tag </em></span><span class="bold"><strong>[ ( </strong></span><span class="emphasis"><em>filter </em></span><span class="bold"><strong>) ]</strong></span><span class="emphasis"><em> </em></span><span class="bold"><strong>)</strong></span><span class="bold"><strong> </strong></span><span class="emphasis"><em></em></span></p><p><span class="emphasis"><em>statements</em></span><span class="bold"><strong></strong></span></p><p><span class="bold"><strong>#END</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="13%"><col width="87%"></colgroup><tbody><tr><td><span class="emphasis"><em>tag</em></span></td><td>An XML tag.</td></tr><tr><td><span class="emphasis"><em>filter</em></span></td><td>A logical expression indicating which specific tag instances to process.</td></tr><tr><td><span class="emphasis"><em>statements</em></span></td><td>The Template statements to execute.</td></tr><tr><td><span class="emphasis"><em>#END</em></span></td><td>The #FOR structure terminator.</td></tr></tbody></table></div><p>The <span class="bold"><strong>#FOR </strong></span>structure loops through the XML, searching for each instance of the <span class="emphasis"><em>tag</em></span> that meets the <span class="emphasis"><em>filter</em></span> expression and executes the <span class="emphasis"><em>statements </em></span>on the data contained within that <span class="emphasis"><em>tag</em></span>.</p><p>Example:</p><pre class="programlisting">  // This script processes XML and generates ECL COUNT statements
+  // which run against the datasets and filters specified in the XML.
+  XMLstuff :=
+   '&lt;section&gt;'+
+       '&lt;item&gt;'+
+           '&lt;dataset&gt;people&lt;/dataset&gt;'+
+           '&lt;filter&gt;firstname = \'RICHARD\'&lt;/filter&gt;'+
+       '&lt;/item&gt;'+
+       '&lt;item&gt;'+
+           '&lt;dataset&gt;people&lt;/dataset&gt;'+
+           '&lt;filter&gt;firstname = \'JOHN\'&lt;/filter&gt;'+
+       '&lt;/item&gt;'+
+       '&lt;item&gt;'+
+           '&lt;dataset&gt;people&lt;/dataset&gt;'+
+           '&lt;filter&gt;first_name = \'HENRY\'&lt;/filter&gt;'+
+       '&lt;/item&gt;'+
+   '&lt;/section&gt;';
+  
+  LOADXML(XMLstuff);
+  #DECLARE(CountStr); // Declare CountStr
+  #SET(CountStr, '' ); // Initialize it to an empty string
+  #FOR(item)
+     #APPEND(CountStr,'COUNT(' + %'dataset'% + '(' + %'filter'% + ' ));\n');
+  #END
+  
+  OUTPUT(%'CountStr'%); // output the string just built
+  %CountStr% // then execute the generated "COUNT" actions
+  
+  // Note that the "CountStr" will have 3 COUNT actions in it:
+  //   COUNT(person(person.per_first_name = 'RICHARD'));
+  //   COUNT(person(person.per_first_name = 'JOHN'));
+  //   COUNT(person(person.per_first_name = 'HENRY'));
+</pre><p>See Also: <a class="link" href="bk01ch12s14.html" title="#LOOP / #BREAK">#LOOP</a>, <a class="link" href="bk01ch12s04.html" title="#DECLARE">#DECLARE</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch12s09.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch12.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch12s11.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">#EXPORTXML&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;#GETDATATYPE</td></tr></table></div></body></html>

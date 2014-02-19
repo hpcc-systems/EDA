@@ -1,0 +1,69 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Single-row DATASET Expressions</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch05s02.html" title="DATASET"><link rel="prev" href="bk01ch05s02s06.html" title="In-line DATASETs"><link rel="next" href="bk01ch05s02s08.html" title="Child DATASETs"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Single-row DATASET Expressions</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch05s02s06.html">Prev</a>&nbsp;</td><th width="60%" align="center">DATASET</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch05s02s08.html">Next</a></td></tr></table><hr></div><div class="sect2" title="Single-row DATASET Expressions"><div class="titlepage"><div><div><h3 class="title"><a name="Single-row_DATASET_Expressions"></a>Single-row DATASET<a class="indexterm" name="d4e2664"></a><a class="indexterm" name="d4e2666"></a> Expressions</h3></div></div></div><p><span class="bold"><strong> DATASET(</strong></span><span class="emphasis"><em> row </em></span><span class="bold"><strong>)</strong></span></p><p>This form is only used in an expression context. It allows you to in-line a single record dataset.</p><p>Example:</p><pre class="programlisting">//the following examples demonstrate 4 ways to do the same thing:
+personRecord := RECORD
+  STRING20 surname;
+  STRING10 forename;
+  INTEGER2 age := 25;
+END;
+         
+namesRecord := RECORD
+  UNSIGNED     id;
+  personRecord;
+END;
+          
+namesTable := DATASET('RTTEST::TestRow',namesRecord,THOR);
+//simple dataset file declaration form
+         
+addressRecord := RECORD
+  UNSIGNED         id;
+  DATASET(personRecord) people;   //child dataset form
+  STRING40       street;
+  STRING40       town;
+  STRING2        st;
+END;
+         
+personRecord tc0(namesRecord L) := TRANSFORM
+  SELF := L;
+END;
+ 
+//** 1st way - using in-line dataset form in an expression  context
+addressRecord t0(namesRecord L) := TRANSFORM
+  SELF.people := PROJECT(DATASET([{L.id,L.surname,L.forename,L.age}],
+                                 namesRecord),
+                         tc0(LEFT));
+  SELF.id := L.id;
+  SELF := [];
+END;
+ 
+p0 := PROJECT(namesTable, t0(LEFT));
+OUTPUT(p0);
+ 
+//** 2nd way - using single-row dataset form
+addressRecord t1(namesRecord L) := TRANSFORM
+  SELF.people := PROJECT(DATASET(L), tc0(LEFT));
+  SELF.id := L.id;
+  SELF := [];
+END;
+
+p1 := PROJECT(namesTable, t1(LEFT));
+OUTPUT(p1);
+
+//** 3rd way - using single-row dataset form and ROW function
+addressRecord t2(namesRecord L) := TRANSFORM
+  SELF.people := DATASET(ROW(L,personRecord));
+  SELF.id := L.id;
+  SELF := [];
+END;
+
+p2 := PROJECT(namesTable, t2(LEFT));
+OUTPUT(p2);
+
+//** 4th way - using in-line dataset form in an expression context
+addressRecord t4(namesRecord l) := TRANSFORM
+  SELF.people := PROJECT(DATASET([L], namesRecord), tc0(LEFT));
+  SELF.id := L.id;
+  SELF := [];
+END;
+p3 := PROJECT(namesTable, t4(LEFT));
+OUTPUT(p3);</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch05s02s06.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch05s02.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch05s02s08.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">In-line DATASETs&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Child DATASETs</td></tr></table></div></body></html>

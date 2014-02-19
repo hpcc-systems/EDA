@@ -1,0 +1,79 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>TRANSFORM Function Requirements - PROJECT</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10s89.html" title="PROJECT"><link rel="prev" href="bk01ch10s89.html" title="PROJECT"><link rel="next" href="bk01ch10s89s02.html" title="PROJECT - Module"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">TRANSFORM Function Requirements - PROJECT</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s89.html">Prev</a>&nbsp;</td><th width="60%" align="center">PROJECT</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s89s02.html">Next</a></td></tr></table><hr></div><div class="sect2" title="TRANSFORM Function Requirements - PROJECT"><div class="titlepage"><div><div><h3 class="title"><a name="TRANSFORM_Function_Requirements_Project"></a>TRANSFORM Function<a class="indexterm" name="d4e11234"></a> Requirements<a class="indexterm" name="d4e11236"></a><a class="indexterm" name="d4e11238"></a> - PROJECT<a class="indexterm" name="d4e11240"></a></h3></div></div></div><p>The <span class="emphasis"><em>transform</em></span> function must take at least one parameter: a LEFT record of the same format as the <span class="emphasis"><em>recordset</em></span>. Optionally, it may take a second parameter: an integer COUNTER specifying the number of times the <span class="emphasis"><em>transform</em></span> has been called for the <span class="emphasis"><em>recordset </em></span>or the current group in the <span class="emphasis"><em>recordset</em></span> (see the GROUP function). The second parameter form is useful for adding sequence numbers. The format of the resulting record set does not need to be the same as the input.</p><p>Example:</p><pre class="programlisting">//form one example **********************************
+Ages := RECORD
+  STRING15 per_first_name;
+  STRING25 per_last_name;
+  INTEGER8 Age;
+END;
+TodaysYear := 2001;
+
+
+Ages CalcAges(person l) := TRANSFORM
+  SELF.Age := TodaysYear - l.birthdate[1..4];
+  SELF := l;
+END;
+AgedRecs := PROJECT(person, CalcAges(LEFT));
+
+//COUNTER example **********************************
+SequencedAges := RECORD
+  Ages;
+  INTEGER8 Sequence := 0;
+END;
+
+SequencedAges AddSequence(Ages l, INTEGER c) :=
+          TRANSFORM
+  SELF.Sequence := c;
+  SELF := l;
+END;
+SequencedAgedRecs := PROJECT(AgedRecs,
+          AddSequence(LEFT,COUNTER));
+
+//form two example **********************************
+NewRec := RECORD
+  STRING15 firstname;
+  STRING25 lastname;
+  STRING15 middlename;
+END;
+NewRecs := PROJECT(People,NewRec);
+//equivalent to:
+//NewRecs := PROJECT(People,TRANSFORM(NewRec,SELF :=
+          LEFT));
+
+
+//LOCAL example **********************************
+MyRec := RECORD
+  STRING1 Value1;
+  STRING1 Value2;
+END;
+
+SomeFile := DATASET([{'C','G'},{'C','C'},{'A','X'},
+                     {'B','G'},{'A','B'}],MyRec);
+
+MyOutRec := RECORD
+  SomeFile.Value1;
+  SomeFile.Value2;
+  STRING6 CatValues;
+END;
+
+DistFile := DISTRIBUTE(SomeFile,HASH32(Value1,Value2));
+
+MyOutRec CatThem(SomeFile L, INTEGER C) := TRANSFORM
+  SELF.CatValues := L.Value1 + L.Value2 + '-' +
+                    (Std.System.Thorlib.Node()+1) + '-' + (STRING)C;
+  SELF := L;
+END;
+
+CatRecs := PROJECT(DistFile,CatThem(LEFT,COUNTER<a class="indexterm" name="d4e11250"></a>),LOCAL);
+
+OUTPUT(CatRecs);
+
+/* CatRecs result set is:
+Rec# Value1 Value2 CatValues
+1      C      C      CC-1-1
+2      B      G      BG-2-1
+3      A      X      AX-2-2
+4      A      B      AB-3-1
+5      C      G      CG-3-2
+*/
+</pre><p>See Also: <a class="link" href="bk01ch09s07.html" title="TRANSFORM Structure">TRANSFORM Structure</a>, <a class="link" href="bk01ch05s01.html" title="RECORD Structure">RECORD Structure</a>, <a class="link" href="bk01ch10s103.html" title="ROW">ROW</a>, <a class="link" href="bk01ch05s02.html" title="DATASET">DATASET</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s89.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10s89.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s89s02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">PROJECT&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;PROJECT - Module</td></tr></table></div></body></html>

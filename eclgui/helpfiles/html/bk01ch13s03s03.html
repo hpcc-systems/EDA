@@ -1,0 +1,12 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>SERVICE Structure - external</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch13s03.html" title="External Service Implementation"><link rel="prev" href="bk01ch13s03s02.html" title="Entry Points"><link rel="next" href="bk01ch13s03s04.html" title="Keywords"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">SERVICE Structure - external</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch13s03s02.html">Prev</a>&nbsp;</td><th width="60%" align="center">External Service Implementation</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch13s03s04.html">Next</a></td></tr></table><hr></div><div class="sect2" title="SERVICE Structure - external"><div class="titlepage"><div><div><h3 class="title"><a name="SERVICE_Structure_external"></a>SERVICE Structure - external<a class="indexterm" name="d4e15640"></a></h3></div></div></div><p>For each system service defined, a corresponding ECL function prototype must be declared (see <span class="bold"><strong>SERVICE Structure</strong></span>).</p><pre class="programlisting">  servicename := SERVICE
+    functionname(parameter list) [: keyword = value];
+    END;
+  
+  For example:
+  email := SERVICE
+    simpleSend(STRING address, STRING template, STRING subject)
+       : LIBRARY='ecl2cw', INITFUNCTION='initEcl2Cw';
+     END;
+</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch13s03s02.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch13s03.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch13s03s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Entry Points&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Keywords</td></tr></table></div></body></html>

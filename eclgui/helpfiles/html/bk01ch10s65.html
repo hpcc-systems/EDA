@@ -1,0 +1,63 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>LIBRARY</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10.html" title="Built-in Functions and Actions"><link rel="prev" href="bk01ch10s64.html" title="LENGTH"><link rel="next" href="bk01ch10s66.html" title="LIMIT"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">LIBRARY</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s64.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Built-in Functions and Actions</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s66.html">Next</a></td></tr></table><hr></div><div class="sect1" title="LIBRARY"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="LIBRARY"></a>LIBRARY</h2></div></div></div><p><span class="bold"><strong>LIBRARY<a class="indexterm" name="d4e8790"></a><a class="indexterm" name="d4e8792"></a>(</strong></span><span class="emphasis"><em> </em></span><span class="bold"><strong>INTERNAL<a class="indexterm" name="d4e8796"></a>( </strong></span><span class="emphasis"><em>module </em></span><span class="bold"><strong>)</strong></span><span class="emphasis"><em>, interface </em></span><span class="bold"><strong>[</strong></span><span class="emphasis"><em> (</em></span><span class="bold"><strong> </strong></span><span class="emphasis"><em>parameters) </em></span><span class="bold"><strong>] )</strong></span><span class="bold"><strong></strong></span></p><p><span class="bold"><strong>LIBRARY(</strong></span><span class="emphasis"><em> module , interface </em></span><span class="bold"><strong>[</strong></span><span class="emphasis"><em> (</em></span><span class="bold"><strong> </strong></span><span class="emphasis"><em>parameters) </em></span><span class="bold"><strong>] )</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="14%"><col width="86%"></colgroup><tbody><tr><td><span class="bold"><strong>INTERNAL</strong></span></td><td>Optional. Specifies the module is an attribute, not an external library (created by the BUILD action).</td></tr><tr><td><span class="emphasis"><em>module</em></span></td><td>The name of the query library. When INTERNAL, this is the name of the MODULE attribute that implements the query library. If not INTERNAL, this is a string expression containing the name of the workunit that compiled the query library (typically defined with #WORKUNIT).</td></tr><tr><td><span class="emphasis"><em>interface</em></span></td><td>The name of the INTERFACE structure that defines the query library.</td></tr><tr><td><span class="emphasis"><em>parameters</em></span></td><td>Optional. The values to pass to the INTERFACE, if defined to receive parameters.</td></tr><tr><td>Return:</td><td>LIBRARY results in a MODULE that can be used to reference the exported attributes from the specified module.</td></tr></tbody></table></div><p>The <span class="bold"><strong>LIBRARY </strong></span>function defines an instance of a query library&#8212;the <span class="emphasis"><em>interface</em></span> as implemented by the <span class="emphasis"><em>module</em></span> when passed the specified <span class="emphasis"><em>parameters. </em></span><span class="bold"><strong>Query libraries are only used by hthor and Roxie.</strong></span></p><p>INTERNAL libraries are typically used when developing queries, while external libraries are best for production queries. An INTERNAL library generates the library code as a separate unit, but then includes that unit within the query workunit. It doesn't have the advantage of reducing compile time or memory usage in Roxie that an external library would have, but it does retain the library structure, and means that changes to the code cannot affect anyone else using the system.</p><p>External libraries are created by the BUILD action and use the "name" form of #WORKUNIT to specify the external name of the library. An external library is pre-compiled and therefore reduces compile time for queries that use it. They also reduce memory usage in Roxie</p><p>Example:</p><pre class="programlisting">NamesRec := RECORD
+    INTEGER1  NameID;
+    STRING20  FName;
+    STRING20  LName;
+END;
+NamesTable := DATASET([ {1,'Doc','Holliday'},
+                        {2,'Liz','Taylor'},
+                        {3,'Mr','Nobody'},
+                      {4,'Anywhere','but here'}],
+       NamesRec);
+FilterLibIface1(DATASET(namesRec) ds, STRING search) := INTERFACE
+ EXPORT DATASET(namesRec) matches;
+ EXPORT DATASET(namesRec) others;
+END;
+FilterDsLib1(DATASET(namesRec) ds, STRING search) :=
+      MODULE,LIBRARY(FilterLibIface1)
+ EXPORT matches := ds(Lname = search);
+ EXPORT others := ds(Lname != search);
+END;
+
+// Run this to create the 'Ppass.FilterDsLib' external library
+// #WORKUNIT('name','Ppass.FilterDsLib')
+// BUILD(FilterDsLib1);
+lib1 := LIBRARY(INTERNAL(FilterDsLib1),
+      FilterLibIface1(NamesTable, 'Holliday'));
+lib2 := LIBRARY('Ppass.FilterDsLib',
+      FilterLibIface1(NamesTable, 'Holliday'));
+IFilterArgs := INTERFACE
+  EXPORT DATASET(namesRec) ds;
+  EXPORT STRING search;
+END;
+FilterLibIface2(IFilterArgs args) := INTERFACE
+ EXPORT DATASET(namesRec) matches;
+ EXPORT DATASET(namesRec) others;
+END;
+    
+FilterDsLib2(IFilterArgs args) := MODULE,LIBRARY(FilterLibIface2)
+ EXPORT matches := args.ds(Lname = args.search);
+ EXPORT others := args.ds(Lname != args.search);
+END;
+// Run this to create the 'Ipass.FilterDsLib' external library
+// #WORKUNIT('name','Ipass.FilterDsLib')
+// BUILD(FilterDsLib2);
+SearchArgs := MODULE(IFilterArgs)
+  EXPORT DATASET(namesRec) ds := NamesTable;
+  EXPORT STRING search := 'Holliday';
+END;    
+lib3 := LIBRARY(INTERNAL(FilterDsLib2),
+      FilterLibIface2(SearchArgs));
+lib4 := LIBRARY('Ipass.FilterDsLib',
+      FilterLibIface2(SearchArgs));
+    
+OUTPUT(lib1.matches,NAMED('INTERNAL_matches_straight_parms'));
+OUTPUT(lib1.others, NAMED('INTERNAL_nonmatches_straight_parms'));
+OUTPUT(lib2.matches,NAMED('EXTERNAL_matches_straight_parms'));
+OUTPUT(lib2.others, NAMED('EXTERNAL_nonmatches_straight_parms'));
+OUTPUT(lib3.matches,NAMED('INTERNAL_matches_interface_parms'));
+OUTPUT(lib3.others, NAMED('INTERNAL_nonmatches_interface_parms'));
+OUTPUT(lib4.matches,NAMED('EXTERNAL_matches_interface_parms'));
+OUTPUT(lib4.others, NAMED('EXTERNAL_nonmatches_interface_parms'));
+</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s64.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s66.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">LENGTH&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;LIMIT</td></tr></table></div></body></html>

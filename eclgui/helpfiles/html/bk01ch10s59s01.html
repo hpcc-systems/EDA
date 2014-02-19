@@ -1,0 +1,43 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>TRANSFORM Function Requirements - ITERATE</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10s59.html" title="ITERATE"><link rel="prev" href="bk01ch10s59.html" title="ITERATE"><link rel="next" href="bk01ch10s60.html" title="JOIN"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">TRANSFORM Function Requirements - ITERATE</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s59.html">Prev</a>&nbsp;</td><th width="60%" align="center">ITERATE</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s60.html">Next</a></td></tr></table><hr></div><div class="sect2" title="TRANSFORM Function Requirements - ITERATE"><div class="titlepage"><div><div><h3 class="title"><a name="TRANSFORM_Function_Requirements_Iterate"></a>TRANSFORM Function Requirements - ITERATE</h3></div></div></div><p>The <span class="emphasis"><em>transform</em></span> function<a class="indexterm" name="d4e7989"></a> must take at least two parameters: LEFT and RIGHT records that must both be of the same format as the resulting recordset. An optional third parameter may be specified: an integer COUNTER specifying the number of times the <span class="emphasis"><em>transform</em></span> has been called for the <span class="emphasis"><em>recordset </em></span>or the current group in the <span class="emphasis"><em>recordset</em></span> (see the GROUP function).</p><p>Example:</p><pre class="programlisting">ResType := RECORD
+  INTEGER1 Val;
+  INTEGER1 Rtot;
+END;
+
+Records := DATASET([{1,0},{2,0},{3,0},{4,0}],ResType);
+/* these are the recs going in: 
+<span class="underline">Val Rtot </span>
+ 1   0
+ 2   0
+ 3   0
+ 4   0 */
+
+ResType T(ResType L, ResType R) := TRANSFORM
+  SELF.Rtot := L.Rtot + R.Val;
+  SELF := R;
+END;
+
+MySet1 := ITERATE(Records,T(LEFT,RIGHT));
+
+/* these are the recs coming out: <span class="underline">
+Val Rtot</span>
+ 1   1
+ 2   3
+ 3   6
+ 4   10 */
+
+//The following code outputs a running balance:
+Run_bal := RECORD
+  Trades.trd_bal;
+  INTEGER8 Balance := 0;
+END;
+TradesBal := TABLE(Trades,Run_Bal);
+
+Run_Bal DoRoll(Run_bal L, Run_bal R) := TRANSFORM
+  SELF.Balance := L.Balance + IF(validmoney(R.trd_bal),R.trd_bal,0);
+  SELF := R;
+END;
+
+MySet2 := ITERATE(TradesBal,DoRoll(LEFT,RIGHT));
+</pre><p>See Also: <a class="link" href="bk01ch09s07.html" title="TRANSFORM Structure">TRANSFORM Structure</a>, <a class="link" href="bk01ch05s01.html" title="RECORD Structure">RECORD Structure</a>, <a class="link" href="bk01ch10s100.html" title="ROLLUP">ROLLUP</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s59.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10s59.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s60.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">ITERATE&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;JOIN</td></tr></table></div></body></html>

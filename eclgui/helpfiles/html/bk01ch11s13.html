@@ -1,0 +1,29 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>WHEN</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch11.html" title="Workflow Services"><link rel="prev" href="bk01ch11s12.html" title="SUCCESS"><link rel="next" href="bk01ch12.html" title="Template Language"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">WHEN</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch11s12.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Workflow Services</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch12.html">Next</a></td></tr></table><hr></div><div class="sect1" title="WHEN"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="WHEN"></a>WHEN</h2></div></div></div><p><span class="emphasis"><em>action </em></span><span class="bold"><strong>: WHEN<a class="indexterm" name="d4e14134"></a>(</strong></span><span class="emphasis"><em> event </em></span><span class="bold"><strong>[</strong></span><span class="emphasis"><em> ,</em></span><span class="bold"><strong>COUNT<a class="indexterm" name="d4e14140"></a>(</strong></span><span class="emphasis"><em> repeat </em></span><span class="bold"><strong>) ] ) </strong></span><a class="indexterm" name="d4e14144"></a>;</p><div class="informaltable"><table border="0"><colgroup><col width="13%"><col width="87%"></colgroup><tbody><tr><td><span class="emphasis"><em>action</em></span></td><td>Any valid ECL Action to execute.</td></tr><tr><td><span class="emphasis"><em>event</em></span></td><td>The event that triggers action execution. This may be either the EVENT or CRON functions, EVENTNAME or the name of an EVENT (as a shorthand for EVENT(event,'*')), or any attribute defined with those functions.</td></tr><tr><td><span class="emphasis"><em>COUNT</em></span></td><td>Optional. Specifies the number of events to trigger instances of the action. If omitted, the default is unlimited (continuously waiting for another event to trigger another instance of the action), until the workunit is manually removed from the list of workunits being monitored by the scheduler.</td></tr><tr><td><span class="emphasis"><em>repeat</em></span></td><td>An integer expression.</td></tr></tbody></table></div><p>The <span class="bold"><strong>WHEN </strong></span>service executes the <span class="emphasis"><em>action </em></span>whenever the <span class="emphasis"><em>event </em></span>occurs.</p><p>Example:</p><pre class="programlisting">  IF (FileServices.FileExists('test::myfile'),
+     FileServices.DeleteLogicalFile('test::myfile'));
+     //deletes the file if it already exists
+  FileServices.MonitorLogicalFileName('MyFileEvent','test::myfile');
+     //sets up monitoring and the event name
+     //to fire when the file is found
+  OUTPUT('File Created') : WHEN(EVENT('MyFileEvent','*'));
+     //this OUTPUT occurs only after the event has fired
+     //may also be coded in this shorthand form:
+     // OUTPUT('File Created') : WHEN('MyFileEvent');
+  afile := DATASET([{ 'A', '0'}], {STRING10 key,STRING10 val});
+  OUTPUT(afile,,'test::myfile');
+     //this creates a file that the DFU file monitor will find
+     //when it periodically polls
+     //**********************************
+  EXPORT events := MODULE
+    EXPORT dailyAtMidnight := CRON('0 0 * * *');
+    EXPORT dailyAt( INTEGER hour,
+                    INTEGER minute=0) :=
+          EVENT('CRON',
+               (STRING)minute + ' ' + (STRING)hour + ' * * *');
+    EXPORT dailyAtMidday := dailyAt(12, 0);
+  END;
+  BUILD(teenagers) : WHEN(events.dailyAtMidnight);
+  BUILD(oldies) : WHEN(events.dailyAt(6));
+  BUILD(oldies) : WHEN(EVENT('FileDropped', 'x'));
+</pre><p>See Also: <a class="link" href="bk01ch10s36.html" title="EVENT">EVENT</a>, <a class="link" href="bk01ch10s25.html" title="CRON">CRON</a>, <a class="link" href="bk01ch10s81.html" title="NOTIFY">NOTIFY</a>, <a class="link" href="bk01ch10s130.html" title="WAIT">WAIT</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch11s12.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch11.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch12.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">SUCCESS&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;<span class="bold"><strong>Template Language</strong></span></td></tr></table></div></body></html>

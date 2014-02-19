@@ -1,0 +1,41 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>FETCH TRANSFORM Function Requirements</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10s44.html" title="FETCH"><link rel="prev" href="bk01ch10s44.html" title="FETCH"><link rel="next" href="bk01ch10s45.html" title="FROMUNICODE"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">FETCH TRANSFORM Function Requirements</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s44.html">Prev</a>&nbsp;</td><th width="60%" align="center">FETCH</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s45.html">Next</a></td></tr></table><hr></div><div class="sect2" title="FETCH TRANSFORM Function Requirements"><div class="titlepage"><div><div><h3 class="title"><a name="TRANSFORM_Function_Requirements_Fetch"></a>FETCH TRANSFORM Function Requirements</h3></div></div></div><p>The <span class="emphasis"><em>transform</em></span> function<a class="indexterm" name="d4e7352"></a> must take up to two parameters: a LEFT record that must be of the same format as the <span class="emphasis"><em>basedataset</em></span>, and an optional RIGHT record that that must be of the same format as the <span class="emphasis"><em>index</em></span>. The optional second parameter is useful in those instances where the index contains information not present in the recordset.</p><p>Example:</p><pre class="programlisting">PtblRec := RECORD
+  STRING2  State := Person.per_st;
+  STRING20 City  := Person.per_full_city;
+  STRING25 Lname := Person.per_last_name;
+  STRING15 Fname := Person.per_first_name;
+END;
+
+PtblOut := OUTPUT(TABLE( Person,PtblRec),,'RTTEMP::TestFetch');
+Ptbl := DATASET('RTTEMP::TestFetch',
+      {PtblRec,UNSIGNED8 __fpos {virtual(fileposition)}},
+      FLAT);
+
+Bld := BUILD(Ptbl,
+   {state,city,lname,fname,__fpos},
+   'RTTEMPkey::TestFetch');
+
+AlphaInStateCity := INDEX(Ptbl,
+      {state,city,lname,fname,__fpos},
+      'RTTEMPkey::TestFetch');
+
+TYPEOF(Ptbl) copy(Ptbl l) := TRANSFORM
+ SELF := l;
+END;
+
+AlphaPeople := FETCH(Ptbl,
+      AlphaInStateCity(state='FL',
+        city ='BOCA RATON',
+        Lname='WIK',
+        Fname='PICHA'),
+      RIGHT.__fpos,
+      copy(LEFT));
+
+OutFile := OUTPUT(CHOOSEN(AlphaPeople,10));
+SEQUENTIAL(PtblOut,Bld,OutFile)
+
+//NOTE the use of a filter on the index file. This is an important
+// use of standard filtering technique in conjunction with indexing
+// to achieve optimal &#8220;random&#8221; access into the base record set
+</pre><p>See Also: <a class="link" href="bk01ch09s07.html" title="TRANSFORM Structure">TRANSFORM Structure</a>, <a class="link" href="bk01ch05s01.html" title="RECORD Structure">RECORD Structure</a>, <a class="link" href="bk01ch10s13.html" title="BUILD">BUILDINDEX</a>, <a class="link" href="bk01ch05s03.html" title="INDEX">INDEX</a>, KEYED/WILD</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s44.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10s44.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s45.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">FETCH&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;FROMUNICODE</td></tr></table></div></body></html>

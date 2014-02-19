@@ -1,0 +1,38 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>REGROUP</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10.html" title="Built-in Functions and Actions"><link rel="prev" href="bk01ch10s97.html" title="REGEXREPLACE"><link rel="next" href="bk01ch10s99.html" title="REJECTED"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">REGROUP</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s97.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Built-in Functions and Actions</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s99.html">Next</a></td></tr></table><hr></div><div class="sect1" title="REGROUP"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="REGROUP"></a>REGROUP</h2></div></div></div><p><span class="bold"><strong>REGROUP<a class="indexterm" name="d4e11653"></a><a class="indexterm" name="d4e11655"></a>(</strong></span><span class="emphasis"><em>recset,&#8230;,recset</em></span><span class="bold"><strong>)</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="13%"><col width="87%"></colgroup><tbody><tr><td>recset</td><td>A grouped set of records. Each recset must be of exactly the same type and must contain the same number of groups.</td></tr><tr><td>Return:</td><td>REGROUP returns a record set.</td></tr></tbody></table></div><p>The <span class="bold"><strong>REGROUP </strong></span>function combines the grouped <span class="emphasis"><em>recsets </em></span>into a single grouped record set. This is accomplished by combining each group in the first <span class="emphasis"><em>recset</em></span> with the groups in the same ordinal position within each subsequent <span class="emphasis"><em>recset</em></span>.</p><p>Example:</p><pre class="programlisting">inrec := {UNSIGNED6 did};
+
+outrec := RECORD(inrec)
+  STRING20 name;
+  UNSIGNED score;
+END;
+
+ds := DATASET([1,2,3,4,5,6], inrec);
+dsg := GROUP(ds, ROW);
+
+i1 := DATASET([{1, 'Kevin', 10},
+               {2, 'Richard', 5},
+               {5, 'Nigel', 2},
+               {0, '', 0}], outrec);
+i2 := DATASET([{1, 'Kevin Halligan', 12},
+               {2, 'Ricardo Chapman', 15},
+               {3, 'Jake Smith', 20},
+               {5, 'David Hicks', 100},
+               {0, '', 0}], outrec);
+i3 := DATASET([{1, 'Halligan', 8},
+               {2, 'Ricardo', 8},
+               {6, 'Pete', 4},
+               {6, 'Peter', 8},
+               {6, 'Petie', 1},
+               {0, '', 0}], outrec);
+
+j1 := JOIN(dsg, i1, LEFT.did = RIGHT.did, LEFT OUTER, MANY LOOKUP);
+j2 := JOIN(dsg, i2, LEFT.did = RIGHT.did, LEFT OUTER, MANY LOOKUP);
+j3 := JOIN(dsg, i3, LEFT.did = RIGHT.did, LEFT OUTER, MANY LOOKUP);
+  
+combined := REGROUP(j1, j2, j3);
+OUTPUT(j1);
+OUTPUT(j2);
+OUTPUT(j3);
+OUTPUT(combined);
+</pre><p>See Also: <a class="link" href="bk01ch08s04.html" title="GROUP keyword">GROUP</a>, <a class="link" href="bk01ch10s19.html" title="COMBINE">COMBINE</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s97.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s99.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">REGEXREPLACE&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;REJECTED</td></tr></table></div></body></html>

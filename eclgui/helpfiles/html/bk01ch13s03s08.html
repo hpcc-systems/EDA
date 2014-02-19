@@ -1,0 +1,19 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Plug-In Requirements</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch13s03.html" title="External Service Implementation"><link rel="prev" href="bk01ch13s03s07.html" title="ECL Plug-Ins"><link rel="next" href="bk01ch13s03s09.html" title="Deployment"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Plug-In Requirements</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch13s03s07.html">Prev</a>&nbsp;</td><th width="60%" align="center">External Service Implementation</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch13s03s09.html">Next</a></td></tr></table><hr></div><div class="sect2" title="Plug-In Requirements"><div class="titlepage"><div><div><h3 class="title"><a name="Plug-In_Requirements"></a>Plug-In Requirements</h3></div></div></div><p>Plug-ins require an exported function with the following signature under Windows:</p><p>Extern "C" _declspec(dllexport) bool getECLPluginDefinition(ECLPluginDefinitionBlock *pb)</p><p>The function must fill the passed structure with correct information for the features of the plug-in. The structure is defined as follows:</p><pre class="programlisting">Struct ECLPluginDefinitionBlock
+  {
+    Size_t size;
+       //size of passed structure - filled in by the calling function
+    Unsigned magicVersion ;
+       // Filled in by .SO - must be PLUGIN_VERSION (1) 
+    Const char *moduleName;
+       // Name of the module 
+    Const char *ECL;
+       // ECL Service definition for non-HOLE applications
+    Unsigned flags;
+       // Type of plug-in - for user plugin use 1
+    Const char *version ;
+       // Text describing version of plugin - used in debugging
+    Const char *description;
+       // Text describing plugin
+  } </pre><p>To initialize information in a plug-in, use a global variable or class and it will be appropriately constructed/destructed when the plugin is loaded and unloaded.</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch13s03s07.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch13s03.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch13s03s09.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">ECL Plug-Ins&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Deployment</td></tr></table></div></body></html>

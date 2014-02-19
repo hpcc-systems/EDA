@@ -1,0 +1,28 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Skew-based DISTRIBUTE</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10s29.html" title="DISTRIBUTE"><link rel="prev" href="bk01ch10s29s03.html" title="Index-based DISTRIBUTE"><link rel="next" href="bk01ch10s30.html" title="DISTRIBUTED"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Skew-based DISTRIBUTE</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s29s03.html">Prev</a>&nbsp;</td><th width="60%" align="center">DISTRIBUTE</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s30.html">Next</a></td></tr></table><hr></div><div class="sect2" title="Skew-based DISTRIBUTE"><div class="titlepage"><div><div><h3 class="title"><a name="Skew-based_DISTRIBUTE"></a>Skew-based DISTRIBUTE</h3></div></div></div><p><span class="bold"><strong>DISTRIBUTE(</strong></span><span class="emphasis"><em>recordset, </em></span><span class="bold"><strong>SKEW(</strong></span><span class="emphasis"><em> maxskew </em></span><span class="bold"><strong>[</strong></span><span class="emphasis"><em>, skewlimit</em></span><span class="bold"><strong> ] ) )</strong></span></p><p>This form redistributes the <span class="emphasis"><em>recordset,</em></span> but only if necessary. The purpose of this form is to replace the use of DISTRIBUTE(<span class="emphasis"><em>recordset</em></span>,RANDOM()) to simply obtain a relatively even distribution of data across the nodes. This form will always try to minimize the amount of data redistributed between the nodes.</p><p>The skew of a dataset is calculated as:</p><p>MAX(ABS(AvgPartSize-PartSize[node])/AvgPartSize)</p><p>If the <span class="emphasis"><em>recordset</em></span> is skewed less than <span class="emphasis"><em>maxskew </em></span>then the DISTRIBUTE is a no-op. If <span class="emphasis"><em>skewlimit</em></span> is specified and the skew on any node exceeds this, the job fails with an error message (specifying the first node number exceeding the limit), otherwise the data is redistributed to ensure that the data is distributed with less skew than <span class="emphasis"><em>maxskew</em></span>.</p><p>Example:</p><pre class="programlisting">MySet1 := DISTRIBUTE(Person); //&#8221;random&#8221; distribution - no skew
+MySet2 := DISTRIBUTE(Person,HASH32(Person.per_ssn));
+ //all people with the same SSN end up on the same node
+ //INDEX example:
+mainRecord := RECORD
+  INTEGER8 sequence;
+  STRING20 forename; 
+  STRING20 surname;
+  UNSIGNED8 filepos{virtual(fileposition)};
+END;
+mainTable := DATASET('~keyed.d00',mainRecord,THOR);
+nameKey := INDEX(mainTable, {surname,forename,filepos}, 'name.idx');
+incTable := DATASET('~inc.d00',mainRecord,THOR);
+x := DISTRIBUTE(incTable, nameKey,
+                LEFT.surname = RIGHT.surname AND
+                LEFT.forename = RIGHT.forename);
+OUTPUT(x);
+
+//SKEW example:
+Jds := JOIN(somedata,otherdata,LEFT.sysid=RIGHT.sysid);
+Jds_dist1 := DISTRIBUTE(Jds,SKEW(0.1));
+ //ensures skew is less than 10%
+Jds_dist2 := DISTRIBUTE(Jds,SKEW(0.1,0.5));
+ //ensures skew is less than 10%
+ //and fails if skew exceeds 50% on any node
+</pre><p>See Also: <a class="link" href="bk01ch10s51.html" title="HASH32">HASH32</a>, <a class="link" href="bk01ch10s30.html" title="DISTRIBUTED">DISTRIBUTED</a>, <a class="link" href="bk01ch05s03.html" title="INDEX">INDEX</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s29s03.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10s29.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s30.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Index-based DISTRIBUTE&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;DISTRIBUTED</td></tr></table></div></body></html>

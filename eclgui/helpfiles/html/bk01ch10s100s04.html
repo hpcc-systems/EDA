@@ -1,0 +1,72 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>ROLLUP Form 3</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10s100.html" title="ROLLUP"><link rel="prev" href="bk01ch10s100s03.html" title="ROLLUP Form 2"><link rel="next" href="bk01ch10s101.html" title="ROUND"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">ROLLUP Form 3</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s100s03.html">Prev</a>&nbsp;</td><th width="60%" align="center">ROLLUP</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s101.html">Next</a></td></tr></table><hr></div><div class="sect2" title="ROLLUP Form 3"><div class="titlepage"><div><div><h3 class="title"><a name="ROLLUP_Form_3"></a>ROLLUP Form 3</h3></div></div></div><p>Form 3 is a special form of ROLLUP where the second parameter passed to the <span class="emphasis"><em>transform</em></span> is a GROUP and the first parameter is the first record in that GROUP. It processes through all groups in the <span class="emphasis"><em>recordset</em></span>, producing one result record for each group. Aggregate functions can be used inside the <span class="emphasis"><em>transform</em></span> (such as TOPN or CHOOSEN) on the second parameter. The result record set is not grouped. This form is implicitly LOCAL in nature, due to the grouping.</p><p>Example:</p><pre class="programlisting">inrec := RECORD
+  UNSIGNED6 did;
+END;
+
+outrec := RECORD(inrec)
+  STRING20 name;
+  UNSIGNED score;
+END;
+
+nameRec := RECORD
+  STRING20 name;
+END;
+
+finalRec := RECORD(inrec)
+  DATASET(nameRec) names;
+  STRING20 secondName;
+END;
+
+ds := DATASET([1,2,3,4,5,6], inrec);
+
+dsg := GROUP(ds, ROW);
+
+i1 := DATASET([ {1, 'Kevin', 10},
+                {2, 'Richard', 5},
+                {5,'Nigel', 2},
+                {0, '', 0}], outrec);
+
+i2 := DATASET([ {1, 'Kevin Halligan', 12},
+                {2, 'Richard Charles', 15},
+                {3, 'Blake Smith', 20},
+                {5,'Nigel Hicks', 100},
+                {0, '', 0}], outrec);
+
+i3 := DATASET([ {1, 'Halligan', 8},
+                {2, 'Richard', 8},
+                {6, 'Pete', 4},
+                {6, 'Peter', 8},
+                {6, 'Petie', 1},
+                {0, '', 0}], outrec);
+j1 := JOIN( dsg,
+            i1,
+            LEFT.did = RIGHT.did,
+            TRANSFORM(outrec, SELF := LEFT; SELF := RIGHT),
+            LEFT OUTER, MANY LOOKUP);
+j2 := JOIN( dsg,
+            i2,
+            LEFT.did = RIGHT.did,
+            TRANSFORM(outrec, SELF := LEFT; SELF := RIGHT),
+            LEFT OUTER,
+            MANY LOOKUP);
+
+j3 := JOIN( dsg,
+            i3,
+            LEFT.did = RIGHT.did,
+            TRANSFORM(outrec, SELF := LEFT; SELF := RIGHT),
+            LEFT OUTER,
+            MANY LOOKUP);
+
+combined := REGROUP(j1, j2, j3);
+
+finalRec doRollup(outRec l, DATASET(outRec) allRows) :=
+          TRANSFORM
+  SELF.did := l.did;
+  SELF.names := PROJECT(allRows(score != 0),
+                        TRANSFORM(nameRec, SELF := LEFT));
+  SELF.secondName := allRows(score != 0)[2].name;
+END;
+
+results := ROLLUP(combined, GROUP, doRollup(LEFT,ROWS(LEFT)));
+</pre><p>See Also: <a class="link" href="bk01ch09s07.html" title="TRANSFORM Structure">TRANSFORM Structure</a>, <a class="link" href="bk01ch05s01.html" title="RECORD Structure">RECORD Structure</a>, <a class="link" href="bk01ch10s26.html" title="DEDUP">DEDUP</a>, <a class="link" href="bk01ch08s02.html" title="EXCEPT">EXCEPT</a>, <a class="link" href="bk01ch08s04.html" title="GROUP keyword">GROUP</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s100s03.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10s100.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s101.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">ROLLUP Form 2&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;ROUND</td></tr></table></div></body></html>

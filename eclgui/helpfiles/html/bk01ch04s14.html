@@ -1,0 +1,30 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>ENUM</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch04.html" title="Value Types"><link rel="prev" href="bk01ch04s13.html" title="RECORDOF"><link rel="next" href="bk01ch04s15.html" title="Type Casting"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">ENUM</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch04s13.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Value Types</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch04s15.html">Next</a></td></tr></table><hr></div><div class="sect1" title="ENUM"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="ENUM"></a>ENUM</h2></div></div></div><p><span class="bold"><strong>ENUM<a class="indexterm" name="d4e1431"></a><a class="indexterm" name="d4e1433"></a>( [ </strong></span><span class="emphasis"><em>type ,</em></span><span class="bold"><strong>]</strong></span><span class="emphasis"><em> name</em></span><span class="bold"><strong> [=</strong></span><span class="emphasis"><em>value</em></span><span class="bold"><strong>] [ </strong></span><span class="emphasis"><em>, name</em></span><span class="bold"><strong> [=</strong></span><span class="emphasis"><em>value</em></span><span class="bold"><strong>] ... ] )</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="21%" align="left"><col width="79%"></colgroup><tbody><tr><td align="left"><span class="emphasis"><em>type</em></span></td><td>The numeric value type of the <span class="emphasis"><em>values</em></span>. If omitted, defaults to UNSIGNED4.</td></tr><tr><td align="left"><span class="emphasis"><em>name</em></span></td><td>The label of the enumerated <span class="emphasis"><em>value</em></span>.</td></tr><tr><td align="left"><span class="emphasis"><em>value</em></span></td><td>The numeric value to associate with the <span class="emphasis"><em>name</em></span>. If omitted, the <span class="emphasis"><em>value</em></span> is the previous <span class="emphasis"><em>value</em></span> plus one (1). If all <span class="emphasis"><em>values</em></span> are omitted, the enumeration starts with one (1).</td></tr></tbody></table></div><p>The <span class="bold"><strong>ENUM </strong></span>declaration specifies constant values to make code more readable.</p><p>Example:</p><pre class="programlisting">GenderEnum := ENUM(UNSIGNED1,Male,Female,Either,Unknown);
+        //values are 1, 2, 3, 4
+      
+Pflg := ENUM(None=0,Dead=1,Foreign=2,Terrorist=4,Wanted=Terrorist*2);
+        //values are 0, 1, 2, 4, 8
+namesRecord := RECORD
+  STRING20 surname;
+  STRING10 forename;
+  GenderEnum gender;
+  INTEGER2 age := 25;
+END;
+       
+namesTable2 := DATASET([{'Foreman','George',GenderEnum.Male,Pflg.Foreign},
+                        {'Bin Laden','Osama',GenderEnum.Male,Pflg.Foreign+Pflg.Terrorist+Pflg.Wanted}
+                       ], namesRecord);
+OUTPUT(namesTable2);
+        
+myModule(UNSIGNED4 baseError, STRING x) := MODULE
+  EXPORT ErrCode := ENUM( ErrorBase = baseError,
+                          ErrNoActiveTable,
+                          ErrNoActiveSystem,
+                          ErrFatal,
+                          ErrLast);
+  EXPORT reportX := FAIL(ErrCode.ErrNoActiveTable,'No ActiveTable in ' + x);
+END;
+       
+myModule(100, 'Call1').reportX;
+myModule(300, 'Call2').reportX;</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch04s13.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch04.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch04s15.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">RECORDOF&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Type Casting</td></tr></table></div></body></html>

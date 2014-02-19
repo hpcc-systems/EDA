@@ -1,0 +1,20 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Named Output DATASETs</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch05s02.html" title="DATASET"><link rel="prev" href="bk01ch05s02s04.html" title="PIPE Files"><link rel="next" href="bk01ch05s02s06.html" title="In-line DATASETs"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Named Output DATASETs</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch05s02s04.html">Prev</a>&nbsp;</td><th width="60%" align="center">DATASET</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch05s02s06.html">Next</a></td></tr></table><hr></div><div class="sect2" title="Named Output DATASETs"><div class="titlepage"><div><div><h3 class="title"><a name="Named_Output_DATASETs"></a>Named Output DATASET<a class="indexterm" name="d4e2621"></a>s</h3></div></div></div><p><span class="emphasis"><em> attr</em></span><span class="bold"><strong> := DATASET(</strong></span><span class="emphasis"><em> </em></span><span class="bold"><strong>WORKUNIT<a class="indexterm" name="d4e2628"></a>( </strong></span>[ <span class="emphasis"><em>wuid ,</em></span> ]<span class="emphasis"><em> namedoutput </em></span><span class="bold"><strong>)</strong></span><span class="emphasis"><em>, struct </em></span><span class="bold"><strong>);</strong></span></p><p>This form allows you to use as a DATASET the result of an OUTPUT with the NAMED option within the same workunit, or the workunit specified by the <span class="emphasis"><em>wuid</em></span> (workunit ID). This is a feature most useful in the Rapid Data Delivery Engine.</p><p>Example:</p><pre class="programlisting">//Named Output DATASET in the same workunit:
+a := OUTPUT(Person(per_st='FL') ,NAMED('FloridaFolk'));
+x := DATASET(WORKUNIT('FloridaFolk'),
+             RECORDOF(Person));
+b := OUTPUT(x(per_first_name[1..4]='RICH'));
+          
+SEQUENTIAL(a,b);
+
+//Named Output DATASET in separate workunits:
+//First Workunit (wuid=W20051202-155102) contains this code:
+MyRec := {STRING1 Value1,STRING1 Value2, INTEGER1 Value3};
+SomeFile := DATASET([{'C','G',1},{'C','C',2},{'A','X',3},
+                     {'B','G',4},{'A','B',5}],MyRec);
+OUTPUT(SomeFile,NAMED('Fred'));
+
+// Second workunit contains this code, producing the same result:
+ds := DATASET(WORKUNIT('W20051202-155102','Fred'), MyRec);
+OUTPUT(ds);</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch05s02s04.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch05s02.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch05s02s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">PIPE Files&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;In-line DATASETs</td></tr></table></div></body></html>

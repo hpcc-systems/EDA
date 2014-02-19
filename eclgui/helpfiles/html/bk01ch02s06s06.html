@@ -1,0 +1,25 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Passing NAMED Parameters</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch02s06.html" title="Function Definitions (Parameter Passing)"><link rel="prev" href="bk01ch02s06s05.html" title="Passing Function Parameters"><link rel="next" href="bk01ch02s07.html" title="Attribute Visibility"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Passing NAMED Parameters</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch02s06s05.html">Prev</a>&nbsp;</td><th width="60%" align="center">Function Definitions (Parameter Passing)</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch02s07.html">Next</a></td></tr></table><hr></div><div class="sect2" title="Passing NAMED Parameters"><div class="titlepage"><div><div><h3 class="title"><a name="Passing_NAMED_Parameters"></a>Passing NAMED Parameters</h3></div></div></div><p>Passing values to a function defined to receive multiple parameters, many of which have default values (and are therefore omittable), is usually accomplished by &#8220;counting commas&#8221; to ensure that the values you choose to pass are passed to the correct parameter by the parameter's position in the list. This method becomes untenable when there are many optional parameters.</p><p>The easier method is to use the following NAMED parameter syntax, which eliminates the need to include extraneous commas as place holders to put the passed values in the proper parameters:</p><p>Attr := FunctionName<span class="bold"><strong>( [ NAMED<a class="indexterm" name="d4e556"></a> ] </strong></span><span class="emphasis"><em>AliasName</em></span><span class="bold"><strong> := </strong></span><span class="emphasis"><em>value </em></span><span class="bold"><strong>);</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="21%" align="left"><col width="79%"></colgroup><tbody><tr><td align="left"><span class="emphasis"><em>NAMED</em></span></td><td>Optional. Required only when the <span class="emphasis"><em>AliasName </em></span>clashes with a reserved word.</td></tr><tr><td align="left"><span class="emphasis"><em>AliasName</em></span></td><td>The names of the parameter in the attribute's function definition.</td></tr><tr><td align="left"><span class="emphasis"><em>value</em></span></td><td>The value to pass to the parameter.</td></tr></tbody></table></div><p>This syntax is used in the call to the function and allows you to pass values to specific parameters by their <span class="emphasis"><em>AliasName</em></span>, without regard for their position in the list. All unnamed parameters passed must precede any NAMED parameters.</p><pre class="programlisting">outputRow(BOOLEAN showA = FALSE, BOOLEAN showB = FALSE,
+          BOOLEAN showC = FALSE, STRING aValue = 'abc',
+          INTEGER bValue = 10, BOOLEAN cValue = TRUE) :=
+  OUTPUT(IF(showA,' a='+aValue,'')+
+         IF(showB,' b='+(STRING)bValue,'')+
+         IF(showc,' c='+(STRING)cValue,''));
+
+outputRow();                    //produce blanks
+outputRow(TRUE);                //produce "a=abc"
+outputRow(,,TRUE);              //produce "c=TRUE"
+outputRow(NAMED showB := TRUE); //produce &#8220;b=10&#8221;
+
+outputRow(TRUE, NAMED aValue := 'Changed value');
+                                //produce &#8220;a=Changed value&#8221;
+
+outputRow(,,,'Changed value2',NAMED showA := TRUE);
+                                //produce "a=Changed value2"
+
+outputRow(showB := TRUE);       //produce &#8220;b=10&#8221;
+
+outputRow(TRUE, aValue := 'Changed value');
+outputRow(,,,'Changed value2',showA := TRUE);
+</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch02s06s05.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch02s06.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch02s07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Passing Function Parameters&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Attribute Visibility</td></tr></table></div></body></html>

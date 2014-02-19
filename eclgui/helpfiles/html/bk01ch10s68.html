@@ -1,0 +1,81 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>LOADXML</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10.html" title="Built-in Functions and Actions"><link rel="prev" href="bk01ch10s67.html" title="LN"><link rel="next" href="bk01ch10s69.html" title="LOCAL"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">LOADXML</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s67.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Built-in Functions and Actions</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s69.html">Next</a></td></tr></table><hr></div><div class="sect1" title="LOADXML"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="LOADXML"></a>LOADXML</h2></div></div></div><p><span class="emphasis"><em>[</em></span><span class="emphasis"><em>attributename</em></span> :=<span class="bold"><strong> ] LOADXML<a class="indexterm" name="d4e8988"></a><a class="indexterm" name="d4e8990"></a>( </strong></span><span class="emphasis"><em> xmlstring | symbol </em></span><span class="bold"><strong>[</strong></span><span class="emphasis"><em>, branch </em></span><span class="bold"><strong>])</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="14%"><col width="86%"></colgroup><tbody><tr><td><span class="emphasis"><em>attributename</em></span></td><td>Optional. The action name, which turns the action into an attribute definition, therefore not executed until the <span class="emphasis"><em>attributename</em></span> is used as an action.</td></tr><tr><td><span class="emphasis"><em>xmlstring</em></span></td><td>A string expression either naming an .XML file to open, or containing the XML text to process inline (no carriage returns or line feeds).</td></tr><tr><td><span class="emphasis"><em>symbol</em></span></td><td>The template symbol containing the XML text to process (typically loaded by #EXPORT or #EXPORTXML).</td></tr><tr><td><span class="emphasis"><em>branch</em></span></td><td>A user-defined string naming the XML text, allowing #FOR to operate.</td></tr></tbody></table></div><p><span class="bold"><strong>LOADXML </strong></span>opens an active XML scope for Template language statements or symbols to act on. LOADXML must be the first line of code to function correctly.</p><p>A valid XML scope is required for most Template Language<a class="indexterm" name="d4e9021"></a> statements to work. This is also used in "drilldown" MACRO code.</p><p>Example:</p><pre class="programlisting">LOADXML('MyFile.XML')  //process the XML in MyFile.XML
+LOADXML('&lt;section&gt;&lt;item type="count"&gt;&lt;set&gt;person&lt;/set&gt;&lt;/item&gt;&lt;/section&gt;')
+     //in-line XML
+//this macro receives in-line XML as its parameter
+//and demonstrates the code for multiple row drilldown
+EXPORT id(xmlRow) :=   MACRO
+STRING myxmlText := xmlRow;
+LOADXML(myxmlText);
+#DECLARE(OutStr)
+#SET(OutStr, '' )
+#FOR(row)
+  #APPEND(OutStr,
+          'OUTPUT(FETCH(Files.People,Files.PeopleIDX(id='
+     + %'id'% + '),RIGHT.RecPos));\n' )
+  #APPEND(OutStr,
+     'ds' + %'id'%
+     + ' := FETCH(Files.Property,Files.PropertyIDX(personid= '
+     + %'id'% + '),RIGHT.RecPos);\n' )
+  #APPEND(OutStr,
+     'OUTPUT(ds' + %'id'%
+     + ',{countTaxdata := COUNT(Taxrecs), ds'
+     + %'id'% + '});\n' )
+  #APPEND(OutStr,
+     'OUTPUT(FETCH(Files.Vehicle,Files.VehicleIDX(personid= '
+         + %'id'% + '),RIGHT.RecPos));\n' )
+#END
+%OutputStr%
+ENDMACRO;
+    
+//this is an example of code for a drilldown (1 per row)
+EXPORT CountTaxdata(xmlRow) := MACRO
+LOADXML(xmlRow);
+OUTPUT(FETCH(Files.TaxData,
+   Files.TaxdataIDX(propertyid=%propertyid%),
+   RIGHT.RecPos));
+ENDMACRO;
+
+//This example uses #EXPORT to generate the XML
+LOADXML('&lt;xml/&gt;'); //"dummy" XML just to open an XML scope
+NamesRecord := RECORD
+  STRING10 first;
+  STRING20 last;
+END;
+r := RECORD
+  UNSIGNED4 dg_parentid;
+  STRING10  dg_firstname;
+  STRING    dg_lastname;
+  UNSIGNED1 dg_prange;
+  IFBLOCK(SELF.dg_prange % 2 = 0)
+    STRING20 extrafield;
+  END;
+  NamesRecord namerec;
+  DATASET(NamesRecord) childNames;
+END;
+
+ds := DATASET('~RTTEST::OUT::ds', r, thor);
+   
+//Walk a record and do some processing on it.
+#DECLARE(out)
+#EXPORT(out, r);
+LOADXML(%'out'%, 'FileStruct');
+   
+#FOR (FileStruct)
+ #FOR (Field)
+  #IF (%'{@isEnd}'% &lt;&gt; '')
+OUTPUT('END');
+  #ELSE
+OUTPUT(%'{@type}'%
+   #IF (%'{@size}'% &lt;&gt; '-15' AND
+   %'{@isRecord}'%='' AND
+   %'{@isDataset}'%='')
++ %'{@size}'%
+   #END
++ ' ' + %'{@label}'% + ';');
+  #END
+ #END
+#END
+OUTPUT('Done');
+</pre><p>See Also: <a class="link" href="bk01ch12.html" title="Template Language">Templates</a>, <a class="link" href="bk01ch12s08.html" title="#EXPORT">#EXPORT</a>, <a class="link" href="bk01ch12s09.html" title="#EXPORTXML">#EXPORTXML</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s67.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s69.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">LN&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;LOCAL</td></tr></table></div></body></html>
