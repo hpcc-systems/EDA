@@ -1,0 +1,99 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>DENORMALIZE TRANSFORM Function Requirements</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10s28.html" title="DENORMALIZE"><link rel="prev" href="bk01ch10s28.html" title="DENORMALIZE"><link rel="next" href="bk01ch10s29.html" title="DISTRIBUTE"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">DENORMALIZE TRANSFORM Function Requirements</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s28.html">Prev</a>&nbsp;</td><th width="60%" align="center">DENORMALIZE</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s29.html">Next</a></td></tr></table><hr></div><div class="sect2" title="DENORMALIZE TRANSFORM Function Requirements"><div class="titlepage"><div><div><h3 class="title"><a name="TRANSFORM_Function_Requirements_Denormalize"></a>DENORMALIZE TRANSFORM Function Requirements</h3></div></div></div><p>For form one, the <span class="emphasis"><em>transform</em></span> function must take at least two parameters: a LEFT<a class="indexterm" name="d4e6517"></a> record of the same format as the combined <span class="emphasis"><em>parentrecset</em></span> and <span class="emphasis"><em>childrecset</em></span> (the resulting de-normalized record structure), and a RIGHT<a class="indexterm" name="d4e6521"></a> record of the same format as the <span class="emphasis"><em>childrecset</em></span>. An optional third parameter may be specified: an integer COUNTER<a class="indexterm" name="d4e6524"></a> specifying the number of times the <span class="emphasis"><em>transform</em></span> has been called for the current set of parent/child pairs (defined by the <span class="emphasis"><em>condition</em></span> values). The result of the <span class="emphasis"><em>transform</em></span> function must be a record set of the same format as the LEFT record.</p><p>For form two, the <span class="emphasis"><em>transform</em></span> function must take at least two parameters: a LEFT record of the same format as the combined <span class="emphasis"><em>parentrecset</em></span> and <span class="emphasis"><em>childrecset</em></span> (the resulting de-normalized record structure), and ROWS(RIGHT) dataset of the same format as the <span class="emphasis"><em>childrecset</em></span>. The result of the <span class="emphasis"><em>transform</em></span> function must be a record set of the same format as the LEFT record.</p><p>Example:</p><pre class="programlisting">//Form 1 example:
+NormRec := RECORD
+  STRING20  thename;
+  STRING20  addr;
+END;
+NamesRec := RECORD
+  UNSIGNED1  numRows;
+  STRING20  thename; 
+  STRING20  addr1 := '';
+  STRING20  addr2 := '';
+  STRING20  addr3 := '';
+  STRING20  addr4 := '';
+END;
+NamesTable := DATASET([ {0,'Kevin'},{0,'Liz'},{0,'Mr Nobody'},
+                        {0,'Anywhere'}], NamesRec);
+NormAddrs := DATASET([{'Kevin','10 Malt Lane'},
+                      {'Liz','10 Malt Lane'},
+                      {'Liz','3 The cottages'},
+                      {'Anywhee','Here'},
+                      {'Anywhere','There'},
+                      {'Anywhere','Near'},
+                      {'Anywhere','Far'}],NormRec);
+NamesRec DeNormThem(NamesRec L, NormRec R, INTEGER C) := TRANSFORM
+    SELF.NumRows := C;
+    SELF.addr1 := IF (C=1, R.addr, L.addr1);
+    SELF.addr2 := IF (C=2, R.addr, L.addr2);
+    SELF.addr3 := IF (C=3, R.addr, L.addr3);
+    SELF.addr4 := IF (C=4, R.addr, L.addr4);
+    SELF := L;
+END;
+DeNormedRecs := DENORMALIZE(NamesTable, NormAddrs,
+                            LEFT.thename = RIGHT.thename,
+                            DeNormThem(LEFT,RIGHT,COUNTER));
+OUTPUT(DeNormedRecs);
+
+//Form 2 example:
+NormRec := RECORD
+  STRING20  thename;
+  STRING20  addr;
+END;
+NamesRec := RECORD
+  UNSIGNED1  numRows;
+  STRING20  thename;
+  DATASET(NormRec) addresses;
+END;
+NamesTable := DATASET([ {0,'Kevin',[]},{0,'Liz',[]},
+                        {0,'Mr Nobody',[]},{0,'Anywhere',[]}],
+                      NamesRec);
+NormAddrs := DATASET([{'Kevin','10 Malt Lane'},
+                      {'Liz','10 Malt Lane'},
+                      {'Liz','3 The cottages'},
+                      {'Anywhere','Here'},
+                      {'Anywhere','There'},
+                      {'Anywhere','Near'},
+                      {'Anywhere','Far'}],NormRec);
+NamesRec DeNormThem(NamesRec L, DATASET(NormRec) R) := TRANSFORM
+    SELF.NumRows := COUNT(R);
+    SELF.addresses := R;
+    SELF := L;
+END;
+DeNormedRecs := DENORMALIZE(NamesTable, NormAddrs,
+                           LEFT.thename = RIGHT.thename,
+                           GROUP,
+                           DeNormThem(LEFT,ROWS(RIGHT)));
+OUTPUT(DeNormedRecs);
+
+// NOSORT example
+MyRec := RECORD
+  STRING1 Value1;
+  STRING1 Value2;
+END;
+ParentFile := DATASET([{'A','C'},{'B','B'},{'C','A'}],MyRec);
+ChildFile  := DATASET([{'A','Z'},{'A','T'},{'B','S'},{'B','Y'},
+                       {'C','X'},{'C','W'}],MyRec);
+MyOutRec := RECORD
+  ParentFile.Value1;
+  ParentFile.Value2;
+  STRING1 CVal2_1 := '';
+  STRING1 CVal2_2 := '';
+END;
+P_Recs := TABLE(ParentFile, MyOutRec);
+MyOutRec DeNormThem(MyOutRec L, MyRec R, INTEGER C) := TRANSFORM
+ SELF.CVal2_1 := IF(C = 1, R.Value2, L.CVal2_1);
+ SELF.CVal2_2 := IF(C = 2, R.Value2, L.CVal2_2);
+ SELF := L;
+END;
+DeNormedRecs := DENORMALIZE(P_Recs, ChildFile,
+                            LEFT.Value1 = RIGHT.Value1,
+                            DeNormThem(LEFT,RIGHT,COUNTER),NOSORT);
+OUTPUT(DeNormedRecs);
+/* DeNormedRecs result set is:
+ Rec#  Value1 PVal2  CVal2_1  CVal2_2
+ 1       A      C      Z         T
+ 2       B      B      Y         S
+ 3       C      A      X         W
+ */
+</pre><p>See Also: <a class="link" href="bk01ch09s07.html" title="TRANSFORM Structure">TRANSFORM Structure</a>, <a class="link" href="bk01ch05s01.html" title="RECORD Structure">RECORD Structure</a>, <a class="link" href="bk01ch10s79.html" title="NORMALIZE">NORMALIZE</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s28.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10s28.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s29.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">DENORMALIZE&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;DISTRIBUTE</td></tr></table></div></body></html>

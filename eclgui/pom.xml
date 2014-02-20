@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>eclgui</artifactId>
+	<packaging>jar</packaging>
+	<name>HPCC Systems Pentaho Data Integration ECL GUI</name>
+	<description></description>
+	<parent>
+		<groupId>org.hpccsystems.pentaho</groupId>
+		<artifactId>spoon-plugins</artifactId>
+		<version>0.1.0</version>
+	</parent>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>pentaho-kettle</groupId>
+				<artifactId>kettle-core</artifactId>
+				<version>4.2.0-GA</version>
+			</dependency>
+			<dependency>
+				<groupId>pentaho-kettle</groupId>
+				<artifactId>kettle-engine</artifactId>
+				<version>4.2.1-GA</version>
+			</dependency>
+			<dependency>
+				<groupId>pentaho-kettle</groupId>
+				<artifactId>kettle-ui-swt</artifactId>
+				<version>4.2.1-GA</version>
+			</dependency>
+			<dependency>
+				<groupId>pentaho-kettle</groupId>
+				<artifactId>kettle-db</artifactId>
+				<version>4.2.1-GA</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse</groupId>
+				<artifactId>jface</artifactId>
+				<version>3.3.0-I20070606-0010</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hpccsystems</groupId>
+				<artifactId>javaecl</artifactId>
+				<version>[0.1.0,)</version>
+			</dependency>
+            
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>pentaho-kettle</groupId>
+			<artifactId>kettle-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>pentaho-kettle</groupId>
+			<artifactId>kettle-engine</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>pentaho-kettle</groupId>
+			<artifactId>kettle-ui-swt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>pentaho-kettle</groupId>
+			<artifactId>kettle-db</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse</groupId>
+			<artifactId>jface</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hpccsystems</groupId>
+			<artifactId>javaecl</artifactId>
+		</dependency>
+        
+	</dependencies>
+</project>

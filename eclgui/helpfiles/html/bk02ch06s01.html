@@ -1,0 +1,18 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>DfuPlusExec</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk02ch06.html" title="File Movement"><link rel="prev" href="bk02ch06.html" title="File Movement"><link rel="next" href="bk02ch06s02.html" title="AbortDfuWorkunit"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">DfuPlusExec</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk02ch06.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="emphasis"><em>File Movement</em></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk02ch06s02.html">Next</a></td></tr></table><hr></div><div class="sect1" title="DfuPlusExec"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="DfuPlusExec"></a>DfuPlusExec</h2></div></div></div><p><span class="bold"><strong>STD.File.DfuPlusExec<a class="indexterm" name="d4e17762"></a><a class="indexterm" name="d4e17764"></a><a class="indexterm" name="d4e17766"></a>(</strong></span> <span class="emphasis"><em> commandline</em></span> <span class="bold"><strong>] )</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="13%"><col width="87%"></colgroup><tbody><tr><td><span class="emphasis"><em>commandline</em></span></td><td>A null-terminated string containing the DFUPlus.exe command line to execute. The valid arguments are documented in the Client Tools manual, in the section describing the DfuPlus.exe program.</td></tr></tbody></table></div><p>The <span class="bold"><strong>DfuPlusExec</strong></span> action executes the specified <span class="emphasis"><em>commandline</em></span> just as the DfuPLus.exe program would do. This simply allows you to have all the functionality of the DfuPLus.exe program available within your ECL code.</p><p>Example:</p><pre class="programlisting">IMPORT STD;
+
+serv := 'server=http://10.150.50.12:8010 ';
+user := 'username=rlor ';
+pswd := 'password=password ';
+over := 'overwrite=1 ';
+repl := 'replicate=1 ';
+
+action  := 'action=despray ';
+dstip   := 'dstip=10.150.50.14 ';
+dstfile := 'dstfile=c:\\import\\despray\\timezones.txt ';
+srcname := 'srcname=RTTEMP::timezones.txt ';
+
+cmd := serv + user + pswd + over + repl + action + dstip + dstfile + srcname;
+STD.File.DfuPlusExec(cmd);
+</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk02ch06.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk02ch06.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk02ch06s02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"><span class="emphasis"><em>File Movement</em></span>&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;AbortDfuWorkunit</td></tr></table></div></body></html>

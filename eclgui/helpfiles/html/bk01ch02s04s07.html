@@ -1,0 +1,21 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>TypeDef Attributes</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch02s04.html" title="Basic Attribute Types"><link rel="prev" href="bk01ch02s04s06.html" title="Record Set Ordering and Indexing"><link rel="next" href="bk01ch02s05.html" title="Recordset Filtering"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">TypeDef Attributes</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch02s04s06.html">Prev</a>&nbsp;</td><th width="60%" align="center">Basic Attribute Types</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch02s05.html">Next</a></td></tr></table><hr></div><div class="sect2" title="TypeDef Attributes"><div class="titlepage"><div><div><h3 class="title"><a name="TypeDef_Attributes"></a>TypeDef Attributes</h3></div></div></div><p>A TypeDef Attribute<a class="indexterm" name="d4e390"></a> is defined as any Attribute whose definition is a value type, whether built-in or user-defined. For example, the following are all TypeDef Attributes (except GetXLen):</p><pre class="programlisting">GetXLen(DATA x,UNSIGNED len) := TRANSFER(((DATA4)(x[1..len])),UNSIGNED4);
+
+EXPORT xstring(UNSIGNED len) := TYPE
+  EXPORT INTEGER PHYSICALLENGTH(DATA x) := GetXLen(x,len) + len;
+  EXPORT STRING LOAD(DATA x) := (STRING)x[(len+1)..GetXLen(x,len) + len];
+  EXPORT DATA STORE(STRING x):= TRANSFER(LENGTH(x),DATA4)[1..len] + (DATA)x;
+END;
+
+pstr := xstring(1); // typedef for user defined type
+pppstr := xstring(3);
+nameStr := STRING20; // typedef of a system type
+
+namesRecord := RECORD
+  pstr surname;
+  nameStr forename;
+  pppStr addr;
+  
+END;
+//A RECORD structure is also a typedef attribute (user-defined)</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch02s04s06.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch02s04.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch02s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Record Set Ordering and Indexing&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Recordset Filtering</td></tr></table></div></body></html>

@@ -1,0 +1,45 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Join Types: setofdatasets</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10s60.html" title="JOIN"><link rel="prev" href="bk01ch10s60s10.html" title="TRANSFORM Function Requirements - JOIN setofdatasets"><link rel="next" href="bk01ch10s61.html" title="KEYDIFF"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Join Types: setofdatasets</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s60s10.html">Prev</a>&nbsp;</td><th width="60%" align="center">JOIN</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s61.html">Next</a></td></tr></table><hr></div><div class="sect2" title="Join Types: setofdatasets"><div class="titlepage"><div><div><h3 class="title"><a name="Join_Types_joincondition"></a>Join Types: setofdatasets</h3></div></div></div><p>The following <span class="emphasis"><em>jointypes</em></span> produce the following types of results, based on the records matching produced by the <span class="emphasis"><em>joincondition</em></span>:</p><div class="informaltable"><table border="0"><colgroup><col width="16%"><col width="84%"></colgroup><tbody><tr><td>INNER</td><td>This is the default if no <span class="emphasis"><em>jointype</em></span> is specified. Only those records that exist in all datasets in the <span class="emphasis"><em>setofdatasets</em></span>.</td></tr><tr><td>LEFT OUTER</td><td>At least one record for every record in the first dataset in the <span class="emphasis"><em>setofdatasets</em></span>.</td></tr><tr><td>LEFT ONLY</td><td>One record for every record in the first dataset in the <span class="emphasis"><em>setofdatasets</em></span> for which there is no match in any of the subsequent datasets.</td></tr><tr><td>MOFN(min [,max])</td><td>One record for every record with matching records in min number of adjacent datasets within the <span class="emphasis"><em>setofdatasets</em></span>. If max is specified, the record is not included if max number of dataset matches are exceeded.</td></tr></tbody></table></div><p>Example:</p><pre class="programlisting">Rec := RECORD,MAXLENGTH(4096)
+  STRING1  Letter;
+  UNSIGNED1    DS;
+  UNSIGNED1    Matches   := 0;
+  UNSIGNED1    LastMatch := 0;
+  SET OF UNSIGNED1 MatchDSs  := [];
+END;
+
+ds1 := DATASET([{'A',1},{'B',1},{'C',1},{'D',1},{'E',1}],Rec);
+ds2 := DATASET([{'A',2},{'B',2},{'H',2},{'I',2},{'J',2}],Rec);
+ds3 := DATASET([{'B',3},{'C',3},{'M',3},{'N',3},{'O',3}],Rec);
+ds4 := DATASET([{'A',4},{'B',4},{'R',4},{'S',4},{'T',4}],Rec);
+ds5 := DATASET([{'B',5},{'V',5},{'W',5},{'X',5},{'Y',5}],Rec);
+SetDS := [ds1,ds2,ds3,ds4,ds5];
+
+Rec XF(Rec L,DATASET(Rec) Matches) := TRANSFORM
+  SELF.Matches   := COUNT(Matches);
+  SELF.LastMatch := MAX(Matches,DS);
+  SELF.MatchDSs  := SET(Matches,DS);
+  SELF := L;
+END;
+j1 := JOIN(SetDS,
+           STEPPED(LEFT.Letter=RIGHT.Letter),
+           XF(LEFT,ROWS(LEFT)),SORTED(Letter));
+j2 := JOIN(SetDS,
+           STEPPED(LEFT.Letter=RIGHT.Letter),
+           XF(LEFT,ROWS(LEFT)),SORTED(Letter),LEFT OUTER);
+j3 := JOIN(SetDS,
+           STEPPED(LEFT.Letter=RIGHT.Letter),  
+           XF(LEFT,ROWS(LEFT)),SORTED(Letter),LEFT ONLY);
+j4 := JOIN(SetDS,
+           STEPPED(LEFT.Letter=RIGHT.Letter),
+           XF(LEFT,ROWS(LEFT)),SORTED(Letter),MOFN(3));
+j5 := JOIN(SetDS,
+           STEPPED(LEFT.Letter=RIGHT.Letter),
+           XF(LEFT,ROWS(LEFT)),SORTED(Letter),MOFN(3,4));
+
+OUTPUT(j1);
+OUTPUT(j2);
+OUTPUT(j3);
+OUTPUT(j4);
+OUTPUT(j5);
+</pre><p>See Also: <a class="link" href="bk01ch09s07.html" title="TRANSFORM Structure">TRANSFORM Structure</a>, <a class="link" href="bk01ch05s01.html" title="RECORD Structure">RECORD Structure</a>, <a class="link" href="bk01ch08s11.html" title="SKIP">SKIP</a>, <a class="link" href="bk01ch10s115.html" title="STEPPED">STEPPED</a>, <a class="link" href="bk01ch08s06.html" title="KEYED and WILD">KEYED/WILD</a>, <a class="link" href="bk01ch10s75.html" title="MERGEJOIN">MERGEJOIN</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s60s10.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10s60.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s61.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">TRANSFORM Function Requirements - JOIN setofdatasets&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;KEYDIFF</td></tr></table></div></body></html>

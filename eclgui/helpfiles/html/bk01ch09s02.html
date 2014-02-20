@@ -1,0 +1,138 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>FUNCTION Structure</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch09.html" title="Special Structures"><link rel="prev" href="bk01ch09s01s02.html" title="Available Options"><link rel="next" href="bk01ch09s03.html" title="FUNCTIONMACRO Structure"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">FUNCTION Structure</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch09s01s02.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Special Structures</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch09s03.html">Next</a></td></tr></table><hr></div><div class="sect1" title="FUNCTION Structure"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="FUNCTION_Structure"></a>FUNCTION Structure<a class="indexterm" name="d4e4134"></a></h2></div></div></div><p><span class="emphasis"><em>[</em></span><span class="emphasis"><em>resulttype</em></span><span class="bold"><strong>]</strong></span><span class="emphasis"><em> funcname </em></span><span class="bold"><strong>(</strong></span><span class="emphasis"><em> parameterlist </em></span><span class="bold"><strong>) := FUNCTION<a class="indexterm" name="d4e4144"></a></strong></span><span class="bold"><strong> </strong></span></p><p><span class="bold"><strong></strong></span><span class="emphasis"><em>code</em></span> <span class="bold"><strong></strong></span></p><p><span class="bold"><strong> RETURN</strong></span> <span class="emphasis"><em>retval</em></span>;</p><p><span class="bold"><strong>END;</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="21%" align="left"><col width="79%"></colgroup><tbody><tr><td align="left"><span class="emphasis"><em>resulttype</em></span></td><td>The return value type of the function. If omitted, the type is implicit from the <span class="emphasis"><em>retval</em></span> expression.</td></tr><tr><td align="left"><span class="emphasis"><em>funcname</em></span></td><td><p>The ECL attribute name of the function.</p></td></tr><tr><td align="left"><span class="emphasis"><em>parameterlist</em></span></td><td>The parameters to pass to the <span class="emphasis"><em>code</em></span>. These are available to all attributes defined in the FUNCTION's <span class="emphasis"><em>code</em></span>.</td></tr><tr><td align="left"><span class="emphasis"><em>code</em></span></td><td>The local attribute definitions that comprise the function. These may not be EXPORT or SHARED attributes, but may include actions (like OUTPUT).</td></tr><tr><td align="left"><span class="bold"><strong>RETURN<a class="indexterm" name="d4e4184"></a></strong></span></td><td>Specifies the function's return value expression&#8212;the <span class="emphasis"><em>retval</em></span>.</td></tr><tr><td align="left"><span class="emphasis"><em>retval</em></span></td><td>The value, expression, recordset, row (record), or action to return.</td></tr></tbody></table></div><p>The <span class="bold"><strong>FUNCTION </strong></span>structure allows you to pass parameters to a set of related attribute definitions. This makes it possible to pass parameters to an attribute that is defined in terms of other non-exported attributes without the need to parameterise all of those as well.</p><p>Side-effect actions contained in the <span class="emphasis"><em>code</em></span> of the FUNCTION must have definition names that must be referenced by the WHEN function to execute.</p><p>Example:</p><pre class="programlisting">EXPORT doProjectChild(parentRecord l,UNSIGNED idAdjust2) := FUNCTION
+  newChildRecord copyChild(childRecord l) := TRANSFORM
+     SELF.person_id := l.person_id + idAdjust2;
+     SELF := l;
+   END;
+
+   RETURN PROJECT(CHOOSEN(l.children, numChildren),copyChild(LEFT));
+END;
+     //And called from
+SELF.children := doProjectChild(l, 99);
+          
+//**********************************
+EXPORT isAnyRateGE(STRING1 rate) := FUNCTION
+   SetValidRates := ['0','1','2','3','4','5','6','7','8','9'];
+   IsValidTradeRate := ValidDate(Trades.trd_drpt) AND
+                       Trades.trd_rate &gt;= rate AND
+                       Trades.trd_rate IN SetValidRates;
+   ValidPHR := Prev_rate(phr_grid_flag = TRUE,
+                         phr_rate IN SetValidRates,
+                         ValidDate(phr_date));
+   IsPHRGridRate := EXISTS(ValidPHR(phr_rate &gt;= rate,
+                                    AgeOf(phr_date)&lt;=24));
+   IsMaxPHRRate := MAX(ValidPHR(AgeOf(phr_date) &gt; 24),
+                       Prev_rate.phr_rate) &gt;= rate;
+   RETURN IsValidTradeRate OR IsPHRGridRate OR IsMaxPHRRate;
+END;
+
+//*************************************************************
+//a FUNCTION with side-effect Action
+namesTable := FUNCTION
+   namesRecord := RECORD
+     STRING20 surname;
+     STRING10 forename;
+     INTEGER2 age := 25;
+   END;
+   o := OUTPUT('namesTable used by user &lt;x&gt;');
+   ds := DATASET([{'x','y',22}],namesRecord);
+   RETURN WHEN(ds,O);
+END;
+z := namesTable : PERSIST('z');
+  //the PERSIST causes the side-effect action to execute only when the PERSIST is re-built
+
+OUTPUT(z);
+
+//*************************************************************
+//a coordinated set of 3 examples
+
+NameRec := RECORD
+  STRING5 title;
+  STRING20 fname;
+  STRING20 mname;
+  STRING20 lname;
+  STRING5 name_suffix;
+  STRING3 name_score;
+END;
+MyRecord := RECORD
+  UNSIGNED id;
+  STRING  uncleanedName;
+  NameRec Name;
+END;
+ds := DATASET('RTTEST::RowFunctionData', MyRecord, THOR);
+STRING73 CleanPerson73(STRING inputName) := FUNCTION
+  suffix :=[ ' 0',' 1',' 2',' 3',' 4',' 5',' 6',' 7',' 8','  9', 
+              ' J',' JR',' S',' SR'];
+  InWords := Std.Str.CleanSpaces(inputName);
+  HasSuffix := InWords[LENGTH(TRIM(InWords))-1 ..] IN suffix;
+  WordCount := LENGTH(TRIM(InWords,LEFT,RIGHT)) -
+               LENGTH(TRIM(InWords,ALL)) + 1;
+  HasMiddle := WordCount = 5 OR (WordCount = 4 AND NOT HasSuffix) ;
+  Sp1 := Std.Str.Find(InWords,' ',1);
+  Sp2 := Std.Str.Find(InWords,' ',2);
+  Sp3 := Std.Str.Find(InWords,' ',3);
+  Sp4 := Std.Str.Find(InWords,' ',4);
+  STRING5 title := InWords[1..Sp1-1];
+  STRING20 fname := InWords[Sp1+1..Sp2-1];
+  STRING20 mname := IF(HasMiddle,InWords[Sp2+1..Sp3-1],'');
+  STRING20 lname := MAP(HasMiddle AND NOT HasSuffix =&gt; InWords[Sp3+1..],
+                        HasMiddle AND HasSuffix =&gt; InWords[Sp3+1..Sp4-1],
+                        NOT HasMiddle AND NOT HasSuffix =&gt; InWords[Sp2+1..],
+                        NOT HasMiddle AND HasSuffix =&gt; InWords[Sp2+1..Sp3-1],
+                        '');
+  STRING5 name_suffix := IF(HasSuffix,InWords[LENGTH(TRIM(InWords))-1..],'');
+  STRING3 name_score := '';
+  RETURN title + fname + mname + lname + name_suffix + name_score;
+END;
+
+//Example 1 - a transform to create a row from an uncleaned name
+NameRec createRow(string inputName) := TRANSFORM
+  cleanedText := LocalAddrCleanLib.CleanPerson73(inputName);
+  SELF.title := cleanedText[1..5];
+  SELF.fname := cleanedText[6..25];
+  SELF.mname := cleanedText[26..45];
+  SELF.lname := cleanedText[46..65];
+  SELF.name_suffix := cleanedText[66..70];
+  SELF.name_score := cleanedText[71..73];
+END;
+myRecord t(myRecord l) := TRANSFORM
+  SELF.Name := ROW(createRow(l.uncleanedName));
+  SELF := l;
+END;
+y := PROJECT(ds, t(LEFT));
+OUTPUT(y);
+
+//Example 2 - an attribute using that transform to generate the row.
+NameRec cleanedName(STRING inputName) :=  ROW(createRow(inputName));
+myRecord t2(myRecord l) := TRANSFORM
+  SELF.Name := cleanedName(l.uncleanedName);
+  SELF := l;
+END;
+y2 := PROJECT(ds, t2(LEFT));
+OUTPUT(y2);
+
+//Example 3 = Encapsulate the transform inside the attribute by
+// defining a FUNCTION.
+NameRec cleanedName2(STRING inputName) := FUNCTION
+          
+  NameRec createRow := TRANSFORM
+     cleanedText := LocalAddrCleanLib.CleanPerson73(inputName);
+     SELF.title := cleanedText[1..5];
+     SELF.fname := cleanedText[6..25];
+     SELF.mname := cleanedText[26..45];
+     SELF.lname := cleanedText[46..65];
+     SELF.name_suffix := cleanedText[66..70];
+     SELF.name_score := cleanedText[71..73];
+  END;
+
+  RETURN ROW(createRow);
+END;
+
+myRecord t3(myRecord l) := TRANSFORM
+  SELF.Name := cleanedName2(l.uncleanedName);
+  SELF := l;
+END;
+
+y3 := PROJECT(ds, t3(LEFT));
+OUTPUT(y3);        </pre><p>See Also: <a class="link" href="bk01ch09s06.html" title="MODULE Structure">MODULE Structure</a>, <a class="link" href="bk01ch09s07.html" title="TRANSFORM Structure">TRANSFORM Structure</a>, <a class="link" href="bk01ch11s13.html" title="WHEN">WHEN</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch09s01s02.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch09.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch09s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Available Options&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;FUNCTIONMACRO Structure</td></tr></table></div></body></html>

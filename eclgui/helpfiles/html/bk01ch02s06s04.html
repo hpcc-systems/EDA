@@ -1,0 +1,22 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Passing Typeless Parameters</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch02s06.html" title="Function Definitions (Parameter Passing)"><link rel="prev" href="bk01ch02s06s03.html" title="Passing DATASET Parameters"><link rel="next" href="bk01ch02s06s05.html" title="Passing Function Parameters"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Passing Typeless Parameters</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch02s06s03.html">Prev</a>&nbsp;</td><th width="60%" align="center">Function Definitions (Parameter Passing)</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch02s06s05.html">Next</a></td></tr></table><hr></div><div class="sect2" title="Passing Typeless Parameters"><div class="titlepage"><div><div><h3 class="title"><a name="Passing_Typeless_Parameters"></a>Passing Typeless Parameters</h3></div></div></div><p>Passing parameters of any type may be accomplished using the keyword ANY<a class="indexterm" name="d4e508"></a> as the passed value type:</p><p><span class="emphasis"><em>DefinitionName</em></span> <span class="bold"><strong>( ANY</strong></span> <span class="emphasis"><em>AliasName</em></span> <span class="bold"><strong> ) := </strong></span><span class="emphasis"><em>expression</em></span><span class="bold"><strong>;</strong></span></p><pre class="programlisting">a := 10;
+b := 20;
+c := '1';
+d := '2';
+e := '3';
+f := '4';
+s1 := [c,d];
+s2 := [e,f];
+
+ds1 := DATASET(s1,{STRING1 ltr});
+ds2 := DATASET(s2,{STRING1 ltr});
+
+MyFunc(ANY l, ANY r) := l + r;
+
+MyFunc(a,b);      //returns 30
+MyFunc(a,c);      //returns '101'
+MyFunc(c,d);      //returns '12'
+MyFunc(s1,s2);    //returns a set: ['1','2','3','4']
+MyFunc(ds1,ds2);  //returns 4 records: '1', '2', '3', and '4'
+</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch02s06s03.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch02s06.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch02s06s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Passing DATASET Parameters&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Passing Function Parameters</td></tr></table></div></body></html>

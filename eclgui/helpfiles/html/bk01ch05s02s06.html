@@ -1,0 +1,70 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>In-line DATASETs</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch05s02.html" title="DATASET"><link rel="prev" href="bk01ch05s02s05.html" title="Named Output DATASETs"><link rel="next" href="bk01ch05s02s07.html" title="Single-row DATASET Expressions"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">In-line DATASETs</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch05s02s05.html">Prev</a>&nbsp;</td><th width="60%" align="center">DATASET</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch05s02s07.html">Next</a></td></tr></table><hr></div><div class="sect2" title="In-line DATASETs"><div class="titlepage"><div><div><h3 class="title"><a name="In-line_DATASETs"></a>In-line DATASET<a class="indexterm" name="d4e2641"></a><a class="indexterm" name="d4e2643"></a>s</h3></div></div></div><p><span class="bold"><strong> [ </strong></span><span class="emphasis"><em>attr</em></span><span class="bold"><strong> := ] DATASET(</strong></span><span class="emphasis"><em> recordset , recstruct</em></span><span class="bold"><strong> );</strong></span></p><p>This form allows you to in-line a set of data<a class="indexterm" name="d4e2652"></a> and have it treated as a file. This is useful in situations where file operations are needed on dynamically generated data (such as the runtime values of a set of pre-defined expressions). It is also useful to test any boundary conditions for attributes by creating a small well-defined set of records with constant values<a class="indexterm" name="d4e2654"></a> that specifically exercise those boundaries. This form may be used in an expression context.</p><p>Nested RECORD structure<a class="indexterm" name="d4e2657"></a>s may be represented by nesting records within records. Nested child datasets may also be initialized inside TRANSFORM functions using inline datasets (see the <span class="bold"><strong>Child DATASETs</strong></span> discussion).</p><p>Example:</p><pre class="programlisting">//Inline DATASET using attribute values
+myrec := {REAL diff, INTEGER1 reason};
+rms5008 := 10.0;
+rms5009 := 11.0;
+rms5010 := 12.0;
+btable := DATASET([{rms5008,72},{rms5009,7},{rms5010,65}], myrec);
+          
+//Inline DATASET with nested RECORD structures
+nameRecord := {STRING20 lname,STRING10 fname,STRING1 initial := ''};
+personRecord := RECORD
+  nameRecord primary;
+  nameRecord mother;
+  nameRecord father;
+END;
+personDataset := DATASET([{{'James','Walters','C'},
+                           {'Jessie','Blenger'},
+                           {'Horatio','Walters'}},
+                          {{'Anne','Winston'},
+                           {'Sant','Aclause'},
+                           {'Elfin','And'}}], personRecord);
+        
+        
+// Inline DATASET containing a Child DATASET
+childPersonRecord := {STRING fname,UNSIGNED1 age};
+personRecord := RECORD
+  STRING20 fname;
+  STRING20 lname;
+  UNSIGNED2 numChildren;
+  DATASET(childPersonRecord) children;
+END;
+123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+personDataset := DATASET([{'Kevin','Hall',2,[{'Abby',2},{'Nat',2}]},
+                          {'Jon','Simms',3,[{'Jen',18},{'Ali',16},{'Andy',13}]}],
+                         personRecord);
+         
+         
+// Inline DATASET derived from a dynamic SET function
+SetIDs(STRING fname) := SET(People(firstname=fname),id);
+ds := DATASET(SetIDs('RICHARD'),{People.id});
+         
+// Inline DATASET derived from a list of transforms
+IDtype := UNSIGNED8;
+FMtype := STRING15;
+Ltype := STRING25;
+
+resultRec := RECORD
+  IDtype id;
+  FMtype firstname;
+  Ltype lastname;
+  FMtype middlename;
+END;
+          
+T1(IDtype idval,FMtype fname,Ltype lname ) :=
+  TRANSFORM(resultRec,
+            SELF.id := idval,
+            SELF.firstname := fname,
+            SELF.lastname := lname,
+            SELF := []);
+          
+T2(IDtype idval,FMtype fname,FMtype mname, Ltype lname ) :=
+  TRANSFORM(resultRec,
+            SELF.id := idval,
+            SELF.firstname := fname,
+            SELF.middlename := mname,
+            SELF.lastname := lname);
+ds := DATASET([T1(123,'Fred','Jones'),
+               T2(456,'John','Q','Public'),
+               T1(789,'Susie','Smith')]);</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch05s02s05.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch05s02.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch05s02s07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Named Output DATASETs&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Single-row DATASET Expressions</td></tr></table></div></body></html>

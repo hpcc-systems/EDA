@@ -1,0 +1,78 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Join Types: Two Datasets</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10s60.html" title="JOIN"><link rel="prev" href="bk01ch10s60s06.html" title="TRANSFORM Function Requirements - JOIN"><link rel="next" href="bk01ch10s60s08.html" title="JOIN Set of Datasets"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Join Types: Two Datasets</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s60s06.html">Prev</a>&nbsp;</td><th width="60%" align="center">JOIN</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s60s08.html">Next</a></td></tr></table><hr></div><div class="sect2" title="Join Types: Two Datasets"><div class="titlepage"><div><div><h3 class="title"><a name="Join_Types"></a>Join Types: Two Datasets</h3></div></div></div><p>The following <span class="emphasis"><em>jointypes</em></span> produce the following types of results, based on the records matching produced by the <span class="emphasis"><em>joincondition</em></span>:</p><div class="informaltable"><table border="0"><colgroup><col width="14%"><col width="86%"></colgroup><tbody><tr><td>INNER (default)</td><td>Only those records that exist in both the <span class="emphasis"><em>leftrecset</em></span> and <span class="emphasis"><em>rightrecset</em></span>.</td></tr><tr><td>LEFT OUTER<a class="indexterm" name="d4e8447"></a></td><td>At least one record for every record in the <span class="emphasis"><em>leftrecset</em></span>.</td></tr><tr><td>RIGHT OUTER<a class="indexterm" name="d4e8453"></a></td><td>At least one record for every record in the <span class="emphasis"><em>rightrecset</em></span>.</td></tr><tr><td>FULL OUTER<a class="indexterm" name="d4e8459"></a></td><td>At least one record for every record in the <span class="emphasis"><em>leftrecset</em></span> and <span class="emphasis"><em>rightrecset</em></span>.</td></tr><tr><td>LEFT ONLY<a class="indexterm" name="d4e8466"></a></td><td>One record for each <span class="emphasis"><em>leftrecset</em></span> record with no match in the <span class="emphasis"><em>rightrecset</em></span>.</td></tr><tr><td>RIGHT ONLY<a class="indexterm" name="d4e8473"></a></td><td>One record for each <span class="emphasis"><em>rightrecset </em></span>record with no match in the <span class="emphasis"><em>leftrecset</em></span>.</td></tr><tr><td>FULL ONLY<a class="indexterm" name="d4e8480"></a></td><td>One record for each <span class="emphasis"><em>leftrecset</em></span> and <span class="emphasis"><em>rightrecset</em></span> record with no match in the opposite record set.</td></tr></tbody></table></div><p>Example:</p><pre class="programlisting">outrec := RECORD
+  people.id;
+  people.firstname;
+  people.lastname;
+END;
+
+RT_folk := JOIN(people(firstname[1] = 'R'),
+                people(lastname[1] = 'T'),
+                LEFT.id=RIGHT.id,
+                TRANSFORM(outrec,SELF := LEFT));
+OUTPUT(RT_folk);
+
+//*********************** Half KEYED JOIN example:
+peopleRecord := RECORD
+  INTEGER8 id;
+  STRING20 addr;
+END;
+peopleDataset := DATASET([{3000,'LONDON'},{3500,'SMITH'},
+                          {30,'TAYLOR'}], peopleRecord);
+PtblRec doHalfJoin(peopleRecord l) := TRANSFORM
+  SELF := l;
+END;
+FilledRecs3 := JOIN(peopleDataset, SequenceKey,
+                    LEFT.id=RIGHT.sequence,doHalfJoin(LEFT));
+FilledRecs4 := JOIN(peopleDataset, AlphaKey,
+                    LEFT.addr=RIGHT.Lname,doHalfJoin(LEFT));
+
+//******************* Full KEYED JOIN example:
+PtblRec := RECORD
+  INTEGER8 seq;
+  STRING2  State;
+  STRING20 City;
+  STRING25 Lname;
+  STRING15 Fname;
+END;
+PtblRec Xform(person L, INTEGER C) := TRANSFORM
+  SELF.seq      := C;
+  SELF.State    := L.per_st;
+  SELF.City     := L.per_full_city;
+  SELF.Lname    := L.per_last_name;
+  SELF.Fname    := L.per_first_name;
+END;
+Proj := PROJECT(Person(per_last_name[1]=per_first_name[1]),
+                Xform(LEFT,COUNTER<a class="indexterm" name="d4e8487"></a>));
+PtblOut := OUTPUT(Proj,,'~RTTEMP::TestKeyedJoin',OVERWRITE);
+
+Ptbl := DATASET('RTTEMP::TestKeyedJoin',
+                {PtblRec,UNSIGNED8 __fpos {virtual(fileposition)}},
+                FLAT);
+AlphaKey := INDEX(Ptbl,{lname,fname,__fpos},
+                  '~RTTEMPkey::lname.fname');
+SeqKey := INDEX(Ptbl,{seq,__fpos},'~RTTEMPkey::sequence');
+
+Bld1 := BUILD(AlphaKey ,OVERWRITE);
+Bld2 := BUILD(SeqKey,OVERWRITE);
+peopleRecord := RECORD
+  INTEGER8 id;
+  STRING20 addr;
+END;
+peopleDataset := DATASET([{3000,'LONDON'},{3500,'SMITH'},
+                          {30,'TAYLOR'}], peopleRecord);
+joinedRecord := RECORD
+  PtblRec;
+  peopleRecord;
+END;
+joinedRecord doJoin(peopleRecord l, Ptbl r) := TRANSFORM
+ SELF := l;
+ SELF := r;
+END;
+
+FilledRecs1 := JOIN(peopleDataset, Ptbl,LEFT.id=RIGHT.seq,
+                    doJoin(LEFT,RIGHT), KEYED(SeqKey));
+FilledRecs2 := JOIN(peopleDataset, Ptbl,LEFT.addr=RIGHT.Lname,
+                    doJoin(LEFT,RIGHT), KEYED(AlphaKey));
+SEQUENTIAL(PtblOut,Bld1,Bld2,OUTPUT(FilledRecs1),OUTPUT(FilledRecs2))
+</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s60s06.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10s60.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s60s08.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">TRANSFORM Function Requirements - JOIN&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;JOIN Set of Datasets</td></tr></table></div></body></html>

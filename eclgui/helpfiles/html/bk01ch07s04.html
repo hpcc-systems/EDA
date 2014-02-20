@@ -1,0 +1,52 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>XML Parsing RECORD and TRANSFORM Functions</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch07.html" title="Parsing Support"><link rel="prev" href="bk01ch07s03s01.html" title="Pattern References"><link rel="next" href="bk01ch08.html" title="Reserved Keywords"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">XML Parsing RECORD and TRANSFORM Functions</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch07s03s01.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Parsing Support</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch08.html">Next</a></td></tr></table><hr></div><div class="sect1" title="XML Parsing RECORD and TRANSFORM Functions"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="XML_Parsing_RECORD_and_TRANSFORM_Functions"></a>XML Parsing RECORD and TRANSFORM Functions</h2></div></div></div><p><span class="emphasis"><em>The following functions are valid for use only in field definition expressions within a RECORD structure<a class="indexterm" name="d4e3659"></a> or TRANSFORM function that is used to define the result set from the PARSE function, or the input RECORD structure for a DATASET containing XML data.</em></span></p><p><span class="bold"><strong>XMLTEXT(</strong></span><span class="emphasis"><em>xmltag</em></span><span class="bold"><strong>)</strong></span></p><p><span class="bold"><strong>XMLTEXT</strong></span> returns the ASCII text from the <span class="emphasis"><em>xmltag</em></span>.</p><p><span class="bold"><strong>XMLUNICODE(</strong></span><span class="emphasis"><em>xmltag</em></span><span class="bold"><strong>)</strong></span></p><p><span class="bold"><strong>XMLUNICODE</strong></span> returns the Unicode text from the <span class="emphasis"><em>xmltag</em></span>.</p><p><span class="bold"><strong>XMLPROJECT(</strong></span><span class="emphasis"><em>xmltag, transform</em></span><span class="bold"><strong>)</strong></span></p><p><span class="bold"><strong>XMLPROJECT</strong></span> returns the text from the <span class="emphasis"><em>xmltag </em></span>as a child dataset.</p><div class="informaltable"><table border="0"><colgroup><col width="21%" align="left"><col width="79%"></colgroup><tbody><tr><td align="left"><span class="emphasis"><em>xmltag</em></span></td><td>A string constant naming the XPATH to the tag containing the data (see the <span class="bold"><strong>XPATH Support</strong></span> section under the RECORD structure discussion). This may contain an instance number (such as <span class="emphasis"><em>tagname</em></span>[1]).</td></tr><tr><td align="left"><span class="emphasis"><em>transform</em></span></td><td>The TRANSFORM function that produces the child dataset.</td></tr></tbody></table></div><p>Example:</p><pre class="programlisting">d := DATASET([{'&lt;library&gt;&lt;book isbn="123456789X"&gt;' +
+  '&lt;author&gt;Bayliss&lt;/author&gt;&lt;title&gt;A Way Too Far&lt;/title&gt;&lt;/book&gt;' +
+  '&lt;book isbn="1234567801"&gt;' +
+  '&lt;author&gt;Smith&lt;/author&gt;&lt;title&gt;A Way Too Short&lt;/title&gt;&lt;/book&gt;' +
+  '&lt;/library&gt;'}],
+  {STRING line });
+
+rform := RECORD
+  STRING author := XMLTEXT('author');
+  STRING title := XMLTEXT('title');
+END;
+
+books := PARSE(d,line,rform,XML('library/book'));
+
+OUTPUT(books)
+
+//*******************************************
+/* The following XML can be parsed using XMLPROJECT
+&lt;XML&gt;
+&lt;Field name='surname' distinct=2&gt;
+&lt;Value count=3&gt;Halliday&lt;/Value&gt;
+&lt;Value count=2&gt;Chapman&lt;/Value&gt;
+&lt;/Field&gt;
+&lt;XML&gt;
+ */
+
+extractedValueRec := RECORD
+  STRING value;
+  UNSIGNED cnt;
+END;
+
+extractedRec := RECORD
+ STRING name;
+ UNSIGNED cnt;
+ DATASET(extractedValueRec) values;
+END;
+
+extractedRec t1 := TRANSFORM
+        SELF.name := XMLTEXT('@name');
+        SELF.cnt := (UNSIGNED)XMLTEXT('@distinct');
+        SELF.values := XMLPROJECT('Value',
+                      TRANSFORM(extractedValueRec,
+                         SELF.value := XMLTEXT(''),
+                         SELF.cnt :=
+                     (UNSIGNED)XMLTEXT('@count')))(cnt &gt; 1);
+END;
+
+p := PARSE(x, line, t1, XML('/XML/Field'));
+
+OUTPUT(p);</pre><p>See Also: <a class="link" href="bk01ch10s84.html" title="PARSE">PARSE</a>, <a class="link" href="bk01ch05s01.html" title="RECORD Structure">RECORD Structure</a>, <a class="link" href="bk01ch09s07.html" title="TRANSFORM Structure">TRANSFORM Structure</a>, <a class="link" href="bk01ch05s02.html" title="DATASET">DATASET</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch07s03s01.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch07.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch08.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Pattern References&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;<span class="bold"><strong>Reserved Keywords</strong></span></td></tr></table></div></body></html>

@@ -1,0 +1,24 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>NOTHOR</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10.html" title="Built-in Functions and Actions"><link rel="prev" href="bk01ch10s79s04.html" title="TRANSFORM Function Requirements for Form 2"><link rel="next" href="bk01ch10s81.html" title="NOTIFY"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">NOTHOR</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s79s04.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Built-in Functions and Actions</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s81.html">Next</a></td></tr></table><hr></div><div class="sect1" title="NOTHOR"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="NOTHOR"></a>NOTHOR<a class="indexterm" name="d4e9739"></a></h2></div></div></div><p><span class="bold"><strong>[</strong></span><span class="emphasis"><em>attributename</em></span> :=<span class="bold"><strong> ] NOTHOR<a class="indexterm" name="d4e9745"></a>(</strong></span><span class="emphasis"><em> action </em></span><span class="bold"><strong>)</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="14%"><col width="86%"></colgroup><tbody><tr><td><span class="emphasis"><em>attributename</em></span></td><td>Optional. The identifier for this action.</td></tr><tr><td>action</td><td>The action to execute.</td></tr></tbody></table></div><p>The <span class="bold"><strong>NOTHOR </strong></span>compiler directive indicates the <span class="emphasis"><em>action</em></span> should not execute on thor, but inline instead, in a global context. You can only do very simple dataset operations within a NOTHOR, like filtering records or a simple PROJECT.</p><p>NOTHOR needs to be used around operations that use the superfile transactions, (such as the example below) where the compiler does not spot the appropriate context .</p><p>Example:</p><pre class="programlisting">rec := RECORD
+  STRING10 S;
+END;
+
+srcnode := '10.150.199.2';
+srcdir := '/c$/test/';
+
+dir := FileServices.RemoteDirectory(srcnode,srcdir,'*.txt',TRUE);
+
+  //without NOTHOR this code gets this error:
+  // "Cannot call function AddSuperFile in a non-global context"
+NOTHOR(SEQUENTIAL(
+  FileServices.DeleteSuperFile('MultiSuper1'),
+  FileServices.CreateSuperFile('MultiSuper1'),
+  FileServices.StartSuperFileTransaction(),
+  APPLY(dir,FileServices.AddSuperFile('MultiSuper1',
+  FileServices.ExternalLogicalFileName(srcnode,srcdir+name))),
+  FileServices.FinishSuperFileTransaction()));
+
+F1 := DATASET('MultiSuper1', rec, THOR);
+OUTPUT(F1,,'testmulti1',overwrite);
+</pre><p>See Also: <a class="link" href="bk01ch10s106.html" title="SEQUENTIAL">SEQUENTIAL</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s79s04.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s81.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">TRANSFORM Function Requirements for Form 2&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;NOTIFY</td></tr></table></div></body></html>

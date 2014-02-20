@@ -1,0 +1,28 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>RECORDOF</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch04.html" title="Value Types"><link rel="prev" href="bk01ch04s12.html" title="TYPEOF"><link rel="next" href="bk01ch04s14.html" title="ENUM"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">RECORDOF</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch04s12.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Value Types</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch04s14.html">Next</a></td></tr></table><hr></div><div class="sect1" title="RECORDOF"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="RECORDOF"></a>RECORDOF</h2></div></div></div><p><span class="bold"><strong>RECORDOF<a class="indexterm" name="d4e1403"></a><a class="indexterm" name="d4e1405"></a>(</strong></span><span class="emphasis"><em> recordset </em></span><span class="bold"><strong>)</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="21%" align="left"><col width="79%"></colgroup><tbody><tr><td align="left"><span class="emphasis"><em>recordset</em></span></td><td>The set of data records whose RECORD structure to use. This may be a DATASET or any derived recordset.</td></tr></tbody></table></div><p>The <span class="bold"><strong>RECORDOF </strong></span>declaration specifies use of just the record layout of the <span class="emphasis"><em>recordset</em></span> in those situations where you need to inherit the structure of the fields but not their default values, such as child DATASET declarations inside RECORD structures.</p><p>This function allows you to keep RECORD structures local to the DATASET whose layout they define and still be able to reference the structure (only, without default values) where needed.</p><p>Example:</p><pre class="programlisting">Layout_People_Slim := RECORD
+   STD_People.RecID;
+   STD_People.ID;
+   STD_People.FirstName;
+   STD_People.LastName;
+   STD_People.MiddleName;
+   STD_People.NameSuffix;
+   STD_People.FileDate;
+   STD_People.BureauCode;
+   STD_People.Gender;
+   STD_People.BirthDate;
+   STD_People.StreetAddress;
+   UNSIGNED8 CSZ_ID;
+END;
+       
+STD_Accounts := TABLE(UID_Accounts,Layout_STD_AcctsFile);
+      
+CombinedRec := RECORD,MAXLENGTH(100000)
+  Layout_People_Slim;
+  UNSIGNED1 ChildCount;
+  DATASET(RECORDOF(STD_Accounts)) ChildAccts;
+END;
+        //This ChildAccts definition is equivalent to:
+        // DATASET(Layout_STD_AcctsFile) ChildAccts;
+        //but doesn&#8217;t require Layout_STD_AcctsFile to be visible (SHARED or
+        // EXPORT)</pre><p>See Also: <a class="link" href="bk01ch05s02.html" title="DATASET">DATASET</a>, <a class="link" href="bk01ch05s01.html" title="RECORD Structure">RECORD Structure</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch04s12.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch04.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch04s14.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">TYPEOF&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;ENUM</td></tr></table></div></body></html>

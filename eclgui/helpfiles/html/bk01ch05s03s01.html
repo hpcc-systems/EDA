@@ -1,0 +1,19 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Keyed Access INDEX</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch05s03.html" title="INDEX"><link rel="prev" href="bk01ch05s03.html" title="INDEX"><link rel="next" href="bk01ch05s03s02.html" title="Payload INDEX"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Keyed Access INDEX</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch05s03.html">Prev</a>&nbsp;</td><th width="60%" align="center">INDEX</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch05s03s02.html">Next</a></td></tr></table><hr></div><div class="sect2" title="Keyed Access INDEX"><div class="titlepage"><div><div><h3 class="title"><a name="Keyed_Access_INDEX"></a>Keyed Access INDEX</h3></div></div></div><p>This form defines an index file to allow keyed access to the <span class="emphasis"><em>baserecset</em></span>. The index is used primarily by the FETCH and JOIN (with the KEYED option) operations.</p><p>Example:</p><pre class="programlisting">PtblRec := RECORD
+  STRING2 State := Person.per_st;
+  STRING20 City := Person.per_full_city;
+  STRING25 Lname := Person.per_last_name;
+  STRING15 Fname := Person.per_first_name;
+END;
+
+PtblOut := OUTPUT(TABLE(Person,PtblRec),,'RTTEMP::TestFetch');
+          
+Ptbl := DATASET('RTTEMP::TestFetch',
+          {PtblRec,UNSIGNED8 RecPtr {virtual(fileposition)}},
+          FLAT);
+          
+AlphaInStateCity := INDEX(Ptbl,
+                   {state,city,lname,fname,RecPtr},
+                   'RTTEMPkey::TestFetch');
+Bld := BUILDINDEX(AlphaInStateCity);</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch05s03.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch05s03.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch05s03s02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">INDEX&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Payload INDEX</td></tr></table></div></body></html>

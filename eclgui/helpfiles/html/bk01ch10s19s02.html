@@ -1,0 +1,32 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>COMBINE Form 1</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10s19.html" title="COMBINE"><link rel="prev" href="bk01ch10s19s01.html" title="COMBINE TRANSFORM Function Requirements"><link rel="next" href="bk01ch10s19s03.html" title="COMBINE Form 2"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">COMBINE Form 1</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s19s01.html">Prev</a>&nbsp;</td><th width="60%" align="center">COMBINE</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s19s03.html">Next</a></td></tr></table><hr></div><div class="sect2" title="COMBINE Form 1"><div class="titlepage"><div><div><h3 class="title"><a name="COMBINE_Form_1"></a>COMBINE Form 1</h3></div></div></div><p>Form 1 of COMBINE produces its result by passing each record from <span class="emphasis"><em>leftrecset</em></span> along with the record in the same ordinal position within <span class="emphasis"><em>rightrecset</em></span> to the <span class="emphasis"><em>transform</em></span> to produce a single output record. Grouping (if any) on the <span class="emphasis"><em>leftrecset</em></span> is preserved. An error occurs if <span class="emphasis"><em>leftrecset</em></span> and <span class="emphasis"><em>rightrecset</em></span> contain a different number of records.</p><p>Example:</p><pre class="programlisting">inrec := RECORD
+  UNSIGNED6 did;
+END;
+outrec := RECORD(inrec)
+  STRING20  name;
+  STRING10  ssn;
+  UNSIGNED8  dob;
+END;
+ds := DATASET([1,2,3,4,5,6], inrec);
+i1 := DATASET([{1, 'Kevin'}, {2, 'Richard'}, {5,'Nigel'}],
+    { UNSIGNED6 did, STRING10 name });
+i2 := DATASET([{3, '123462'}, {5, '1287234'}, {6,'007001002'}],
+    { UNSIGNED6 did, STRING10 ssn });
+i3 := DATASET([{1, 19700117}, {4, 19831212}, {6,20000101}],
+    { UNSIGNED6 did, UNSIGNED8 dob}); 
+j1 := JOIN(ds, i1, LEFT.did = RIGHT.did, LEFT OUTER, LOOKUP);
+j2 := JOIN(ds, i2, LEFT.did = RIGHT.did, LEFT OUTER, LOOKUP);
+j3 := JOIN(ds, i3, LEFT.did = RIGHT.did, LEFT OUTER, LOOKUP);
+combined1 := COMBINE(j1, 
+                     j2,   
+             TRANSFORM(outRec,
+      SELF := LEFT;
+      SELF := RIGHT;
+      SELF := []));
+combined2 := COMBINE(combined1,
+                   j3,
+             TRANSFORM(outRec,
+      SELF.dob := RIGHT.dob;
+      SELF := LEFT));
+</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s19s01.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10s19.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s19s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">COMBINE TRANSFORM Function Requirements&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;COMBINE Form 2</td></tr></table></div></body></html>

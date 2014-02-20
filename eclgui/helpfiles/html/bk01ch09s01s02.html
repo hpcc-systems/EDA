@@ -1,0 +1,52 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Available Options</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch09s01.html" title="BEGINC++ Structure"><link rel="prev" href="bk01ch09s01s01.html" title="ECL to C++ Mapping"><link rel="next" href="bk01ch09s02.html" title="FUNCTION Structure"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Available Options</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch09s01s01.html">Prev</a>&nbsp;</td><th width="60%" align="center">BEGINC++ Structure</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch09s02.html">Next</a></td></tr></table><hr></div><div class="sect2" title="Available Options"><div class="titlepage"><div><div><h3 class="title"><a name="Available_Options"></a>Available Options</h3></div></div></div><p><span class="bold"><strong>#option pure</strong></span>By default, embedded C++ functions are assumed to have side-effects, which means the generated code won't be as efficient as it might be since the calls can't be shared. Adding #option pure inside the embedded C++ <span class="emphasis"><em>code</em></span> causes it to be treated as a pure function without side effects.</p><p><span class="bold"><strong>#option once</strong></span>Indicates the function has no side effects and is evaluated at query execution time, even if the parameters are constant, allowing the optimizer to make more efficient calls to the function in some cases.</p><p><span class="bold"><strong>#option action</strong></span>Indicates side effects, requiring the optimizer to keep all calls to the function.</p><p><span class="bold"><strong>#body</strong></span> Delimits the beginning of executable code. All <span class="emphasis"><em>code</em></span> that precedes #body (such as #include) is generated outside the function definition; all code that follows it is generated inside the function definition.</p><p>Example:</p><pre class="programlisting">//static int add(int x,int y) {
+INTEGER4 add(INTEGER4 x, INTEGER4 y) := BEGINC++
+  #option pure
+  return x + y;
+ENDC++;
+         
+OUTPUT(add(10,20));
+          
+//static void reverseString(size32_t &amp; __lenResult,char *  &amp; __result,
+// size32_t lenValue,char * value) {
+STRING reverseString(STRING value) := BEGINC++
+   size32_t len = lenValue;
+   char * out = (char *)rtlMalloc(len);
+   for (unsigned i= 0; i &lt; len; i++)
+        out[i] = value[len-1-i];
+   __lenResult = len;
+   __result = out;
+ENDC++;
+OUTPUT(reverseString('Kevin'));
+// This is a function returning an unknown length string via the
+// special reference parameters __lenResult and  __result
+         
+//this function demonstrates #body, allowing #include to be  used
+BOOLEAN nocaseInList(STRING search,
+          SET OF STRING values) := BEGINC++
+#include &lt;string.h&gt;
+#body 
+  if (isAllValues)
+    return true; 
+  const byte * cur = (const byte *)values; 
+  const byte * end = cur + lenValues; 
+  while (cur != end) 
+  { 
+  unsigned len = *(unsigned *)cur; 
+  cur += sizeof(unsigned); 
+  if (lenSearch == len &amp;&amp; memicmp(search, cur, len) == 0) 
+      return true; 
+  cur += len; 
+  } 
+  return false;
+ENDC++;
+          
+//and another example, generating a variable number of Xes
+STRING buildString(INTEGER4 value) := BEGINC++
+   char * out = (char *)rtlMalloc(value);
+   for (unsigned i= 0; i &lt; value; i++)
+     out[i] = 'X';
+     __lenResult = value;
+     __result = out;
+ENDC++;</pre><p>See Also: <a class="link" href="bk01ch13s03.html" title="External Service Implementation">External Service Implementation</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch09s01s01.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch09s01.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch09s02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">ECL to C++ Mapping&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;FUNCTION Structure</td></tr></table></div></body></html>

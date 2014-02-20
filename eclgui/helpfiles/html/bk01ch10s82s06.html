@@ -1,0 +1,27 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Named OUTPUT</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10s82.html" title="OUTPUT"><link rel="prev" href="bk01ch10s82s05.html" title="OUTPUT PIPE Files"><link rel="next" href="bk01ch10s82s07.html" title="OUTPUT Scalar Values"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Named OUTPUT</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s82s05.html">Prev</a>&nbsp;</td><th width="60%" align="center">OUTPUT</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s82s07.html">Next</a></td></tr></table><hr></div><div class="sect2" title="Named OUTPUT"><div class="titlepage"><div><div><h3 class="title"><a name="Named_OUTPUT"></a>Named OUTPUT<a class="indexterm" name="d4e10503"></a><a class="indexterm" name="d4e10505"></a></h3></div></div></div><p><span class="bold"><strong>[</strong></span><span class="emphasis"><em>attr</em></span> :=<span class="bold"><strong> ] OUTPUT<a class="indexterm" name="d4e10511"></a>(</strong></span><span class="emphasis"><em>recordset</em></span><span class="bold"><strong> [,</strong></span><span class="emphasis"><em> format </em></span><span class="bold"><strong>] </strong></span><span class="emphasis"><em>,</em></span><span class="bold"><strong>NAMED<a class="indexterm" name="d4e10519"></a>(</strong></span><span class="emphasis"><em> name </em></span><span class="bold"><strong>) [,EXTEND<a class="indexterm" name="d4e10523"></a>] [</strong></span><span class="emphasis"><em>,</em></span><span class="bold"><strong>ALL<a class="indexterm" name="d4e10527"></a>])</strong></span></p><p>This form writes the <span class="emphasis"><em>recordset</em></span> to the workunit with the specified <span class="emphasis"><em>name</em></span>. The EXTEND option allows multiple OUTPUT actions to the same <span class="emphasis"><em>named</em></span> result. The ALL option is used to override the implicit CHOOSEN applied to interactive queries in the Query Builder program. This specifies returning all records.</p><p>Example:</p><pre class="programlisting">OUTPUT(CHOOSEN(people(firstname[1]='A'),10));
+  // writes the A People to the query builder
+OUTPUT(CHOOSEN(people(firstname[1]='A'),10),ALL);
+  // writes all the A People to the query builder
+OUTPUT(CHOOSEN(people(firstname[1]='A'),10),NAMED('fred'));
+  // writes the A People to the fred named output
+  
+//a NAMED, EXTEND example:
+errMsgRec := RECORD
+  UNSIGNED4 code;
+  STRING text;
+END;
+makeErrMsg(UNSIGNED4 _code,STRING _text) := DATASET([{_code, _text}], errMsgRec);
+rptErrMsg(UNSIGNED4 _code,STRING _text) := OUTPUT(makeErrMsg(_code,_text),
+                                                  NAMED('ErrorResult'),EXTEND);
+
+OUTPUT(DATASET([{100, 'Failed'}],errMsgRec),NAMED('ErrorResult'),EXTEND);
+  //Explicit syntax.
+
+//Something else creates the dataset
+OUTPUT(makeErrMsg(101, 'Failed again'),NAMED('ErrorResult'),EXTEND);
+  
+//output and dataset handled elsewhere.
+rptErrMsg(102, 'And again');
+</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s82s05.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10s82.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s82s07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">OUTPUT PIPE Files&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;OUTPUT Scalar Values</td></tr></table></div></body></html>

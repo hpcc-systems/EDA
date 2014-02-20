@@ -1,0 +1,16 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>RANGE</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10.html" title="Built-in Functions and Actions"><link rel="prev" href="bk01ch10s91.html" title="RANDOM"><link rel="next" href="bk01ch10s93.html" title="RANK"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">RANGE</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s91.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Built-in Functions and Actions</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s93.html">Next</a></td></tr></table><hr></div><div class="sect1" title="RANGE"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="RANGE"></a>RANGE</h2></div></div></div><p><span class="bold"><strong>RANGE<a class="indexterm" name="d4e11365"></a><a class="indexterm" name="d4e11367"></a>( </strong></span><span class="emphasis"><em>setofdatasets, setofintegers</em></span><span class="bold"><strong> )</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="81"><col width="271"></colgroup><tbody><tr><td><span class="emphasis"><em>setofdatasets</em></span></td><td>A set of datasets.</td></tr><tr><td><span class="emphasis"><em>setofintegers</em></span></td><td>A set of integers.</td></tr><tr><td>Return:</td><td>RANGE returns a set of datasets.</td></tr></tbody></table></div><p>The <span class="bold"><strong>RANGE </strong></span>function extracts a subset of the <span class="emphasis"><em>setofdatasets</em></span> as a SET. The <span class="emphasis"><em>setofintegers</em></span> specifies which elements of the <span class="emphasis"><em>setofdatasets</em></span> comprise the resulting SET of datasets. This is typically used in the GRAPH function.</p><p>Example:</p><pre class="programlisting">r := {STRING1 Letter};
+ds1 := DATASET([{'A'},{'B'},{'C'},{'D'},{'E'}],r);
+ds2 := DATASET([{'F'},{'G'},{'H'},{'I'},{'J'}],r);
+ds3 := DATASET([{'K'},{'L'},{'M'},{'N'},{'O'}],r);
+ds4 := DATASET([{'P'},{'Q'},{'R'},{'S'},{'T'}],r);
+ds5 := DATASET([{'U'},{'V'},{'W'},{'X'},{'Y'}],r);
+
+SetDS := [ds1,ds2,ds3,ds4,ds5];
+outDS := RANGE(setDS,[1,3]); 
+//use only 1st and 3rd elements
+
+OUTPUT(outDS[1]); //results in A,B,C,D,E
+OUTPUT(outDS[2]); //results in K,L,M,N,O
+</pre><p>See Also: <a class="link" href="bk01ch10s48.html" title="GRAPH">GRAPH</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s91.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s93.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">RANDOM&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;RANK</td></tr></table></div></body></html>
