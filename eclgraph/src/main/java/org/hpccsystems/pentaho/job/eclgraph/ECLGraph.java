@@ -164,7 +164,7 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         			} 
         		}
         		//String[] path = FilePath.split("\"");
-        		logBasic(path[1].replaceAll("manifest.xml", "")); 
+        		logBasic(path[1]);//.replaceAll("manifest.xml", "")); 
         		Player axis = new Player();
         		String haxis = "hAxis: {title: '";
         		String Colours = "colors : ["; String fields = ""; String graph = "";String h = ""; String w = "";
@@ -216,7 +216,7 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
 		        				fields += this.getDatasetName()+"."+p.getFirstName()+";\n";
 		        			i++;
 		        			f = false;
-		        			haxis += p.getFirstName()+"', titleTextStyle:{color: 'Black', fontName:'Arial', fontSize:14, italic:0}},";
+		        			haxis += p.getFirstName().toUpperCase()+"', titleTextStyle:{color: 'Red', fontName:'Arial', fontSize:18, italic:0}},";
 		        			continue;
 		        		}
 		        		Player P = (Player) it.next();

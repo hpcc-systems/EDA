@@ -70,7 +70,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 	public static final String OPTION = "Color Option";
 	public static final String DATTYPE = "DataType";
   
-	public static final String[] PROP = { NAME, OPTION};
+	public static final String[] PROP = { NAME, OPTION, DATTYPE};
 	
 	java.util.List people;	
 	private String filePath;
@@ -782,7 +782,7 @@ class PersonCellModifier implements ICellModifier {
 	      return p.getFirstName();
 	    else if (ECLGraphDialog.OPTION.equals(property))
 	      return p.getColor();
-	    if (ECLGraphDialog.DATTYPE.equals(property))
+	    else if (ECLGraphDialog.DATTYPE.equals(property))
 		      return p.getTy();
 		    	    
 	    else
@@ -798,7 +798,7 @@ class PersonCellModifier implements ICellModifier {
 	      p.setFirstName((String) value);
 	    else if (ECLGraphDialog.OPTION.equals(property))
 	      p.setColor((Integer) value);
-	    if (ECLGraphDialog.DATTYPE.equals(property))
+	    else if (ECLGraphDialog.DATTYPE.equals(property))
 		      p.setTy((String) value);
 		    
 	    // Force the viewer to refresh
