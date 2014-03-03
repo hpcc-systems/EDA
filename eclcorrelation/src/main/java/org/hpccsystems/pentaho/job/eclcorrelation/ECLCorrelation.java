@@ -126,13 +126,13 @@ public class ECLCorrelation extends ECLJobEntry{//extends JobEntryBase implement
 	        	ecl += "PearRec := RECORD\nUNSIGNED left_number;\nUNSIGNED right_number;\nSTRING left_field;\nSTRING right_field;\nREAL8 Pearson;\nEND;\nnCorr := COUNT(MyDSCorr);\n";
 	        	ecl += "PearRec Tran(with_x L, single R) := TRANSFORM\nSELF.Pearson := (L.e_xyP - nCorr*L.meanP*R.meanP)/(nCorr*L.sdP*R.sdP);\nSELF := L;\nEND;\n";
 	        	ecl += "pears := JOIN(with_x,single,LEFT.right_number=RIGHT.number,Tran(LEFT,RIGHT),LOOKUP);\n";
-	        	ecl += "OUTPUT(TABLE(pears,{left_field,right_field,Pearson}),NAMED('Pearson'));\n";
+	        	ecl += "OUTPUT(SORT(TABLE(pears,{left_field,right_field,Pearson}),left_field),THOR);\n";
         	}
         	else if(this.method.equalsIgnoreCase("Spearman")){
 	        	ecl += "SPearRec := RECORD\nUNSIGNED left_number;\nUNSIGNED right_number;\nSTRING left_field;\nSTRING right_field;\nREAL8 Spearman;\nEND;\nnCorr := COUNT(MyDSCorr);\n";
 	        	ecl += "SPearRec Tran(with_x L, single R) := TRANSFORM\nSELF.Spearman := (L.e_xyS - nCorr*L.meanS*R.meanS)/(nCorr*L.sdS*R.sdS);\nSELF := L;\nEND;\n";
 	        	ecl += "Spears := JOIN(with_x,single,LEFT.right_number=RIGHT.number,Tran(LEFT,RIGHT),LOOKUP);\n";
-	        	ecl += "OUTPUT(TABLE(Spears,{left_field,right_field,Spearman}),NAMED('Spearman'));\n";
+	        	ecl += "OUTPUT(SORT(TABLE(Spears,{left_field,right_field,Spearman}),left_field),THOR);\n";
 
         	}
         	

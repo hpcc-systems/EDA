@@ -1,0 +1,15 @@
+au.com.bytecode.opencsv
+au.com.bytecode.opencsv.bean
+com.hpccsystems.resources
+com.hpccsystems.ui.constants
+org.hpccsystems.eclguifeatures
+org.hpccsystems.ecljobentrybase
+org.hpccsystems.mapper
+org.hpccsystems.recordlayout
+org.hpccsystems.saltui.concept
+org.hpccsystems.saltui.concept.edit
+org.hpccsystems.saltui.concept.table
+org.hpccsystems.saltui.hygiene
+org.hpccsystems.sortui.table
+org.hpccsystems.swing.recordlayout
+org.phccsystems.testing

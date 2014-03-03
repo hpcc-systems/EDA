@@ -175,7 +175,7 @@ public class ECLPercentile extends ECLJobEntry{//extends JobEntryBase implements
 	        for(int i = 0; i<norm.length; i++){
 	        	String[] S = norm[i].split("-");
 	        	percentile += S[0]+"_"+getName()+":=TABLE(percentileTab(field='"+S[0]+"'),{field,percentiles,value});\n";
-	        	percentile += "OUTPUT("+S[0]+"_"+getName()+",NAMED('"+S[0]+"'));\n";
+	        	percentile += "OUTPUT("+S[0]+"_"+getName()+",THOR);\n";
 	        }
         	
 	        RowMetaAndData data = new RowMetaAndData();

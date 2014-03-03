@@ -1,0 +1,18 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>GETISVALID</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch06s02.html" title="TYPE Structure Special Functions"><link rel="prev" href="bk01ch06s02s04.html" title="MAXLENGTH"><link rel="next" href="bk01ch07.html" title="Parsing Support"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">GETISVALID</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch06s02s04.html">Prev</a>&nbsp;</td><th width="60%" align="center">TYPE Structure Special Functions</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch07.html">Next</a></td></tr></table><hr></div><div class="sect2" title="GETISVALID"><div class="titlepage"><div><div><h3 class="title"><a name="getisvalid"></a>GETISVALID</h3></div></div></div><p><span class="bold"><strong>EXPORT BOOLEAN<a class="indexterm" name="d4e3210"></a> GETISVALID<a class="indexterm" name="d4e3213"></a>(</strong></span><span class="emphasis"><em>PhysicalType alias) := expression;</em></span></p><div class="informaltable"><table border="0"><colgroup><col width="21%" align="left"><col width="79%"></colgroup><tbody><tr><td align="left"><span class="emphasis"><em>PhysicalType</em></span></td><td>The value type of the input parameter to the function.</td></tr><tr><td align="left"><span class="emphasis"><em>alias</em></span></td><td>The name of the input to use in the <span class="emphasis"><em>expression</em></span>.</td></tr><tr><td align="left"><span class="emphasis"><em>expression</em></span></td><td>The operation to perform on the input.</td></tr></tbody></table></div><p><span class="bold"><strong>GETISVALID </strong></span>defines the callback function to determine that data values are in the specified physical format.</p><p>Example:</p><pre class="programlisting">EXPORT NeedC(INTEGER len) := TYPE
+  EXPORT STRING LOAD(STRING S) := 'C' + S[1..len];
+  EXPORT STRING STORE(STRING S) := S[2..len+1];
+  EXPORT INTEGER PHYSICALLENGTH(STRING S) := len;
+  EXPORT INTEGER MAXLENGTH(STRING S) := len;
+  EXPORT BOOLEAN GETISVALID(STRING S) := S[1] &lt;&gt; 'C';
+END;
+          
+// delimited string data type
+EXPORT dstring(STRING del) := TYPE
+  EXPORT INTEGER PHYSICALLENGTH(STRING s) :=
+               Std.Str.Find(s,del)+length(del)-1;
+  EXPORT STRING LOAD(STRING s) :=
+               s[1..Std.Str.Find(s,del)-1];
+  EXPORT STRING STORE(STRING s) := s + del;
+END;</pre><p>See Also: <a class="link" href="bk01ch06s01.html" title="TYPE Structure">TYPE Structure</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch06s02s04.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch06s02.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">MAXLENGTH&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;<span class="bold"><strong>Parsing Support</strong></span></td></tr></table></div></body></html>

@@ -1,0 +1,70 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>TRANSFORM Function Requirements - PROCESS</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10s88.html" title="PROCESS"><link rel="prev" href="bk01ch10s88.html" title="PROCESS"><link rel="next" href="bk01ch10s89.html" title="PROJECT"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">TRANSFORM Function Requirements - PROCESS</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s88.html">Prev</a>&nbsp;</td><th width="60%" align="center">PROCESS</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s89.html">Next</a></td></tr></table><hr></div><div class="sect2" title="TRANSFORM Function Requirements - PROCESS"><div class="titlepage"><div><div><h3 class="title"><a name="TRANSFORM_Function_Requirements_Process"></a>TRANSFORM Function<a class="indexterm" name="d4e11119"></a> Requirements - PROCESS<a class="indexterm" name="d4e11121"></a><a class="indexterm" name="d4e11123"></a><a class="indexterm" name="d4e11125"></a></h3></div></div></div><p>The <span class="emphasis"><em>datasettransform</em></span> and <span class="emphasis"><em>rowtransform</em></span> functions both must take at least two parameters: a LEFT record of the same format as the <span class="emphasis"><em>recordset </em></span>and a RIGHT record of the same format as the <span class="emphasis"><em>datarow</em></span>. The format of the resulting record set for the <span class="emphasis"><em>datasettransform</em></span> both must be the same as the input <span class="emphasis"><em>recordset</em></span>. The format of the resulting record set for the <span class="emphasis"><em>rowtransform</em></span> both must be the same as the initial <span class="emphasis"><em>datarow</em></span>. Optionally, the <span class="emphasis"><em>datsettransform</em></span> may take a third parameter: an integer COUNTER specifying the number of times the transform has been called for the <span class="emphasis"><em>recordset </em></span>or the current group in the <span class="emphasis"><em>recordset</em></span> (see the GROUP function).</p><p>Example:</p><pre class="programlisting">DSrec := RECORD
+  STRING4 Letter;
+  STRING4 LeftRecIn := '';
+  STRING4 RightRecIn := '';
+END;
+StateRec := RECORD
+  STRING2 Letter;
+END;
+ds := DATASET([{'AA'},{'BB'},{'CC'},{'DD'},{'EE'}],DSrec);
+
+DSrec DSxform(DSrec L,StateRec R) := TRANSFORM
+  SELF.Letter := L.Letter[1..2] + R.Letter;
+  SELF.LeftRecIn := L.Letter;
+  SELF.RightRecIn := R.Letter;
+END;
+StateRec ROWxform(DSrec L,StateRec R) := TRANSFORM
+  SELF.Letter := L.Letter[1] + R.Letter[1];
+END;
+
+p := PROCESS(ds,
+             ROW({'ZZ'},StateRec),
+             DSxform(LEFT,RIGHT),
+             ROWxform(LEFT,RIGHT));
+OUTPUT(p);
+/* Result:
+AAZZ AA ZZ
+BBAZ BB AZ
+CCBA CC BA
+DDCB DD CB
+EEDC EE DC */
+
+//******************************************************************
+// This examples uses different information for state tracking
+// (the point of the PROCESS function) through the input record set.
+  
+w1 := RECORD
+  STRING v{MAXLENGTH(100)};
+END;
+
+s1 := RECORD
+  BOOLEAN priorA;
+END;
+
+ds := DATASET([{'B'},{'A'}, {'C'}, {'D'}], w1);
+
+s1 doState(w1 l, s1 r) := TRANSFORM
+  SELF.priorA := l.v = 'A';
+END;
+
+w1 doRecords(w1 l, s1 r) := TRANSFORM
+  SELF.v := l.v + IF(r.priorA, '***', '');
+END;
+
+initState := ROW({TRUE}, s1);
+
+rs := PROCESS(ds,
+              initState,
+              doRecords(LEFT,RIGHT),
+              doState(LEFT,RIGHT));
+
+OUTPUT(rs);
+/* Result:
+B***
+A
+C***
+D
+*/
+</pre><p>See Also: <a class="link" href="bk01ch09s07.html" title="TRANSFORM Structure">TRANSFORM Structure</a>, <a class="link" href="bk01ch05s01.html" title="RECORD Structure">RECORD Structure</a>, <a class="link" href="bk01ch10s103.html" title="ROW">ROW</a>, <a class="link" href="bk01ch10s59.html" title="ITERATE">ITERATE</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s88.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10s88.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s89.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">PROCESS&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;PROJECT</td></tr></table></div></body></html>

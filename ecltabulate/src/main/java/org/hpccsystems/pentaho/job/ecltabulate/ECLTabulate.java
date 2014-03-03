@@ -124,7 +124,7 @@ public class ECLTabulate extends ECLJobEntry{//extends JobEntryBase implements C
         			else
         				ecl += "MyTab"+cnt+":=TABLE("+this.getDatasetName()+",MyRec"+cnt+","+Sr+","+Sc+","+sort+");\n";
         			if(settings.contains("count"))
-        				ecl += "OUTPUT(CHOOSEN(MyTab"+cnt+",200),NAMED('CountTable"+cnt+"'));\n";
+        				ecl += "OUTPUT(CHOOSEN(MyTab"+cnt+",200),THOR);\n";
         			if(settings.contains("rows") || settings.contains("cols")){        				
         				String s = "";
         				String r = "";
@@ -165,7 +165,7 @@ public class ECLTabulate extends ECLJobEntry{//extends JobEntryBase implements C
         				ecl += r+"Rec"+cnt+" trans"+cnt+"(Tab2"+cnt+" L):=TRANSFORM\n";
         				ecl += "SELF."+r+"Pct:=IF((L.cnt/L.totcnt)>= 1, 100, (L.cnt/L.totcnt)*100);\nSELF:=L;\nEND;\n";
         				ecl += r+"Table"+cnt+":=PROJECT(Tab2"+cnt+",trans"+cnt+"(LEFT));\n";
-        				ecl += "OUTPUT(CHOOSEN("+r+"Table"+cnt+",200),NAMED(\'"+r+"Percentages"+cnt+"\'));";
+        				ecl += "OUTPUT(CHOOSEN("+r+"Table"+cnt+",200),THOR);";
         			}
         			cnt = cnt + 1;
         		}

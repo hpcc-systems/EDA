@@ -1,0 +1,53 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>DISTRIBUTION</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10.html" title="Built-in Functions and Actions"><link rel="prev" href="bk01ch10s30.html" title="DISTRIBUTED"><link rel="next" href="bk01ch10s32.html" title="EBCDIC"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">DISTRIBUTION</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s30.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Built-in Functions and Actions</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s32.html">Next</a></td></tr></table><hr></div><div class="sect1" title="DISTRIBUTION"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="DISTRIBUTION"></a>DISTRIBUTION<a class="indexterm" name="d4e6730"></a></h2></div></div></div><p><span class="bold"><strong>DISTRIBUTION<a class="indexterm" name="d4e6734"></a>(</strong></span><span class="emphasis"><em>recordset </em></span><span class="bold"><strong>[</strong></span><span class="emphasis"><em>, fields</em></span><span class="bold"><strong> ] [</strong></span><span class="emphasis"><em>,</em></span><span class="bold"><strong> NAMED<a class="indexterm" name="d4e6742"></a>( </strong></span><span class="emphasis"><em>name</em></span><span class="bold"><strong> ) ] )</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="14%"><col width="86%"></colgroup><tbody><tr><td><span class="emphasis"><em>recordset</em></span></td><td>The set of records on which to run statistics.</td></tr><tr><td><span class="emphasis"><em>fields</em></span></td><td>Optional. A comma-delimited list of fields in the recordset to which to limit the action. If omitted, all fields are included.</td></tr><tr><td><span class="bold"><strong>NAMED</strong></span></td><td>Optional. Specifies the result name that appears in the workunit.</td></tr><tr><td><span class="emphasis"><em>name</em></span></td><td>A string constant containing the result label.</td></tr></tbody></table></div><p>The <span class="bold"><strong>DISTRIBUTION</strong></span> action produces a crosstab report in XML format indicating how many unique records there are in the <span class="emphasis"><em>recordset</em></span> for each value in each field in the <span class="emphasis"><em>recordset</em></span>.</p><p>Example:</p><pre class="programlisting">SomeFile := DATASET([{'C','G'},{'C','C'},{'A','X'},{'B','G'}],
+     {STRING1 Value1,STRING1 Value2});
+DISTRIBUTION(SomeFile);
+/* The result comes back looking like this:
+&lt;XML&gt;
+&lt;Field name="Value1" distinct="3"&gt;
+ &lt;Value count="1"&gt;A&lt;/Value&gt;
+ &lt;Value count="1"&gt;B&lt;/Value&gt;
+ &lt;Value count="2"&gt;C&lt;/Value&gt;
+&lt;/Field&gt;
+&lt;Field name="Value2" distinct="3"&gt;
+ &lt;Value count="1"&gt;C&lt;/Value&gt;
+ &lt;Value count="2"&gt;G&lt;/Value&gt;
+ &lt;Value count="1"&gt;X&lt;/Value&gt;
+&lt;/Field&gt;
+&lt;/XML&gt;
+*/
+
+//******************************************
+namesRecord := RECORD
+  STRING20 surname;
+  STRING10 forename;
+  INTEGER2 age;
+END;
+
+namesTable := DATASET([
+  {'Halligan','Kevin',31},
+  {'Halligan','Liz',30},
+  {'Salter','Abi',10},
+  {'X','Z'}], namesRecord);
+
+DISTRIBUTION(namesTable, surname, forename, NAMED('Stats'));
+x := DATASET(ROW(TRANSFORM({STRING line},
+       SELF.line := WORKUNIT('Stats', STRING))));
+
+/* The result comes back looking like this:
+&lt;XML&gt;
+&lt;Field name="surname" distinct="3"&gt;
+ &lt;Value count="2"&gt;Halligan&lt;/Value&gt;
+ &lt;Value count="1"&gt;X&lt;/Value&gt;
+ &lt;Value count="1"&gt;Salter&lt;/Value&gt;
+&lt;/Field&gt;
+&lt;Field name="forename" distinct="4"&gt;
+ &lt;Value count="1"&gt;Abi&lt;/Value&gt;
+ &lt;Value count="1"&gt;Kevin&lt;/Value&gt;
+ &lt;Value count="1"&gt;Liz&lt;/Value&gt;
+ &lt;Value count="1"&gt;Z&lt;/Value&gt;
+&lt;/Field&gt;
+&lt;/XML&gt;
+*/
+</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s30.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s32.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">DISTRIBUTED&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;EBCDIC</td></tr></table></div></body></html>

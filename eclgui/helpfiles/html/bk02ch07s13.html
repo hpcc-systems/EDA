@@ -1,0 +1,20 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>FilterOut</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk02ch07.html" title="String Handling"><link rel="prev" href="bk02ch07s12.html" title="Filter"><link rel="next" href="bk02ch07s14.html" title="Find"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center"><span class="bold"><strong>FilterOut</strong></span></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk02ch07s12.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="emphasis"><em>String Handling</em></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk02ch07s14.html">Next</a></td></tr></table><hr></div><div class="sect1" title="FilterOut"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="FilterOut"></a><span class="bold"><strong>FilterOut</strong></span></h2></div></div></div><p><span class="bold"><strong>STD.Str.FilterOut<a class="indexterm" name="d4e19236"></a><a class="indexterm" name="d4e19238"></a><a class="indexterm" name="d4e19240"></a>(</strong></span> <span class="emphasis"><em>source, filterstring</em></span> <span class="bold"><strong>)</strong></span> <span class="bold"><strong></strong></span></p><p><span class="bold"><strong>STD.Uni.FilterOut<a class="indexterm" name="d4e19247"></a><a class="indexterm" name="d4e19249"></a>(</strong></span> <span class="emphasis"><em>source, filterstring</em></span> <span class="bold"><strong>)</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="13%"><col width="87%"></colgroup><tbody><tr><td><span class="emphasis"><em>source</em></span></td><td>A string containing the data to filter.</td></tr><tr><td><span class="emphasis"><em>filterstring </em></span></td><td>A string containing the characters to use as the filter.</td></tr><tr><td>Return:<span class="emphasis"><em> </em></span></td><td>FilterOut returns a STRING or UNICODE value, as appropriate.</td></tr></tbody></table></div><p>The <span class="bold"><strong>FilterOut </strong></span>functions return the <span class="emphasis"><em>source</em></span> string with all the characters in the <span class="emphasis"><em>filterstring </em></span>removed.</p><p>Example:</p><pre class="programlisting">//all these examples result in 'Success'
+
+A := IF(STD.Str.FilterOut('ABCDE', 'BD') = 'ACE',
+   'Success',
+   'Failure - 1');
+    
+B := IF(STD.Str.FilterOut('ABCDEABCDE', 'BD') = 'ACEACE',
+   'Success',
+   'Failure - 2');
+    
+C := IF(STD.Str.FilterOut('ABCDEABCDE', '') = 'ABCDEABCDE',
+   'Success',
+   'Failure - 3');
+    
+D := IF(STD.Str.FilterOut('', 'BD') = '',
+   'Success',
+   'Failure - 4');
+</pre><p></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk02ch07s12.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk02ch07.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk02ch07s14.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"><span class="bold"><strong>Filter</strong></span>&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;<span class="bold"><strong>Find</strong></span></td></tr></table></div></body></html>

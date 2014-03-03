@@ -1,0 +1,52 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>The PARALLEL Option</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10s71.html" title="LOOP"><link rel="prev" href="bk01ch10s71.html" title="LOOP"><link rel="next" href="bk01ch10s72.html" title="MAP"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">The PARALLEL Option</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s71.html">Prev</a>&nbsp;</td><th width="60%" align="center">LOOP</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s72.html">Next</a></td></tr></table><hr></div><div class="sect2" title="The PARALLEL Option"><div class="titlepage"><div><div><h3 class="title"><a name="The_PARALLEL_Option"></a>The PARALLEL Option</h3></div></div></div><p>The PARALLEL option is offered to solve the following type of problem: When implementing a text search (A and B and C) or (D and E), where each element in the search is evaluated on an iteration of a LOOP(), you want to ensure that the execution is broken in the correct places. If it were split every 2 iterations, the iterations would produce:</p><p>(A and B)</p><p>(A and B and C), (D)</p><p>(A and B and C) or (D and E)</p><p>The second iteration would potentially generate a very large number of temporary records. To prevent this, the number of iterations at each step can be controlled. For this specific case you would probably use PARALLEL([3,3]). For more complicated search criteria the numbers would be different.</p><p>If a very large number is provided as the <span class="emphasis"><em>iterations</em></span> or <span class="emphasis"><em>default </em></span>value, then the all the iterations will execute in parallel. Doing this will likely significantly reduce the number of temporary rows stored in the system, but may potentially use a large amount of resources.</p><p>There is a restriction: ROWS(LEFT) cannot be directly used in a sub-query of the <span class="emphasis"><em>loopbody</em></span>.</p><p>Example:</p><pre class="programlisting">namesRec := RECORD  
+STRING20 lname;
+STRING10 fname;
+  UNSIGNED2 age := 25;
+  UNSIGNED2 ctr := 0;
+END;
+namesTable2 := DATASET([{'Flintstone','Fred',35},
+    {'Flintstone','Wilma',33},
+    {'Jetson','Georgie',10},
+    {'Mr. T','Z-man'}], namesRec);
+loopBody(DATASET(namesRec) ds, unsigned4 c) :=
+ PROJECT(ds,
+    TRANSFORM(namesRec,
+    SELF.age := LEFT.age*c;
+    SELF.ctr := COUNTER ;
+    SELF := LEFT));
+//Form 1:
+OUTPUT(LOOP(namesTable2,
+  COUNTER &lt;= 10,
+            PROJECT(ROWS(LEFT),
+     TRANSFORM(namesRec,
+     SELF.age := LEFT.age*2;
+     SELF.ctr := LEFT.ctr + COUNTER ;
+     SELF := LEFT))));
+OUTPUT(LOOP(namesTable2, 4, ROWS(LEFT) &amp; ROWS(LEFT)));
+//Form 2:
+OUTPUT(LOOP(namesTable2,
+  10,
+  LEFT.age * COUNTER &lt;= 200,
+            PROJECT(ROWS(LEFT),
+     TRANSFORM(namesRec,
+     SELF.age := LEFT.age*2;
+     SELF := LEFT))));
+//Form 3:
+OUTPUT(LOOP(namesTable2,
+  SUM(ROWS(LEFT), age) &lt; 1000 * COUNTER,
+            PROJECT(ROWS(LEFT),
+     TRANSFORM(namesRec,
+     SELF.age := LEFT.age*2;
+     SELF := LEFT))));
+//Form 4:
+OUTPUT(LOOP(namesTable2,
+  LEFT.age &lt; 100,
+  loopBody(ROWS(LEFT), COUNTER)));
+//Form 5:
+OUTPUT(LOOP(namesTable2,
+  LEFT.age &lt; 100,
+  EXISTS(ROWS(LEFT)) and SUM(ROWS(LEFT), age) &lt; 1000,
+  loopBody(ROWS(LEFT), COUNTER)));
+</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s71.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10s71.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s72.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">LOOP&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;MAP</td></tr></table></div></body></html>

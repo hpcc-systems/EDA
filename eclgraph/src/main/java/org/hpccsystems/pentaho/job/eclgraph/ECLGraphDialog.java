@@ -70,7 +70,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 	public static final String OPTION = "Color Option";
 	public static final String DATTYPE = "DataType";
   
-	public static final String[] PROP = { NAME, OPTION};
+	public static final String[] PROP = { NAME, OPTION, DATTYPE};
 	
 	java.util.List people;	
 	private String filePath;
@@ -80,6 +80,10 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
     private Combo datasetName;
     private Combo datasetNameOriginal;
     private Combo GraphType;
+    private Text GHeight;
+    private Text GWidth;
+    private Combo Size;
+    Group sizeGroup = null;
     ArrayList<String> Fieldfilter = new ArrayList<String>();
     
     String checkList[] = null;
@@ -127,28 +131,39 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
             datasets1 = new String[]{""};
         }
 
-        shell = new Shell(parentShell, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MIN | SWT.MAX);
+        shell = new Shell(parentShell, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MIN | SWT.MAX );
         people = new ArrayList();
         
 
         TabFolder tab = new TabFolder(shell, SWT.FILL | SWT.RESIZE | SWT.MIN | SWT.MAX);
         FormData datatab = new FormData();
         
-        datatab.height = 270;
+        datatab.height = 500;
         datatab.width = 650;
         tab.setLayoutData(datatab);
         
-        Composite compForGrp = new Composite(tab, SWT.NONE);
-        //compForGrp.setLayout(new FillLayout(SWT.VERTICAL));
-        compForGrp.setBackground(new Color(tab.getDisplay(),255,255,255));
-        compForGrp.setLayout(new FormLayout());
-        TabItem item1 = new TabItem(tab, SWT.NULL);
+        //Composite compForGrp = new Composite(tab, SWT.NONE | SWT.V_SCROLL | SWT.SHADOW_OUT);
         
+        //compForGrp.setBackground(new Color(tab.getDisplay(),255,255,255));
+        //compForGrp.setLayout(new FormLayout());
+        
+        TabItem item1 = new TabItem(tab, SWT.NULL);               
         item1.setText ("General");
+        
+        ScrolledComposite sc1 = new ScrolledComposite(tab, SWT.V_SCROLL);
+        sc1.setAlwaysShowScrollBars(true);
+        final Composite compForGrp1 = new Composite(sc1, SWT.NONE);
+        compForGrp1.setBackground(new Color(tab.getDisplay(),255,255,255));
+        compForGrp1.setLayout(new FormLayout());
+        sc1.setContent(compForGrp1);
+        sc1.setMinSize(400, 200);
+        sc1.setExpandHorizontal(true);
+        sc1.setExpandVertical(true);        
+        
         props.setLook(shell);
         JobDialog.setShellImage(shell, jobEntry);
 
-        ModifyListener lsMod = new ModifyListener() {
+        final ModifyListener lsMod = new ModifyListener() {
 
             public void modifyText(ModifyEvent e) {
                 jobEntry.setChanged();
@@ -160,18 +175,18 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 		layout.marginWidth = Const.FORM_MARGIN;
 		layout.marginHeight = Const.FORM_MARGIN;
 		
-		int middle = props.getMiddlePct();
-        int margin = Const.MARGIN;
+		final int middle = props.getMiddlePct();
+        final int margin = Const.MARGIN;
         
 		shell.setLayout(layout);
 		shell.setText("Graph");
 		
-		FormLayout groupLayout = new FormLayout();
+		final FormLayout groupLayout = new FormLayout();
         groupLayout.marginWidth = 10;
         groupLayout.marginHeight = 10;
 
         // Stepname line
-        Group generalGroup = new Group(compForGrp, SWT.SHADOW_NONE);
+        final Group generalGroup = new Group(compForGrp1, SWT.SHADOW_NONE);
         props.setLook(generalGroup);
         generalGroup.setText("General Details");
         generalGroup.setLayout(groupLayout);
@@ -182,29 +197,74 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         generalGroupFormat.left = new FormAttachment(middle, 0);
         generalGroup.setLayoutData(generalGroupFormat);
 		
-		jobEntryName = buildText("Job Name :    ", null, lsMod, middle, margin, generalGroup);
+		jobEntryName = buildText("Job Entry Name :    ", null, lsMod, middle, margin, generalGroup);
 		
 		//All other contols
         //Dataset Declaration
-        Group datasetGroup = new Group(compForGrp, SWT.SHADOW_NONE);
+        final Group datasetGroup = new Group(compForGrp1, SWT.SHADOW_NONE);
         props.setLook(datasetGroup);
         datasetGroup.setText("Dataset and Graph Details");
         datasetGroup.setLayout(groupLayout);
         FormData datasetGroupFormat = new FormData();
         datasetGroupFormat.top = new FormAttachment(generalGroup, margin);
         datasetGroupFormat.width = 400;
-        datasetGroupFormat.height = 120;
+        datasetGroupFormat.height = 180;
         datasetGroupFormat.left = new FormAttachment(middle, 0);
         datasetGroup.setLayoutData(datasetGroupFormat);
 		
 		
-        datasetNameOriginal = buildCombo("Original Dataset : ", jobEntryName, lsMod, middle, margin, datasetGroup, datasets1);
+        datasetNameOriginal = buildCombo("Original Dataset Name :", jobEntryName, lsMod, middle, margin, datasetGroup, datasets1);
         
-        datasetName = buildCombo("Dataset :    ", datasetNameOriginal, lsMod, middle, margin, datasetGroup, datasets);
+        datasetName = buildCombo("Dataset Name :", datasetNameOriginal, lsMod, middle, margin*2, datasetGroup, datasets);
 		
-        GraphType = buildCombo("Graph Type :", datasetName, lsMod, middle, margin, datasetGroup, new String[]{"PieChart", "LineChart","ScatterChart","BarChart"});
+        GraphType = buildCombo("Graph Type :", datasetName, lsMod, middle, margin*2, datasetGroup, new String[]{"PieChart", "LineChart","ScatterChart","BarChart"});
         
-        item1.setControl(compForGrp);
+        Size = buildCombo("Set Size :", GraphType, lsMod, middle, margin*2, datasetGroup, new String[]{"YES","NO"});
+        
+        Size.addSelectionListener(new SelectionAdapter(){
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if(sizeGroup != null)
+					sizeGroup.dispose();
+				if(Size.getText().equalsIgnoreCase("YES")){
+					 sizeGroup = new Group(compForGrp1, SWT.SHADOW_NONE);
+				     props.setLook(sizeGroup);
+				     sizeGroup.setText("Size of Graph");
+				     sizeGroup.setLayout(groupLayout);
+				     FormData GroupFormat = new FormData();
+				     GroupFormat.top = new FormAttachment(datasetGroup, margin); 
+				     GroupFormat.width = 400;
+				     GroupFormat.height = 100;
+				     GroupFormat.left = new FormAttachment(middle, 0);
+				     sizeGroup.setLayoutData(GroupFormat);
+				     sizeGroup.setSize(sizeGroup.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+				     sizeGroup.layout();
+				     
+				     GHeight = buildText("Height :", Size, lsMod, middle, margin*2, sizeGroup);
+				        
+				     GWidth = buildText("Width :", GHeight, lsMod, middle, margin*2, sizeGroup);
+				     
+				     if(jobEntry.getHeight() != null){
+				       	GHeight.setText(jobEntry.getHeight());
+				     }
+				        
+				     if(jobEntry.getWidth() != null){
+				     	GWidth.setText(jobEntry.getWidth());
+				     }
+				     
+				     compForGrp1.setSize(compForGrp1.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+	                 compForGrp1.layout();
+				}
+				
+				
+			}
+        	
+        });
+        
+        
+        
+        item1.setControl(sc1);
         /**
          * TableViewer in new Tab starts
          */
@@ -213,6 +273,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         item2.setText("Columns for Graph");
 		
         ScrolledComposite sc2 = new ScrolledComposite(tab, SWT.H_SCROLL | SWT.V_SCROLL);
+        sc2.setAlwaysShowScrollBars(true);
         Composite compForGrp2 = new Composite(sc2, SWT.NONE);
         compForGrp2.setLayout(new GridLayout(1, false));
         sc2.setContent(compForGrp2);
@@ -591,6 +652,40 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         if(jobEntry.getFilePath() != null){
         	filePath = jobEntry.getFilePath();
         }
+        
+        if(jobEntry.getSize() != null){
+        	Size.setText(jobEntry.getSize());
+        	if(jobEntry.getSize().equals("YES")){
+        		sizeGroup = new Group(compForGrp1, SWT.SHADOW_NONE);
+			     props.setLook(sizeGroup);
+			     sizeGroup.setText("Size of Graph");
+			     sizeGroup.setLayout(groupLayout);
+			     FormData GroupFormat = new FormData();
+			     GroupFormat.top = new FormAttachment(datasetGroup, margin); 
+			     GroupFormat.width = 400;
+			     GroupFormat.height = 100;
+			     GroupFormat.left = new FormAttachment(middle, 0);
+			     sizeGroup.setLayoutData(GroupFormat);
+			     sizeGroup.setSize(sizeGroup.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+			     sizeGroup.layout();
+			     
+			     GHeight = buildText("Height :", Size, lsMod, middle, margin*2, sizeGroup);
+			        
+			     GWidth = buildText("Width :", GHeight, lsMod, middle, margin*2, sizeGroup);
+			     
+			     if(jobEntry.getHeight() != null){
+			       	GHeight.setText(jobEntry.getHeight());
+			     }
+			        
+			     if(jobEntry.getWidth() != null){
+			     	GWidth.setText(jobEntry.getWidth());
+			     }
+			     
+			     compForGrp1.setSize(compForGrp1.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+                 compForGrp1.layout();
+        	}
+        }
+        
         shell.pack();
         shell.open();
         while (!shell.isDisposed()) {
@@ -617,12 +712,12 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
    		}
    		if(this.GraphType.getText().equals("")){
    			isValid = false;
-       		errors += "\"Choice of Type\" is a required field!\r\n";
+       		errors += "\"Graph Type\" is a required field!\r\n";
    		}
    		if(this.normlist.equals("")){
    			isValid = false;
-   			errors += "You need to Enter Some Field to produce Graph\r\n";
-   		}
+   			errors += "You need to select a field to produce Graph\r\n";
+   		}   		
    		
     	if(!isValid){
     		ErrorNotices en = new ErrorNotices();
@@ -647,6 +742,16 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         jobEntry.setTyp(this.GraphType.getText());
         jobEntry.setPeople(this.people);
         jobEntry.setFilePath(this.filePath);
+        if(Size.getText().equals("NO")){
+        	jobEntry.setWidth("");
+        	jobEntry.setHeight("");
+        }
+        else{
+        	jobEntry.setWidth(this.GWidth.getText());
+        	jobEntry.setHeight(this.GHeight.getText());
+        }
+        	
+        jobEntry.setSize(Size.getText());
         if(checkList.length>0)
         	jobEntry.setTest(this.checkList[0]);// Only when one needs to plot Univariate statistics
         dispose();
@@ -677,7 +782,7 @@ class PersonCellModifier implements ICellModifier {
 	      return p.getFirstName();
 	    else if (ECLGraphDialog.OPTION.equals(property))
 	      return p.getColor();
-	    if (ECLGraphDialog.DATTYPE.equals(property))
+	    else if (ECLGraphDialog.DATTYPE.equals(property))
 		      return p.getTy();
 		    	    
 	    else
@@ -693,7 +798,7 @@ class PersonCellModifier implements ICellModifier {
 	      p.setFirstName((String) value);
 	    else if (ECLGraphDialog.OPTION.equals(property))
 	      p.setColor((Integer) value);
-	    if (ECLGraphDialog.DATTYPE.equals(property))
+	    else if (ECLGraphDialog.DATTYPE.equals(property))
 		      p.setTy((String) value);
 		    
 	    // Force the viewer to refresh

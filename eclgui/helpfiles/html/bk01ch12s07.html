@@ -1,0 +1,14 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>#EXPAND</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch12.html" title="Template Language"><link rel="prev" href="bk01ch12s06.html" title="#ERROR"><link rel="next" href="bk01ch12s08.html" title="#EXPORT"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">#EXPAND</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch12s06.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Template Language</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch12s08.html">Next</a></td></tr></table><hr></div><div class="sect1" title="#EXPAND"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_EXPAND"></a>#EXPAND</h2></div></div></div><p><span class="bold"><strong>#EXPAND<a class="indexterm" name="d4e14369"></a>( </strong></span><span class="emphasis"><em>token</em></span> <span class="bold"><strong>);</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="13%"><col width="87%"></colgroup><tbody><tr><td><span class="emphasis"><em>token</em></span></td><td>The name of the MACRO parameter whose passed string constant value to expand.</td></tr></tbody></table></div><p>The <span class="bold"><strong>#EXPAND </strong></span>statement substitutes and parses the text of the passed <span class="emphasis"><em>token</em></span>'s string within the MACRO.</p><p>Example:</p><pre class="programlisting">  MAC_join(attrname, leftDS, rightDS, linkflags) := MACRO
+    attrname := JOIN(leftDS,rightDS,#EXPAND(linkflags));
+  ENDMACRO;
+  
+  MAC_join(J1,People,Property,'LEFT.ID=RIGHT.PeopleID,LEFT OUTER')
+  //expands out to:
+  // J1 := JOIN(People,Property,LEFT.ID=RIGHT.PeopleID,LEFT OUTER);
+  
+  MAC_join(J2,People,Property,'LEFT.ID=RIGHT.PeopleID')
+  //expands out to:
+  // J2 := JOIN(People,Property,LEFT.ID=RIGHT.PeopleID);
+</pre><p>See Also: <a class="link" href="bk01ch09s05.html" title="MACRO Structure">MACRO</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch12s06.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch12.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch12s08.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">#ERROR&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;#EXPORT</td></tr></table></div></body></html>

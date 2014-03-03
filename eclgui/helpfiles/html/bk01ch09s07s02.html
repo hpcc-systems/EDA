@@ -1,0 +1,32 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>TRANSFORM Functions</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch09s07.html" title="TRANSFORM Structure"><link rel="prev" href="bk01ch09s07s01.html" title="Transformation Attribute Definitions"><link rel="next" href="bk01ch09s07s03.html" title="Inline TRANSFORMs"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">TRANSFORM Functions</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch09s07s01.html">Prev</a>&nbsp;</td><th width="60%" align="center">TRANSFORM Structure</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch09s07s03.html">Next</a></td></tr></table><hr></div><div class="sect2" title="TRANSFORM Functions"><div class="titlepage"><div><div><h3 class="title"><a name="TRANSFORM_Functions"></a>TRANSFORM Functions</h3></div></div></div><p>This form of TRANSFORM must be terminated by the END keyword. The <span class="emphasis"><em>resulttype</em></span> must be specified, and the function itself takes parameters in the <span class="emphasis"><em>parameterlist</em></span>. These parameters are typically RECORD structures, but may be any type of parameter depending upon the type of TRANSFORM function the using function expects to call. The exact form a TRANSFORM function must take is always directly associated with the operation that uses it.</p><p>Example:</p><pre class="programlisting">Ages := RECORD
+  AgedRecs.id;
+  AgedRecs.id1;
+  AgedRecs.id2;
+END;
+SequencedAges := RECORD
+  Ages;
+  INTEGER4 Sequence := 0;
+END;
+
+SequencedAges AddSequence(AgedRecs L, INTEGER C) :=
+          TRANSFORM, SKIP(C % 2 = 0) //skip even recs
+  INTEGER1 rangex(UNSIGNED4 divisor) := (l.id DIV divisor) % 100;
+  SELF.id1 := rangex(10000);
+  SELF.id2 := rangex(100);
+  SELF.Sequence := C;
+  SELF := L;
+END;
+
+SequencedAgedRecs := PROJECT(AgedRecs, AddSequence(LEFT,COUNTER<a class="indexterm" name="d4e4674"></a>));
+//Example of defining a TRANSFORM function in terms of another
+namesIdRecord assignId(namesRecord l, UNSIGNED value) :=  TRANSFORM
+  SELF.id := value;
+  SELF := l;
+END;
+
+assignId1(namesRecord l) := assignId(l, 1);
+         //creates an assignId1 TRANSFORM that uses assignId
+assignId2(namesRecord l) := assignId(l, 2);
+         //creates an assignId2 TRANSFORM that uses assignId</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch09s07s01.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch09s07.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch09s07s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Transformation Attribute Definitions&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Inline TRANSFORMs</td></tr></table></div></body></html>

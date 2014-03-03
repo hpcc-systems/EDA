@@ -1,0 +1,34 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>DEPRECATED</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch11.html" title="Workflow Services"><link rel="prev" href="bk01ch11s02.html" title="CHECKPOINT"><link rel="next" href="bk01ch11s04.html" title="FAILURE"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">DEPRECATED</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch11s02.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Workflow Services</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch11s04.html">Next</a></td></tr></table><hr></div><div class="sect1" title="DEPRECATED"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="DEPRECATED"></a>DEPRECATED</h2></div></div></div><p><span class="emphasis"><em>attribute </em></span>:= <span class="emphasis"><em>expression </em></span><span class="bold"><strong>: DEPRECATED<a class="indexterm" name="d4e13670"></a> [ ( </strong></span><span class="emphasis"><em> message </em></span><span class="bold"><strong>) ] <a class="indexterm" name="d4e13674"></a></strong></span>;</p><div class="informaltable"><table border="0"><colgroup><col width="79"><col width="273"></colgroup><tbody><tr><td><span class="emphasis"><em>attribute</em></span></td><td>The name of the Attribute.</td></tr><tr><td><span class="emphasis"><em>expression</em></span></td><td>The definition of the attribute.</td></tr><tr><td><span class="emphasis"><em>message</em></span></td><td>Optional. The text to append to the warning if the attribute is used.</td></tr></tbody></table></div><p>The <span class="bold"><strong>DEPRECATED </strong></span>service displays a warning when the <span class="emphasis"><em>attribute</em></span> is used in code that instantiates a workunit or during a syntax check. This is meant to be used on attribute definitions that have been superseded.</p><p>When used on a structure attribute (RECORD, TRANSFORM, FUNCTION, etc.), this must be placed between the keyword END and its terminating semi-colon.</p><p>Example:</p><pre class="programlisting">  OldSort := SORT(Person,Person.per_first_name) : DEPRECATED('Use NewSort instead.');
+  NewSort := SORT(Person,-Person.per_first_name);
+  
+  OUTPUT(OldSort); 
+  //produces this warning:
+  // Attribute OldSort is marked as deprecated. Use NewSort instead.
+  
+  //**********************************************
+  ds := DATASET(['A','B','C'],{STRING1 letter});
+  
+  R1 := RECORD
+    STRING1 letter;
+  END : DEPRECATED('Use R2 now.');
+  
+  R2 := RECORD
+    STRING1 letter;
+    INTEGER number;
+  END;
+  
+  R1 Xform1(ds L) := TRANSFORM
+    SELF.letter := Std.Str.ToLowerCase(L.letter);
+  END : DEPRECATED('Use Xform2 now.');
+  
+  R2 Xform2(ds L, integer C) := TRANSFORM
+    SELF.letter := Std.Str.ToLowerCase(L.letter);
+    SELF.number := C;
+  END;
+  
+  OUTPUT(PROJECT(ds,Xform1(LEFT))); //produces these warnings:
+  // Attribute r1 is marked as deprecated. Use R2 now.
+  // Attribute Xform1 is marked as deprecated. Use Xform2 now.
+</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch11s02.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch11.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch11s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">CHECKPOINT&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;FAILURE</td></tr></table></div></body></html>

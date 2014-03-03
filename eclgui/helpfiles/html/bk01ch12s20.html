@@ -1,0 +1,23 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>#TEXT</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch12.html" title="Template Language"><link rel="prev" href="bk01ch12s19.html" title="#STORED"><link rel="next" href="bk01ch12s21.html" title="#UNIQUENAME"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">#TEXT</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch12s19.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Template Language</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch12s21.html">Next</a></td></tr></table><hr></div><div class="sect1" title="#TEXT"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_TEXT"></a>#TEXT</h2></div></div></div><p><span class="bold"><strong>#TEXT<a class="indexterm" name="d4e15417"></a>( </strong></span><span class="emphasis"><em> argument </em></span><span class="bold"><strong> );</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="78"><col width="274"></colgroup><tbody><tr><td><span class="emphasis"><em>argument</em></span></td><td>The MACRO parameter whose text to supply.</td></tr></tbody></table></div><p>The <span class="bold"><strong>#TEXT </strong></span>statement returns the text of the specified <span class="emphasis"><em>argument</em></span> to the MACRO. This statement may be used outside an XML scope and does not require a previous LOADXML to instantiate an XML scope.</p><p>Example:</p><pre class="programlisting">  extractFields(ds, outDs, f1, f2='?') := MACRO
+  
+  #UNIQUENAME(r);
+  
+  %r% := RECORD
+    f1 := ds.f1;
+  #IF (#TEXT(f2)&lt;&gt;'?')
+    #TEXT(f2)+':';
+    f2 := ds.f2;
+  #END
+   END;
+  
+  outDs := TABLE(ds, %r%);
+  ENDMACRO;
+  
+  extractFields(people, justSurname, lastname);
+  OUTPUT(justSurname);
+  
+  extractFields(people, justName, lastname, firstname);
+  OUTPUT(justName);
+</pre><p>See Also: <a class="link" href="bk01ch09s05.html" title="MACRO Structure">MACRO</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch12s19.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch12.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch12s21.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">#STORED&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;#UNIQUENAME</td></tr></table></div></body></html>

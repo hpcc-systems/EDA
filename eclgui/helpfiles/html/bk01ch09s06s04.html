@@ -1,0 +1,53 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>LIBRARY Modules</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch09s06.html" title="MODULE Structure"><link rel="prev" href="bk01ch09s06s03.html" title="Concrete vs. Abstract Modules"><link rel="next" href="bk01ch09s07.html" title="TRANSFORM Structure"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">LIBRARY Modules</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch09s06s03.html">Prev</a>&nbsp;</td><th width="60%" align="center">MODULE Structure</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch09s07.html">Next</a></td></tr></table><hr></div><div class="sect2" title="LIBRARY Modules"><div class="titlepage"><div><div><h3 class="title"><a name="LIBRARY_Modules"></a>LIBRARY Modules</h3></div></div></div><p>A MODULE with the LIBRARY option defines a related set of functions meant to be used as a query library (see the LIBRARY function and BUILD action discussions). There are several restrictions on what may be included in a query library. They are:</p><p>It may not contain side-effect actions (like OUTPUT or BUILD)</p><p>It may not contain attributes with workflow services attached to them(such as PERSIST, STORED, SUCCESS, etc.)</p><p>It may only EXPORT:</p><p>dataset/recordset attributes</p><p>datarow attributes (such as the ROW function<a class="indexterm" name="d4e4517"></a>)</p><p>single-valued and Boolean attributes</p><p>And may NOT export:</p><p>actions (like OUTPUT or BUILD)</p><p>TRANSFORM functions</p><p>other MODULE structures</p><p>MACRO attributes</p><p>Example:</p><pre class="programlisting">EXPORT filterDataset(STRING search, BOOLEAN onlyOldies) := MODULE
+  f := namesTable; //local to the &#8220;g&#8221; attribute
+  SHARED g := IF (onlyOldies, f(age &gt;= 65), f);
+          //SHARED = visible only within the structure
+  EXPORT included := g(surname != search);
+  EXPORT excluded := g(surname = search);
+          //EXPORT = visible outside the structure
+END;
+filtered := filterDataset('Halliday', TRUE);
+OUTPUT(filtered.included,,NAMED('Included'));
+OUTPUT(filtered.excluded,,NAMED('Excluded'));
+       
+//same result, different coding style:
+EXPORT filterDataset(BOOLEAN onlyOldies) := MODULE
+  f := namesTable;
+  SHARED g := IF (onlyOldies, f(age &gt;= 65), f);
+  EXPORT included(STRING search) := g(surname &lt;&gt; search);
+  EXPORT excluded(STRING search) := g(surname = search);
+END;
+filtered := filterDataset(TRUE);
+OUTPUT(filtered.included('Halliday'),,NAMED('Included'));
+OUTPUT(filterDataset(true).excluded('Halliday'),,NAMED('Excluded'));
+          
+//An Example with a side-effect action
+  EXPORT customerNames := MODULE
+    EXPORT Layout := RECORD
+      STRING20 surname;
+      STRING10 forename;
+      INTEGER2 age := 25;
+    END;
+    OUTPUT('customer file used by user &lt;x&gt;');
+    EXPORT File := DATASET([{'x','y',22}],Layout);
+END;
+BOOLEAN doIt := TRUE : STORED('doIt');
+IF (doIt, OUTPUT(customerNames.File));
+          
+//VIRTUAL examples
+Mod1 := MODULE,VIRTUAL //an abstract module
+  EXPORT val := 1;
+  EXPORT func(INTEGER sc) := val * sc;
+END;
+         
+Mod2 := MODULE(Mod1) //a concete instance
+  EXPORT val := 3; //override inherited default value
+END
+     
+Mod3 := MODULE(Mod1) //a concete instance
+  EXPORT func(INTEGER sc) := val + sc; //override inherited func
+END
+OUTPUT(Mod2.func(5)); //result is 15
+OUTPUT(Mod3.func(5)); //result is 6</pre><p>See Also: <a class="link" href="bk01ch09s02.html" title="FUNCTION Structure">FUNCTION Structure</a>, <a class="link" href="bk01ch02s07.html" title="Attribute Visibility">Attribute Visibility</a>, <a class="link" href="bk01ch09s04.html" title="INTERFACE Structure">INTERFACE Structure</a>, <a class="link" href="bk01ch10s65.html" title="LIBRARY">LIBRARY</a>, <a class="link" href="bk01ch10s13.html" title="BUILD">BUILD</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch09s06s03.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch09s06.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch09s07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Concrete vs. Abstract Modules&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;TRANSFORM Structure</td></tr></table></div></body></html>

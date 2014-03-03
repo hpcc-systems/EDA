@@ -1,0 +1,62 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>COMBINE Form 2</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10s19.html" title="COMBINE"><link rel="prev" href="bk01ch10s19s02.html" title="COMBINE Form 1"><link rel="next" href="bk01ch10s20.html" title="CORRELATION"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">COMBINE Form 2</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s19s02.html">Prev</a>&nbsp;</td><th width="60%" align="center">COMBINE</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s20.html">Next</a></td></tr></table><hr></div><div class="sect2" title="COMBINE Form 2"><div class="titlepage"><div><div><h3 class="title"><a name="COMBINE_Form_2"></a>COMBINE Form 2</h3></div></div></div><p>Form 2 of COMBINE produces its result by passing each record from <span class="emphasis"><em>leftrecset,</em></span> the group in the same ordinal position within <span class="emphasis"><em>rightrecset </em></span>(along with the first record in the group) to the <span class="emphasis"><em>transform</em></span> to produce a single output record. Grouping (if any) on the <span class="emphasis"><em>leftrecset</em></span> is preserved. An error occurs if the number of records in the <span class="emphasis"><em>leftrecset</em></span> differs from the number of groups in the <span class="emphasis"><em>rightrecset</em></span>.</p><p>Example:</p><pre class="programlisting">inrec := {UNSIGNED6 did};
+outrec := RECORD(inrec)
+  STRING20 name;
+  UNSIGNED score;
+END;
+nameRec := RECORD
+  STRING20 name;
+END;
+ 
+resultRec := RECORD(inrec)
+  DATASET(nameRec) names;
+END;
+ds := DATASET([1,2,3,4,5,6], inrec);
+dsg := GROUP(ds, ROW);
+i1 := DATASET([ {1, 'Kevin', 10},
+   {2, 'Richard', 5},
+   {5,'Nigel', 2},
+   {0, '', 0} ], outrec);
+i2 := DATASET([ {1, 'Kevin Halligan', 12},
+   {2, 'Richard Chapman', 15},
+   {3, 'Jake Smith', 20},
+   {5,'Nigel Hicks', 100},
+   {0, '', 0} ], outrec);
+i3 := DATASET([ {1, 'Halligan', 8},
+   {2, 'Richard', 8},
+   {6, 'Pete', 4},
+   {6, 'Peter', 8},
+   {6, 'Petie', 1},
+   {0, '', 0} ], outrec);
+j1 := JOIN( dsg,
+  i1,
+  LEFT.did = RIGHT.did,
+  TRANSFORM(outrec, SELF := LEFT; SELF := RIGHT),
+  LEFT OUTER, MANY LOOKUP);
+j2 := JOIN( dsg,
+  i2,
+  LEFT.did = RIGHT.did,
+  TRANSFORM(outrec, SELF := LEFT; SELF := RIGHT),
+  LEFT OUTER,
+  MANY LOOKUP);
+j3 := JOIN( dsg,
+  i3,
+  LEFT.did = RIGHT.did,
+  TRANSFORM(outrec, SELF := LEFT; SELF := RIGHT),
+  LEFT OUTER,
+  MANY LOOKUP);
+combined := REGROUP(j1, j2, j3);
+resultRec t(inrec l, DATASET(RECORDOF(combined)) r) := TRANSFORM
+ self.names := PROJECT(r, TRANSFORM(nameRec, SELF := LEFT));
+ self := l;
+ END;
+res1 := COMBINE(dsg,combined,GROUP,t(LEFT, ROWS(RIGHT)(score != 0)));
+//A variation using rows in a child query.
+resultRec t2(inrec l, DATASET(RECORDOF(combined)) r) := TRANSFORM
+ SELF.names := PROJECT(SORT(r, -score),
+        TRANSFORM(nameRec, SELF := LEFT));
+ SELF := l;
+ END;
+res2 := COMBINE(dsg,combined,GROUP,t2(LEFT,ROWS(RIGHT)(score != 0)));
+</pre><p>See Also: <a class="link" href="bk01ch08s04.html" title="GROUP keyword">GROUP</a>, <a class="link" href="bk01ch10s98.html" title="REGROUP">REGROUP</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s19s02.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10s19.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s20.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">COMBINE Form 1&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;CORRELATION</td></tr></table></div></body></html>

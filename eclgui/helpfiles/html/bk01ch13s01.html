@@ -1,0 +1,61 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>SERVICE Structure</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch13.html" title="External Services"><link rel="prev" href="bk01ch13.html" title="External Services"><link rel="next" href="bk01ch13s02.html" title="CONST"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">SERVICE Structure</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch13.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>External Services</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch13s02.html">Next</a></td></tr></table><hr></div><div class="sect1" title="SERVICE Structure"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="SERVICE_Structure"></a>SERVICE Structure<a class="indexterm" name="d4e15554"></a></h2></div></div></div><p><span class="emphasis"><em>servicename </em></span><span class="bold"><strong>:= SERVICE [ : </strong></span><span class="emphasis"><em>defaultkeywords</em></span><span class="bold"><strong> ]</strong></span><span class="bold"><strong> </strong></span><span class="emphasis"><em></em></span></p><p><span class="emphasis"><em> prototype </em></span>: <span class="emphasis"><em>keywordlist</em></span>;<span class="bold"><strong> </strong></span></p><p><span class="bold"><strong>END;</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="14%"><col width="86%"></colgroup><tbody><tr><td><span class="emphasis"><em>servicename</em></span></td><td>The name of the service the SERVICE structure provides.</td></tr><tr><td><span class="emphasis"><em>defaultkeywords</em></span></td><td>Optional. A comma-delimited list of default keywords and their values shared by all prototypes in the external service.</td></tr><tr><td><span class="emphasis"><em>prototype</em></span></td><td>The ECL name and prototype of a specific function.</td></tr><tr><td><span class="emphasis"><em>keywordlist</em></span></td><td>A comma-delimited list of keywords and their values that tell the ECL compiler how to access the external service.</td></tr></tbody></table></div><p>The <span class="bold"><strong>SERVICE </strong></span>structure makes it possible to create external services to extend the capabilities of ECL to perform any desired functionality. These external system services are implemented as exported functions in a .SO (Shared Object). An ECL system service .SO can contain one or more services and (possibly) a single .SO initialization routine.</p><p>Example:</p><pre class="programlisting">  email := SERVICE
+    simpleSend( STRING address,
+            STRING template,
+            STRING subject) : LIBRARY='ecl2cw',
+                 INITFUNCTION='initEcl2Cw';
+    END;
+  MyAttr := COUNT(Trades): FAILURE(email.simpleSend('help@ln_risk.com',
+                          'FailTemplate',
+                          'COUNT failure'));
+  //An example of a SERVICE function returning a structured record
+  NameRecord := RECORD
+    STRING5 title;
+    STRING20 fname;
+    STRING20 mname;
+    STRING20 lname;
+    STRING5 name_suffix;
+    STRING3 name_score;
+  END;
+  
+  LocalAddrCleanLib := SERVICE
+  NameRecord dt(CONST STRING name, CONST STRING server = 'x')
+    : c,entrypoint='aclCleanPerson73',pure;
+  END;
+  
+  MyRecord := RECORD
+    UNSIGNED id;
+    STRING uncleanedName;
+    NameRecord Name;
+  END;
+  x := DATASET('x', MyRecord, THOR);
+  
+  myRecord t(myRecord L) := TRANSFORM
+      SELF.Name := LocalAddrCleanLib.dt(L.uncleanedName);
+      SELF := L;
+    END;
+  y := PROJECT(x, t(LEFT));
+  OUTPUT(y);
+
+
+  //The following two examples define the same functions:
+  TestServices1 := SERVICE
+    member(CONST STRING src)
+      : holertl,library='test',entrypoint='member',ctxmethod;
+    takesContext1(CONST STRING src)
+      : holertl,library='test',entrypoint='takesContext1',context;
+    takesContext2()
+      : holertl,library='test',entrypoint='takesContext2',context;
+    STRING takesContext3()
+      : holertl,library='test',entrypoint='takesContext3',context;
+  END;
+  
+  //this form demonstrates the use of default keywords
+  TestServices2 := SERVICE : holert,library='test'
+    member(CONST STRING src) : entrypoint='member',ctxmethod;
+    takesContext1(CONST STRING src) : entrypoint='takesContext1',context;
+    takesContext2() : entrypoint='takesContext2',context;
+    STRING takesContext3() : entrypoint='takesContext3',context;
+  END;
+</pre><p>See Also: <a class="link" href="bk01ch13s03.html" title="External Service Implementation">External Service Implementation</a>, <a class="link" href="bk01ch13s02.html" title="CONST">CONST</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch13.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch13.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch13s02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"><span class="bold"><strong>External Services</strong></span>&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;CONST</td></tr></table></div></body></html>

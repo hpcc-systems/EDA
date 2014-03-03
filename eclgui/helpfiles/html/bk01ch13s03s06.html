@@ -1,0 +1,55 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Passing Set Parameters to a Service</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch13s03.html" title="External Service Implementation"><link rel="prev" href="bk01ch13s03s05.html" title="Data Types"><link rel="next" href="bk01ch13s03s07.html" title="ECL Plug-Ins"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Passing Set Parameters to a Service</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch13s03s05.html">Prev</a>&nbsp;</td><th width="60%" align="center">External Service Implementation</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch13s03s07.html">Next</a></td></tr></table><hr></div><div class="sect2" title="Passing Set Parameters to a Service"><div class="titlepage"><div><div><h3 class="title"><a name="Passing_Set_Parameters_to_a_Service"></a>Passing Set Parameters<a class="indexterm" name="d4e15706"></a><a class="indexterm" name="d4e15708"></a> to a Service</h3></div></div></div><p>Three types of set parameters are supported: INTEGER, REAL, and STRING<span class="emphasis"><em>n</em></span>.</p><p><span class="bold"><strong>INTEGER<a class="indexterm" name="d4e15714"></a></strong></span></p><p>If you want to sum up all the elements in a set of integers with an external function, to declare the function in the SERVICE structure:</p><pre class="programlisting">  SetFuncLib := SERVICE
+    INTEGER SumInt(SET OF INTEGER ss) :
+       holertl,library='dab',entrypoint='rtlSumInt';
+  END;
+  x:= 3+4.5;
+  SetFuncLib.SumInt([x, 11.79]); //passed two REAL numbers - it works
+</pre><p>To define the external function, in the header (.h) file:</p><pre class="programlisting">__int64 rtlSumInt(unsigned len, __int64 * a);</pre><p>In the source code (.cpp) file:</p><pre class="programlisting">  __int64 rtlSumInt(unsigned len, __int64 * a) {
+       __int64 sum = 0;
+       for(unsigned i = 0; i &lt; len; i++) {
+            sum += a[i];
+       }
+       return sum;
+    }
+</pre><p>The first parameter contains the length of the set, and the second parameter is an int array that holds the elements of the set. <span class="bold"><strong>Note:</strong></span> In declaring the function in ECL, you can also have sets of INTEGER4, INTEGER2 and INTEGER1, but you need to change the type of the C function parameter, too. The relationship is:</p><pre class="programlisting">  INTEGER8 -- __int64
+  INTEGER4 -- int
+  INTEGER2 -- short
+  INTEGER1 -- char
+</pre><p><span class="bold"><strong>REAL<a class="indexterm" name="d4e15727"></a></strong></span></p><p>If you want to sum up all the elements in a set of real numbers:</p><p>To declare the function in the SERVICE structure<a class="indexterm" name="d4e15731"></a>:</p><pre class="programlisting">  SetFuncLib := SERVICE
+       REAL8 SumReal(SET OF REAL8 ss) :
+            holertl,library='dab',entrypoint='rtlSumReal';
+  END;
+  
+  INTEGER r1 := 10;
+  r2 := 20.345;
+  SetFuncLib.SumReal([r1, r2]);
+  // intentionally passed an integer to the real set, it works too.
+</pre><p>To define the external function, in the header (.h) file:</p><p>double rtlSumReal(unsigned len, double * a);</p><p>In the source code (.cpp) file:</p><pre class="programlisting">  double rtlSumReal(unsigned len, double * a) {
+    double sum = 0;
+    for(unsigned i = 0; i &lt; len; i++) {
+       sum += a[i];
+    }
+    return sum;
+  }
+</pre><p>The first parameter contains the length of the set, and the second parameter is an array that holds the elements of the set.</p><p><span class="bold"><strong>Note:</strong></span> You can also declare the function in ECL as set of REAL4, but you need to change the parameter of the C function to float.</p><p><span class="bold"><strong>STRING</strong></span><span class="bold"><strong>n<a class="indexterm" name="d4e15744"></a></strong></span></p><p>If you want to calculate the sum of the lengths of all the strings in a set, with the trailing blanks trimmed off:</p><p>To declare the function in the SERVICE structure<a class="indexterm" name="d4e15748"></a>:</p><pre class="programlisting">  SetFuncLib := SERVICE
+    INTEGER SumCharLen(SET OF STRING20 ss) :
+       holertl,library='dab',entrypoint='rtlSumCharLen';
+  END;
+  str1 := '1234567890'+'xxxx ';
+  str2 := 'abc';
+  SetFuncLib.SumCharLen([str1, str2]);
+</pre><p>To define the external function, in the header (.h) file:</p><pre class="programlisting">__int64 rtlSumCharLen(unsigned len, char a[ ][20]);</pre><p>In the source code (.cpp) file:</p><pre class="programlisting">__int64 rtlSumCharLen(unsigned len, char a[][20]) {
+    __int64 sumtrimedlen = 0;
+       for(unsigned i = 0; i &lt; len; i++) {
+          for(int j = 20-1; j &gt;= 0; j&#8212;) {
+            if(a[i][j] != ' ') {
+              break;
+            }
+            a[i][j] = 0;
+       }
+       sumtrimedlen += j + 1;
+    }
+    return sumtrimedlen;
+  } </pre><p><span class="bold"><strong>Note:</strong></span> In declaring the C function, we have two parameters for the set. The first parameter is the length of the set, the second parameter is char[][n] where n is the SAME as that in stringn. Eg., if the service is declared as "integer SumCharLen(set of string20)", then in the C function the parameter type must be char a[][20].</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch13s03s05.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch13s03.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch13s03s07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Data Types&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;ECL Plug-Ins</td></tr></table></div></body></html>

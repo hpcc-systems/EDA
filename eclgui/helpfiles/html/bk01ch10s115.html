@@ -1,0 +1,29 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>STEPPED</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10.html" title="Built-in Functions and Actions"><link rel="prev" href="bk01ch10s114.html" title="SQRT"><link rel="next" href="bk01ch10s116.html" title="STORED"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">STEPPED</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s114.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Built-in Functions and Actions</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s116.html">Next</a></td></tr></table><hr></div><div class="sect1" title="STEPPED"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="STEPPED"></a>STEPPED</h2></div></div></div><p><span class="bold"><strong>STEPPED<a class="indexterm" name="d4e12739"></a><a class="indexterm" name="d4e12741"></a>( </strong></span><span class="emphasis"><em>index, fields </em></span><span class="bold"><strong>)</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="13%"><col width="87%"></colgroup><tbody><tr><td><span class="emphasis"><em>index</em></span></td><td>The INDEX to sort. This can be filtered or the result of a PROJECT on an INDEX.</td></tr><tr><td>fields</td><td>A comma-delimited list of fields by which to sort the result, typically trailing elements in the key.</td></tr></tbody></table></div><p>The <span class="bold"><strong>STEPPED </strong></span>function sorts the <span class="emphasis"><em>index</em></span> by the specified <span class="emphasis"><em>fields</em></span>. This function is used in those cases where the SORTED(index) function will not suffice.</p><p>There are some restrictions in its use:</p><p>The key fields before ordered <span class="emphasis"><em>fields</em></span> should be reasonably well filtered, otherwise the sorting could become very memory intensive.</p><p>Roxie only supports sorting by trailing components on indexes that are read locally (single part indexes or superkeys containing single part indexes), or NOROOT indexes read within ALLNODES.</p><p>Thor does not support STEPPED.</p><p>Example:</p><pre class="programlisting">DataFile := '~RTTEST::TestStepped';
+KeyFile := '~RTTEST::TestSteppedKey';
+Rec := RECORD
+STRING2 state;
+STRING20 city;
+STRING25 lname;
+STRING15 fname;
+END;
+ds := DATASET(DataFile,
+{Rec,UNSIGNED8 RecPos {virtual(fileposition)}},
+THOR);
+IDX := INDEX(ds,{state,city,lname,fname,RecPos},KeyFile);
+
+OUTPUT(IDX(state IN ['FL','PA']));
+/* where this OUTPUT produces this result:
+FL BOCA RATON WIK PICHA
+FL DELAND WIKER OKE
+FL GAINESVILLE WIK MACHOUSTON
+PA NEW STANTON WIKER DESSIE */
+
+OUTPUT(STEPPED(IDX(state IN ['FL','PA']),fname));
+/* this STEPPED OUTPUT produces this result:
+PA NEW STANTON WIKER DESSIE
+FL GAINESVILLE WIK MACHOUSTON
+FL DELAND WIKER OKE
+FL BOCA RATON WIK PICHA */
+</pre><p>See Also: <a class="link" href="bk01ch05s03.html" title="INDEX">INDEX</a>, <a class="link" href="bk01ch10s113.html" title="SORTED">SORTED</a>, <a class="link" href="bk01ch10s04.html" title="ALLNODES">ALLNODES</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s114.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s116.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">SQRT&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;STORED</td></tr></table></div></body></html>

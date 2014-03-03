@@ -1,0 +1,19 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>How sorting affects JOINs</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10s112s06.html" title="Performance Considerations"><link rel="prev" href="bk01ch10s112s06s02.html" title="Spilling to disk"><link rel="next" href="bk01ch10s113.html" title="SORTED"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">How sorting affects JOINs</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s112s06s02.html">Prev</a>&nbsp;</td><th width="60%" align="center">Performance Considerations</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s113.html">Next</a></td></tr></table><hr></div><div class="sect3" title="How sorting affects JOINs"><div class="titlepage"><div><div><h4 class="title"><a name="How_sorting_affects_JOINs"></a>How sorting affects JOINs</h4></div></div></div><p>A normal JOIN operation requires that both its inputs be sorted by the fields used in the equality portion of the match condition. The supercomputer automatically performs these sorts "under the covers" unless it knows that an input is already sorted correctly. Therefore, some of the considerations that apply to the consideration of the algorithm for a SORT can also apply to a JOIN. To take advantage of these alternate sorting algorithms in a JOIN context you need to SORT the input dataset(s) the way you want, then specify the NOSORT option on the JOIN.</p><p>Note well that no sorting is required for JOIN operations using the KEYED (or half-keyed), LOOKUP, or ALL options. Under some circumstances (usually in Roxie queries or in those cases where the optimizer thinks there are few records in the right input dataset) the supercomputer's optimizer will automatically perform a LOOKUP or ALL join instead of a regular join. This means that, if you have done your own SORT and specified the NOSORT option on the JOIN, that you will be defeating this possible optimization.</p><p>Example:</p><pre class="programlisting">MySet1 := SORT(Person,-last_name, first_name);
+// descending last name, ascending first name
+
+MySet2 := SORT(Person,RECORD,EXCEPT per_sex,per_marital_status);
+// sort by all fields except sex and marital status
+
+MySet3 := SORT(Person,last_name, first_name,STABLE('quicksort'));
+// stable quick sort, not supported by Roxie
+
+MySet4 := SORT(Person,last_name, first_name,UNSTABLE('heapsort'));
+// unstable heap sort,
+// not supported by any platform,
+// therefore ignored
+
+MySet5 := SORT(Person,last_name,first_name,STABLE('insertionsort'));
+// stable insertion sort, not supported by Thor
+</pre><p>See Also: <a class="link" href="bk01ch10s113.html" title="SORTED">SORTED</a>, <a class="link" href="bk01ch10s93.html" title="RANK">RANK</a>, <a class="link" href="bk01ch10s94.html" title="RANKED">RANKED</a>, <a class="link" href="bk01ch08s02.html" title="EXCEPT">EXCEPT</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s112s06s02.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10s112s06.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s113.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Spilling to disk&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;SORTED</td></tr></table></div></body></html>

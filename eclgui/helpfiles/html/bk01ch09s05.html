@@ -1,0 +1,70 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>MACRO Structure</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch09.html" title="Special Structures"><link rel="prev" href="bk01ch09s04.html" title="INTERFACE Structure"><link rel="next" href="bk01ch09s06.html" title="MODULE Structure"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">MACRO Structure</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch09s04.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Special Structures</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch09s06.html">Next</a></td></tr></table><hr></div><div class="sect1" title="MACRO Structure"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="MACRO_Structure"></a>MACRO Structure<a class="indexterm" name="d4e4333"></a></h2></div></div></div><p><span class="emphasis"><em>[</em></span><span class="emphasis"><em>resulttype</em></span><span class="bold"><strong>]</strong></span><span class="emphasis"><em> macroname </em></span><span class="bold"><strong>(</strong></span><span class="emphasis"><em> parameterlist </em></span><span class="bold"><strong>) := MACRO</strong></span><span class="bold"><strong><a class="indexterm" name="d4e4344"></a> </strong></span><span class="emphasis"><em></em></span></p><p><span class="emphasis"><em> tokenstream</em></span>;<span class="bold"><strong></strong></span></p><p><span class="bold"><strong>ENDMACRO<a class="indexterm" name="d4e4352"></a>;</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="21%" align="left"><col width="79%"></colgroup><tbody><tr><td align="left"><span class="emphasis"><em>resulttype</em></span></td><td>Optional. The result type of the macro. The only valid type is DATASET. If omitted and the <span class="emphasis"><em>tokenstream</em></span> contains no Attribute definitions, then the macro is treated as returning a value (typically INTEGER or STRING).</td></tr><tr><td align="left"><span class="emphasis"><em>macroname</em></span></td><td><p>The name of the function the MACRO structure defines.</p></td></tr><tr><td align="left"><span class="emphasis"><em>parameterlist</em></span></td><td>A list of names (tokens) of the parameters that will be passed to the macro. These names are used in the <span class="emphasis"><em>tokenstream</em></span> to indicate where the passed parameters are substituted when the macro is used. Value types for these parameters are not allowed, but default values may be specified as string constants.</td></tr><tr><td align="left"><span class="emphasis"><em>tokenstream</em></span></td><td>The Attribute definitions or Actions that the macro will perform.</td></tr></tbody></table></div><p>The <span class="bold"><strong>MACRO </strong></span>structure makes it possible to create a function without knowing the value types of the parameters that will eventually be passed to it. The most common use would be performing functions upon arbitrary datasets.</p><p>A macro behaves as if you had typed the <span class="emphasis"><em>tokenstream</em></span> into the exact position you use it, using lexical substitution&#8212;the tokens defined in the <span class="emphasis"><em>parameterlist</em></span> are substituted everywhere they appear in the <span class="emphasis"><em>tokenstream </em></span>by the text passed to the macro. This makes it entirely possible to write a valid MACRO definition that could be called with a set of parameters that result in obscure compile time errors.</p><p>There are two basic type of macros: Value or Attribute. A Value macro does not contain any Attribute definitions, and may therefore be used wherever the value type it will generate would be appropriate to use. An Attribute macro does contain Attribute definitions (detected by the presence of the := in the <span class="emphasis"><em>tokenstream</em></span>) and may therefore only be used where an Attribute definition is valid (a line by itself) and one item in the <span class="emphasis"><em>parameterlist</em></span> should generally name the Attribute to be used to contain the result of the macro (so any code following the macro call can make use of the result).</p><p>Example:</p><pre class="programlisting">// This is a DATASET Value macro that results in a crosstab
+DATASET CrossTab(File,X,Y) := MACRO
+        TABLE(File,{X, Y, COUNT(GROUP)},X,Y)
+ENDMACRO;
+// and would be used something like this:
+OUTPUT(CrossTab(Person,person.per_st,Person.per_sex))
+// this macro usage is the equivalent of:
+//   OUTPUT(TABLE(Person,{person.per_st,Person.per_sex,COUNT(GROUP)},
+// person.per_st,Person.per_sex)
+//The advantage of using this macro is that it can be re-used to
+// produce another cross-tab without recoding
+// The following macro takes a LeftFile and looks up a field of it in
+// the RightFile and then sets a field in the LeftFile indicating if 
+// the lookup worked.
+IsThere(OutFile&nbsp;,RecType,LeftFile,RightFile,LinkId&nbsp;,SetField&nbsp;) := MACRO
+    RecType Trans(RecType L, RecType R) := TRANSFORM
+        SELF.SetField := IF(NOT R.LinkId,0,1);
+        SELF := L;
+    END;
+    OutFile := JOIN(LeftFile,
+        RightFile,
+        LEFT.LinkId=RIGHT.LinkId,
+        Trans(LEFT,RIGHT),LEFT OUTER);
+ENDMACRO;
+    
+// and would be used something like this:
+MyRec := RECORD
+   Person.per_cid;
+   Person.per_st;
+   Person.per_sex;
+   Flag:=FALSE;
+END;
+MyTable1 := TABLE(Person(per_first_name[1]='R'),MyRec);
+MyTable2 := TABLE(Person(per_first_name[1]='R',per_sex='F'),MyRec);
+
+IsThere(MyOutTable,MyRec,MyTable1,MyTable2,per_cid,Flag)
+
+        // This macro call generates the following code:
+        // MyRec Trans(MyRec L, MyRec R) := TRANSFORM
+        // SELF.Flag := IF(NOT R.per_cid ,0,1);
+        // SELF := L;
+        // END;
+        // MyOutTable := JOIN(MyTable1,
+        // MyTable2,
+        // LEFT.per_cid=RIGHT.per_cid,
+        // Trans(LEFT,RIGHT),
+        // LEFT OUTER );
+
+OUTPUT(MyOutTable);
+//***********************************************************
+//This macro has defaults for its second and third parameters
+MyMac(FirstParm,yParm='22',zParm='42') := MACRO
+        FirstParm := yParm + zParm;
+ENDMACRO;
+
+// and would be used something like this:
+        MyMac(Fred)
+    // This macro call generates the following code:
+    // Fred := 22 + 42;
+    //***********************************************************
+    //This macro uses #EXPAND
+  
+MAC_join(attrname, leftDS, rightDS, linkflags) := MACRO
+  attrname := JOIN(leftDS,rightDS,#EXPAND(linkflags));
+ENDMACRO;
+MAC_join(J1,People,Property,'LEFT.ID=RIGHT.PeopleID,LEFT  OUTER')
+//expands out to:
+// J1 := JOIN(People,Property,LEFT.ID=RIGHT.PeopleID,LEFT OUTER);</pre><p>See Also: <a class="link" href="bk01ch09s07.html" title="TRANSFORM Structure">TRANSFORM Structure</a>, <a class="link" href="bk01ch05s01.html" title="RECORD Structure">RECORD Structure</a>, <a class="link" href="bk01ch12s21.html" title="#UNIQUENAME">#UNIQUENAME</a>, <a class="link" href="bk01ch12s07.html" title="#EXPAND">#EXPAND</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch09s04.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch09.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch09s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">INTERFACE Structure&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;MODULE Structure</td></tr></table></div></body></html>

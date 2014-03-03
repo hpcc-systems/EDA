@@ -1,0 +1,45 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>SIZEOF</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10.html" title="Built-in Functions and Actions"><link rel="prev" href="bk01ch10s109.html" title="SINH"><link rel="next" href="bk01ch10s111.html" title="SOAPCALL"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">SIZEOF</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s109.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Built-in Functions and Actions</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s111.html">Next</a></td></tr></table><hr></div><div class="sect1" title="SIZEOF"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="SIZEOF"></a>SIZEOF</h2></div></div></div><p><span class="bold"><strong>SIZEOF<a class="indexterm" name="d4e12208"></a><a class="indexterm" name="d4e12210"></a>(</strong></span><span class="emphasis"><em>data </em></span><span class="bold"><strong>[</strong></span>, <span class="bold"><strong>MAX</strong></span><span class="bold"><strong><a class="indexterm" name="d4e12216"></a> </strong></span><span class="bold"><strong>] )</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="13%"><col width="87%"></colgroup><tbody><tr><td><span class="emphasis"><em>data</em></span></td><td>The name of a dataset, RECORD structure, a fully-qualified field name, or a constant string expression.</td></tr><tr><td><span class="bold"><strong>MAX</strong></span></td><td>Specifies the data is variable-length (such as containing child datasets) and the value to return is the maximum size..</td></tr><tr><td>Return:</td><td>SIZEOF returns a single integer value.</td></tr></tbody></table></div><p>The <span class="bold"><strong>SIZEOF </strong></span>function returns the total number of bytes defined for storage of the specified <span class="emphasis"><em>data</em></span> structure or field.</p><p>Example:</p><pre class="programlisting">MyRec := RECORD
+INTEGER1 F1;
+INTEGER5 F2;
+STRING1 F3;
+STRING10 F4;
+QSTRING12 F5;
+VARSTRING12 F6;
+END;
+MyData :=
+        DATASET([{1,33333333333,'A','A','A',V'A'}],MyRec);
+SIZEOF(MyRec); //result is 39
+SIZEOF(MyData.F1); //result is 1
+SIZEOF(MyData.F2); //result is 5
+SIZEOF(MyData.F3); //result is 1
+SIZEOF(MyData.F4); //result is 10
+SIZEOF(MyData.F5); //result is 9 -12 chars stored in 9
+        bytes
+SIZEOF(MyData.F6); //result is 13 -12 chars plus null
+          terminator
+
+Layout_People := RECORD
+STRING15 first_name;
+STRING15 middle_name;
+STRING25 last_name;
+STRING2 suffix;
+STRING42 street;
+STRING20 city;
+STRING2 st;
+STRING5 zip;
+STRING1 sex;
+STRING3 age;
+STRING8 dob;
+BOOLEAN age_flag;
+UNSIGNED8 __filepos { virtual(fileposition)};
+END;
+File_People := DATASET('ecl_training::People', Layout_People,
+          FLAT);
+SIZEOF(File_People); //result is 147
+SIZEOF(File_People.street); //result is 42
+SIZEOF('abc' + '123'); //result is 6
+SIZEOF(person.per_cid); //result is 9 - Person.per_cid is
+        DATA9
+</pre><p>See Also: <a class="link" href="bk01ch10s64.html" title="LENGTH">LENGTH</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s109.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s111.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">SINH&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;SOAPCALL</td></tr></table></div></body></html>

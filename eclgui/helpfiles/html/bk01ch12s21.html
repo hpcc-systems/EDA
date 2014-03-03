@@ -1,0 +1,68 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>#UNIQUENAME</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch12.html" title="Template Language"><link rel="prev" href="bk01ch12s20.html" title="#TEXT"><link rel="next" href="bk01ch12s22.html" title="#WARNING"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">#UNIQUENAME</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch12s20.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Template Language</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch12s22.html">Next</a></td></tr></table><hr></div><div class="sect1" title="#UNIQUENAME"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_UNIQUENAME"></a>#UNIQUENAME</h2></div></div></div><p><span class="bold"><strong>#UNIQUENAME<a class="indexterm" name="d4e15442"></a>( </strong></span><span class="emphasis"><em>namevar</em></span><span class="bold"><strong> [ </strong></span><span class="emphasis"><em>,pattern</em></span><span class="bold"><strong>]);</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="13%"><col width="87%"></colgroup><tbody><tr><td><span class="emphasis"><em>namevar</em></span></td><td>The label of the template variable (without the percent signs) to use in subsequent statements (with the percent signs) that need the generated unique name.</td></tr><tr><td><span class="emphasis"><em>pattern</em></span></td><td>Optional. A template for unique name construction. It should contain a dollar sign ($) to indicate the position at which a unique number is generated, and may contain a pound sign (#) to include the namevar. This is useful for situations where #UNIQUENAME is being used to generate field names and the result is meant to be viewed in the ECL IDE program, since by default #UNIQUENAME generates identifiers that begin with a double underscore (__) and the ECL IDE treats them as hidden fields. If omitted, the default pattern is __#__$__.</td></tr></tbody></table></div><p>The <span class="bold"><strong>#UNIQUENAME </strong></span>statement creates a valid unique ECL identifier within the context of the current scope limit. This is particularly useful in MACRO structures as it allows the macro to be used multiple times in the same scope without creating duplicate attribute name errors from the attribute definitions within the macro. This statement may be used outside an XML scope and does not require a previous LOADXML to instantiate an XML scope.</p><p>Example:</p><pre class="programlisting">  IMPORT Training_Compare;
+  EXPORT MAC_Compare_Result(module_name, attribute_name) := MACRO
+  
+  #UNIQUENAME(compare_file);
+  %compare_file% := Training_Compare.File_Compare_Master;
+  
+  #UNIQUENAME(layout_per_attr);
+  #UNIQUENAME(compare_attr, _MyField_$_);
+       //the compare_attr fieldname is generated like: _MyField_1_
+  %layout_per_attr% := RECORD
+       person.per_cid;
+       %compare_attr% := module_name.attribute_name;
+  END;
+  
+  #UNIQUENAME(person_attr_out);
+  %person_attr_out% := TABLE(person, %layout_per_attr%);
+  
+  #UNIQUENAME(person_attr_out_dist);
+  %person_attr_out_dist% := DISTRIBUTE(%person_attr_out%,HASH(per_cid));
+  
+  #UNIQUENAME(layout_match_out);
+  %layout_match_out% := RECORD
+       data9 per_cid;
+       boolean ValuesMatchFlag;
+       TYPEOF(module_name.attribute_name) MyValue;
+       TYPEOF(%compare_file%.attribute_name) CompareValue;
+  END;
+  
+  #UNIQUENAME(layout_compare);
+  %layout_compare% := RECORD
+       %compare_file%.per_cid;
+       %compare_file%.attribute_name;
+  END;
+  
+  #UNIQUENAME(compare_table);
+  %compare_table% := TABLE(%compare_file%, %layout_compare%);
+  #UNIQUENAME(compare_table_dist);
+  %compare_table_dist% := DISTRIBUTE(%compare_table%, HASH(per_cid));
+  #UNIQUENAME(compare_attr_to_field);
+  %layout_match_out% %compare_attr_to_field%(%person_attr_out% L,
+  %compare_table% R) := TRANSFORM
+       SELF.ValuesMatchFlag := (L.%compare_attr% = R.attribute_name);
+       SELF.MyValue := L.%compare_attr%;
+       SELF.CompareValue := R.attribute_name;
+       SELF := L;
+  END;
+  
+  #UNIQUENAME(compare_out);
+  %compare_out% := JOIN(%person_attr_out_dist%,
+            %compare_table_dist%,
+            LEFT.per_cid = RIGHT.per_cid,
+            %compare_attr_to_field%(LEFT, RIGHT),
+            LOCAL);
+  
+  #UNIQUENAME(match_out);
+  #UNIQUENAME(nomatch_out);
+  %match_out% := %compare_out%(ValuesMatchFlag);
+  %nomatch_out% := %compare_out%(~ValuesMatchFlag);
+  
+  COUNT(%match_out%);
+  OUTPUT(CHOOSEN(%match_out%, 50));
+  COUNT(%nomatch_out%);
+  OUTPUT(CHOOSEN(%nomatch_out%, 50));
+  
+  ENDMACRO;
+</pre><p>See Also: <a class="link" href="bk01ch09s05.html" title="MACRO Structure">MACRO</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch12s20.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch12.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch12s22.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">#TEXT&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;#WARNING</td></tr></table></div></body></html>

@@ -1,0 +1,39 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>ECL to C++ Mapping</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch09s01.html" title="BEGINC++ Structure"><link rel="prev" href="bk01ch09s01.html" title="BEGINC++ Structure"><link rel="next" href="bk01ch09s01s02.html" title="Available Options"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">ECL to C++ Mapping</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch09s01.html">Prev</a>&nbsp;</td><th width="60%" align="center">BEGINC++ Structure</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch09s01s02.html">Next</a></td></tr></table><hr></div><div class="sect2" title="ECL to C++ Mapping"><div class="titlepage"><div><div><h3 class="title"><a name="ECL_to_Cplus_Mapping"></a>ECL to C++ Mapping</h3></div></div></div><p>Types are passed as follows:</p><pre class="programlisting">//The following typedefs are used below:
+typedef unsigned size32_t;
+typedef wchar_t UChar; [ unsigned short in linux ]</pre><p>The following list describes the mappings from ECL to C++. For embedded C++ the parameters are always converted to lower case, and capitalized in conjunctions (see below).</p><pre class="programlisting"><span class="bold"><strong>ECL                  C++ [Linux in brackets]</strong></span>
+BOOOLEAN xyz         bool xyz
+INTEGER1 xyz         signed char xyz
+INTEGER2 xyz         signed short xyz
+INTEGER4 xyz         signed int xyz
+INTEGER8 xyz         signed __int64 xyz [ long long ]
+UNSIGNED1 xyz        unsigned char xyz
+UNSIGNED2 xyz        unsigned short xyz
+UNSIGNED4 xyz        unsigned int xyz
+UNSIGNED8 xyz        unsigned __int64 xyz [ unsigned long long xyz ]
+REAL4 xyz            float xyz
+REAL/REAL8 xyz       double xyz
+DATA xyz             size32_t lenXyz, void * xyz
+STRING xyz           size32_t lenXyz, char * xyz
+VARSTRING xyz        char * xyz;
+QSTRING xyz          size32_t lenXyz, char * xyz
+UNICODE xyz          size32_t lenXyz, UChar * xyz
+VARUNICODE xyz       UChar * xyz
+DATA&lt;nn&gt; xyz         void * xyz
+STRING&lt;nn&gt; xyz       char * xyz
+QSTRING&lt;nn&gt; xyz      char * xyz
+UNICODE&lt;nn&gt; xyz      UChar * xyz
+SET OF ... xyz       bool isAllXyz, size32_t lenXyz, void *  xyz</pre><p>Note that strings of unknown length are passed differently from those with a known length. A variable length input string is passed as a number of characters, not the size (i.e. qstring/unicode), followed by a pointer to the data, like this (size32_t is an UNSIGNED4):</p><pre class="programlisting">string ABC -&gt; size32_t lenAbc, const char * abc;
+unicode ABC -&gt; size32_t lenABC, const UChar * abc;</pre><p>A dataset is passed as a size/pointer pair. The length gives the size of the following dataset in bytes. The same naming convention is used:</p><pre class="programlisting">dataset(r) ABC -&gt; size32_t lenAbc, const void * abc</pre><p>NOTE: variable length strings within a record are stored as a 4 byte number of characters, followed by the string data.</p><p>Sets are passed as a set of parameters (all, size, pointer):</p><pre class="programlisting">set of unsigned4 ABC -&gt; bool isAllAbc, size32_t lenAbc, const void * abc</pre><p>Return types are handled as C++ functions returning the same types with some exceptions. The exceptions have some extra initial parameters to return the results in:</p><pre class="programlisting"><span class="bold"><strong>ECL                C++ [Linux in brackets]</strong></span>
+DATA xyz           size32_t &amp; __lenResult, void * &amp; __result
+STRING xyz         size32_t &amp; __lenResult, char * &amp; __result
+QSTRING xyz        size32_t &amp; __lenResult, char * &amp; __result
+UNICODE xyz        size32_t &amp; __lenResult, UChar * &amp; __result
+DATA&lt;nn&gt; xyz       void * __result
+STRING&lt;nn&gt; xyz     char * __result
+QSTRING&lt;nn&gt; xyz    char * __result
+UNICODE&lt;nn&gt; xyz    UChar * __result
+SET OF ... xyz     bool __isAllResult, size32_t &amp;  __lenResult,
+                      void * &amp; __result</pre><p>For example,</p><pre class="programlisting">STRING process(STRING value, INTEGER4 len)</pre><p>has the prototype:</p><pre class="programlisting">void process(size32_t &amp; __lenResult, char * &amp; __result,
+             size32_t lenValue, char * value, int len);</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch09s01.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch09s01.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch09s01s02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">BEGINC++ Structure&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Available Options</td></tr></table></div></body></html>

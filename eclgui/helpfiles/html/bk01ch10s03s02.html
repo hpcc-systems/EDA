@@ -1,0 +1,43 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>How AGGREGATE Works</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10s03.html" title="AGGREGATE"><link rel="prev" href="bk01ch10s03s01.html" title="TRANSFORM Function Requirements - AGGREGATE"><link rel="next" href="bk01ch10s04.html" title="ALLNODES"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">How AGGREGATE Works</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s03s01.html">Prev</a>&nbsp;</td><th width="60%" align="center">AGGREGATE</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s04.html">Next</a></td></tr></table><hr></div><div class="sect2" title="How AGGREGATE Works"><div class="titlepage"><div><div><h3 class="title"><a name="How_Aggregate_Works"></a>How AGGREGATE Works</h3></div></div></div><p>In the <span class="emphasis"><em>maintransform</em></span>, LEFT refers to the next input record and RIGHT the result of the previous transform.</p><p>There are 4 interesting cases:</p><p>(a) If no records match (and the operation isn't grouped), the output is a single record with all the fields set to blank values.</p><p>(b) If a single record matches, the first record that matches calls the <span class="emphasis"><em>maintransform</em></span> as you would expect.</p><p>(c) If multiple records match on a single node, subsequent records that match call the <span class="emphasis"><em>maintransform</em></span> but any field expression in the <span class="emphasis"><em>maintransform</em></span> that does not reference the RIGHT record is not processed. Therefore the value for that field is set by the first matching record matched instead of the last.</p><p>(d) If multiple records match on multiple nodes, then step (c) performs on each node, and then the summary records are merged. This requires a <span class="emphasis"><em>mergetransform</em></span> that takes two records of type RIGHT. Whenever possible the code generator tries to deduce the <span class="emphasis"><em>mergetransform</em></span> from the <span class="emphasis"><em>maintransform</em></span>. If it can't, then the user will need to specify one.</p><pre class="programlisting">inRecord := RECORD 
+  UNSIGNED box; 
+  STRING text{MAXLENGTH(10)}; 
+END; 
+inTable := DATASET([{1,'Fred'},{1,'Freddy'},
+                    {2,'Freddi'},{3,'Fredrik'},{1,'FredJon'}], inRecord);
+      
+//Example 1: Produce a list of box contents by concatenating a string:
+      
+outRecord1 := RECORD 
+  UNSIGNED box; 
+  STRING contents{MAXLENGTH(200)}; 
+END; 
+outRecord1 t1(inRecord l, outRecord1 r) := TRANSFORM 
+  SELF.box := l.box; 
+  SELF.contents := r.contents + IF(r.contents &lt;&gt; '', ',', '') + l.text; 
+END; 
+      
+outRecord1 t2(outRecord1 r1, outRecord1 r2) := TRANSFORM 
+  SELF.box := r1.box; 
+  SELF.contents := r1.contents + ',' + r2.contents; 
+END; 
+OUTPUT(AGGREGATE(inTable, outRecord1, t1(LEFT, RIGHT), t2(RIGHT1, RIGHT2), LEFT.box));
+      
+//This example could eliminate the merge transform if the SELF.contents expression in
+//the t1 TRANSFORM were simpler, like this:
+//     SELF.contents := r.contents + ',' + l.text;
+//which would make the AGGREGATE function like this:
+//   OUTPUT(AGGREGATE(inTable, outRecord1, t1(LEFT, RIGHT), LEFT.box));
+
+      
+//Example 2: A PIGMIX style grouping operation:
+outRecord2 := RECORD 
+  UNSIGNED box; 
+  DATASET(inRecord) items; 
+END; 
+outRecord2 t3(inRecord l, outRecord2 r) := TRANSFORM 
+  SELF.box := l.box; 
+  SELF.items:= r.items + l; 
+END; 
+OUTPUT(AGGREGATE(inTable, outRecord2, t3(LEFT, RIGHT), LEFT.box));</pre><p>See Also: <a class="link" href="bk01ch09s07.html" title="TRANSFORM Structure">TRANSFORM Structure</a>, <a class="link" href="bk01ch05s01.html" title="RECORD Structure">RECORD Structure</a>, <a class="link" href="bk01ch10s100.html" title="ROLLUP">ROLLUP</a>, <a class="link" href="bk01ch10s118.html" title="TABLE">TABLE</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s03s01.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10s03.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">TRANSFORM Function Requirements - AGGREGATE&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;ALLNODES</td></tr></table></div></body></html>

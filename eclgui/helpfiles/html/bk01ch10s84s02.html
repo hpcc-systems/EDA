@@ -1,0 +1,49 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>PARSE XML Data</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10s84.html" title="PARSE"><link rel="prev" href="bk01ch10s84s01.html" title="PARSE Text Data"><link rel="next" href="bk01ch10s84s03.html" title="Extended PARSE Examples"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">PARSE XML Data</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s84s01.html">Prev</a>&nbsp;</td><th width="60%" align="center">PARSE</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s84s03.html">Next</a></td></tr></table><hr></div><div class="sect2" title="PARSE XML Data"><div class="titlepage"><div><div><h3 class="title"><a name="PARSE_XML_Data"></a>PARSE XML<a class="indexterm" name="d4e10868"></a> Data</h3></div></div></div><p>The second form operates on an XML <span class="emphasis"><em>dataset</em></span>, parsing the XML <span class="emphasis"><em>data </em></span>and creating a result set using the <span class="emphasis"><em>result </em></span>parameter, one output record per input. The expectation is that each row of <span class="emphasis"><em>data</em></span> contains a complete block of XML. If the <span class="emphasis"><em>result</em></span> names a RECORD structure, then this form of PARSE operates like the TABLE function to generate the result set.</p><p>If the <span class="emphasis"><em>result</em></span> names a TRANSFORM function, then the transform generates the result set. The TRANSFORM function must take at least one parameter: a LEFT record of the same format as the <span class="emphasis"><em>dataset</em></span>. The format of the resulting record set does not need to be the same as the input.</p><p><span class="bold"><strong>NOTE:</strong></span> XML reading and parsing can consume a large amount of memory, depending on the usage. In particular, if the specified xpath matches a very large amount of data, then a large data structure will be provided to the transform. Therefore, the more you match, the more resources you consume per match. For example, if you have a very large document and you match an element near the root that virtually encompasses the whole thing, then the whole thing will be constructed as a referenceable structure that the ECL can get at.</p><p>Example:</p><pre class="programlisting">linerec := { STRING line };
+in1 := DATASET([{
+        '&lt;ENTITY eid="P101" type="PERSON" subtype="MILITARY"&gt;' +
+        '  &lt;ATTRIBUTE name="fullname"&gt;JOHN SMITH&lt;/ATTRIBUTE&gt;' +
+        '  &lt;ATTRIBUTE name="honorific"&gt;Mr.&lt;/ATTRIBUTE&gt;' +
+        '  &lt;ATTRIBUTEGRP descriptor="passport"&gt;' +
+        '     &lt;ATTRIBUTE name="idNumber"&gt;W12468&lt;/ATTRIBUTE&gt;' +
+        '     &lt;ATTRIBUTE name="idType"&gt;pp&lt;/ATTRIBUTE&gt;' +
+        '     &lt;ATTRIBUTE name="issuingAuthority"&gt;JAPAN PASSPORT AUTHORITY&lt;/ATTRIBUTE&gt;' +
+        '     &lt;ATTRIBUTE name="country" value="L202"/&gt;' +
+        '     &lt;ATTRIBUTE name="age" value="19"/&gt;' +
+        '  &lt;/ATTRIBUTEGRP&gt;' +
+        '&lt;/ENTITY&gt;'}],
+     linerec);
+passportRec := RECORD
+  STRING id;
+  STRING idType;
+  STRING issuer;
+  STRING country;
+  INTEGER age;
+END;
+outrec := RECORD
+  STRING id;
+  UNICODE fullname;
+  UNICODE title;
+  passportRec passport;
+  STRING line;
+END;
+outrec t(lineRec L) := TRANSFORM
+  SELF.id := XMLTEXT('@eid');
+  SELF.fullname := XMLUNICODE('ATTRIBUTE[@name="fullname"]');
+  SELF.title := XMLUNICODE('ATTRIBUTE[@name="honorific"]');
+  SELF.passport.id := XMLTEXT('ATTRIBUTEGRP[@descriptor="passport"]' 
+                            + '/ATTRIBUTE[@name="idNumber"]');
+  SELF.passport.idType := XMLTEXT('ATTRIBUTEGRP[@descriptor="passport"]'
+                                + '/ATTRIBUTE[@name="idType"]');
+  SELF.passport.issuer := XMLTEXT('ATTRIBUTEGRP[@descriptor="passport"]'
+                                + '/ATTRIBUTE[@name="issuingAuthority"]');
+  SELF.passport.country := XMLTEXT('ATTRIBUTEGRP[@descriptor="passport"]'
+                                 + '/ATTRIBUTE[@name="country"]/@value');
+  SELF.passport.age := (INTEGER)XMLTEXT('ATTRIBUTEGRP[@descriptor="passport"]'
+                                      + '/ATTRIBUTE[@name="age"]/@value');
+  SELF := L;
+END;
+
+textout := PARSE(in1, line, t(LEFT), XML('/ENTITY[@type="PERSON"]'));
+</pre><p>See Also: <a class="link" href="bk01ch05s02.html" title="DATASET">DATASET</a>, <a class="link" href="bk01ch10s82.html" title="OUTPUT">OUTPUT</a>, <a class="link" href="bk01ch10s135.html" title="XMLENCODE">XMLENCODE</a>, <a class="link" href="bk01ch10s134.html" title="XMLDECODE">XMLDECODE</a>, <a class="link" href="bk01ch10s96.html" title="REGEXFIND">REGEXFIND</a>, <a class="link" href="bk01ch10s97.html" title="REGEXREPLACE">REGEXREPLACE</a>, <a class="link" href="bk01ch10s27.html" title="DEFINE">DEFINE</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s84s01.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10s84.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s84s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">PARSE Text Data&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Extended PARSE Examples</td></tr></table></div></body></html>
