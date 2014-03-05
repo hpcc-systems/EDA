@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin id="ECLFilter"
+	iconfile="icon.png"
+	description="Filter"
+	tooltip="ECLFilter" 
+	category="HPCC Systems"
+	classname="org.hpccsystems.pentaho.job.eclfilter.ECLFilter">
+            
+    <libraries>
+	  <library name="../../hpcc-common/javaecl-0.1.0.jar"/>
+        <library name="../../hpcc-common/eclgui.jar"/>
+        <library name="eclfilter.jar"/>
+    </libraries>            
+</plugin>
