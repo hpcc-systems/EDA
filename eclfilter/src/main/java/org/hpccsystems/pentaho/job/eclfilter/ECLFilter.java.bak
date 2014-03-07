@@ -37,6 +37,7 @@ import org.hpccsystems.ecljobentrybase.*;
  */
 public class ECLFilter extends ECLJobEntry{//extends JobEntryBase implements Cloneable, JobEntryInterface {
     
+	private String Name = "";
     private String recordsetName = "";
     private String inRecordName = "";
     private String outRecordName = "";
@@ -45,6 +46,14 @@ public class ECLFilter extends ECLJobEntry{//extends JobEntryBase implements Clo
     private RecordList recordList = new RecordList();
     
     private MapperRecordList mapperRecList = new MapperRecordList();
+    
+    public String getName(){
+		return Name;
+	}
+    
+	public void setName(String Name){
+		this.Name = Name;
+	}
 
     public String getRecordsetName() {
         return recordsetName;
@@ -201,7 +210,7 @@ public class ECLFilter extends ECLJobEntry{//extends JobEntryBase implements Clo
         	return result;
  		}
         Filter filter = new Filter();
-        filter.setName(this.getRecordsetName());
+        filter.setName(this.getName());
 
         filter.setInRecordName(this.getInRecordName());
        

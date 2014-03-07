@@ -110,11 +110,17 @@ public class CreateTable {
 	
 	private boolean includeCopyParent = false;
 	private boolean selectColumns = false;
-	
+	private boolean isAddButton = true;
 	
 	private String[] filedNameArr = null;
 
 	
+	public boolean isAddButton() {
+		return isAddButton;
+	}
+	public void setAddButton(boolean isAddButton) {
+		this.isAddButton = isAddButton;
+	}
 	public String[] getFiledNameArr() {
 		return filedNameArr;
 	}
@@ -143,7 +149,7 @@ public class CreateTable {
 	public void setIncludeCopyParent(boolean includeCopyParent) {
 		this.includeCopyParent = includeCopyParent;
 	}
-	public TabItem buildDefTab(String tabName, TabFolder tabFolder){
+	public TabItem buildDefTab(String tabName, TabFolder tabFolder) {
 		this.tabFolder = tabFolder;
 		TabItem tabItem = new TabItem(tabFolder, SWT.NULL);
 		tabItem.setText(tabName);
@@ -332,7 +338,7 @@ public class CreateTable {
 	 * Create a new shell, add the widgets, open the shell
 	 * @return the shell that was created	 
 	 */
-	private void addChildControls(Composite composite){//,Element[] eElement, ArrayList<Integer> list) {
+	private void addChildControls(Composite composite) {
 
 		// Create a composite to hold the children
 		GridData gridData = new GridData (GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_BOTH);
@@ -585,8 +591,8 @@ public class CreateTable {
 					if(items.length == 0)
 						s = "";
 					for (int i = 0; i < items.length; i++) {
-						if (items[i].toLowerCase().startsWith(s.toLowerCase())) {
-							if(!letter.equals(s)){
+						if (items[i].toLowerCase().startsWith(key.toLowerCase())) {
+							if(!letter.equals(key)){
 								tempList = new ArrayList<String>();
 							}
 							if (items[i].equalsIgnoreCase("select")) {
@@ -600,7 +606,7 @@ public class CreateTable {
 									} else {
 										((CCombo) typeComboBox.getControl()).select(i);
 									}
-									letter = s;
+									letter = key;
 									return;
 								} 
 							}
@@ -965,6 +971,7 @@ public class CreateTable {
 		
 		// Create and configure the "Add" button
 		//if(!this.selectColumns){//decided to keep the add button in all cases if user prefers this use case
+		if(this.isAddButton){
 			Button add = new Button(parent, SWT.PUSH | SWT.CENTER);
 			add.setText("Add");
 			
@@ -978,12 +985,14 @@ public class CreateTable {
 	                                table.redraw();
 				}
 			});
+		}
 		//}
 		
 		if(this.selectColumns){
 			Button selCol = new Button(parent, SWT.PUSH | SWT.CENTER);
 			selCol.setText("Select Columns");
-			
+			gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
+			gridData.widthHint = 120; 
 			
 			selCol.setLayoutData(gridData);
 			selCol.addSelectionListener(new SelectionAdapter() {
@@ -1129,7 +1138,7 @@ public class CreateTable {
 		btnRowDown.setImage(RecordLabels.getImage("downArrow"));
 		btnRowDown.setText("Move Down");
 		gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gridData.widthHint = 90;
+		gridData.widthHint = 100;
 		btnRowDown.setLayoutData(gridData); 
 
 		btnRowDown.addSelectionListener(new SelectionAdapter() {
@@ -1168,6 +1177,11 @@ public class CreateTable {
 		//gridData.widthHint = 80; 
 		//closeButton.setLayoutData(gridData);
 		
+		/*closeButton = new Button(parent, SWT.PUSH | SWT.CENTER);
+		closeButton.setText("Close");
+		gridData = new GridData (GridData.HORIZONTAL_ALIGN_END);
+		gridData.widthHint = 80; 
+		closeButton.setLayoutData(gridData);*/
 		gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gridData.widthHint = 80;
 		expandButton = new Button(parent, SWT.PUSH | SWT.CENTER);

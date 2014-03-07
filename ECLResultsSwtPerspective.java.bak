@@ -102,37 +102,28 @@ public class ECLResultsSwtPerspective implements SpoonPerspective {
   }
   
   private ECLResultsSwtPerspective(){  
-    System.out.println("create eclResults ECLResultsSwtPerspective");
-   // createUI();
+   // System.out.println("create eclResults ECLResultsSwtPerspective");
+    createUI();
   }
-/*
+
   private void createUI(){
-	  System.out.println("createUI called");
     String newFile = "";
+    
     
     parentShell = ((Spoon) SpoonFactory.getInstance()).getShell();
     
     Display display = parentShell.getDisplay();
    
-    comp = new Composite(parentShell, SWT.BORDER);
-   
-    GridLayout gl = new GridLayout();
-   
-    comp.setLayout(gl);
-    GridData gd = new GridData(SWT.FILL,SWT.FILL,true,true);
-   // GridData gd = new GridData(GridData.FILL_BOTH);
-   // gd.horizontalAlignment = GridData.FILL;
-   // gd.grabExcessHorizontalSpace = true;
-   // gd.verticalAlignment = GridData.FILL;
-    
-    comp.setLayoutData(gd);
+    comp = new Composite(((Spoon) SpoonFactory.getInstance()).getShell(), SWT.BORDER);
+    comp.setLayout(new GridLayout());
+    comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 
     lbl = new Label(comp, SWT.CENTER | SWT.TOP);
    
     GridData ldata = new GridData(SWT.CENTER, SWT.TOP, true, false);
     lbl.setLayoutData(ldata);
     lbl.setText("Preview data returned from HPCC");
-    
+
     Button fileButton = new Button(comp, SWT.PUSH | SWT.SINGLE | SWT.TOP);
  
     fileButton.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false));
@@ -164,14 +155,8 @@ public class ECLResultsSwtPerspective implements SpoonPerspective {
   folder.setBorderVisible(true);
   folder.setLayoutData(new GridData(GridData.FILL_BOTH));
   
-  comp.layout(true);
-  comp.redraw();
-  parentShell.layout(true);
-  parentShell.redraw();
-  
      
   }
-  */
   public void buildWUIDTab(String wuid){
 	  	CTabItem tab2 = new CTabItem(folder, SWT.NONE);
 	    tab2.setText(wuid);
@@ -504,67 +489,9 @@ public class ECLResultsSwtPerspective implements SpoonPerspective {
 
   
   // Whatever you pass out will be reparented. Don't construct the UI in this method as it may be called more than once.
-  public final Composite getUI() {
-       System.out.println("getUI");
-	  //comp.layout(true);
-       //createUI();
-       
-       if(comp == null){
-    	   System.out.println("getUI in if");
-    	   parentShell = ((Spoon) SpoonFactory.getInstance()).getShell();
-           
-           Display display = parentShell.getDisplay();
-	       comp = new Composite(parentShell, SWT.BORDER);
-	       
-	       GridLayout gl = new GridLayout();
-	       
-	       comp.setLayout(gl);
-	       GridData gd = new GridData(SWT.FILL,SWT.FILL,true,true);
-	      // GridData gd = new GridData(GridData.FILL_BOTH);
-	      // gd.horizontalAlignment = GridData.FILL;
-	      // gd.grabExcessHorizontalSpace = true;
-	      // gd.verticalAlignment = GridData.FILL;
-	       
-	       comp.setLayoutData(gd);
-	
-	       lbl = new Label(comp, SWT.CENTER | SWT.TOP);
-	      
-	       GridData ldata = new GridData(SWT.CENTER, SWT.TOP, true, false);
-	       lbl.setLayoutData(ldata);
-	       lbl.setText("Preview data returned from HPCC");
-	       
-	       Button fileButton = new Button(comp, SWT.PUSH | SWT.SINGLE | SWT.TOP);
-	    
-	       fileButton.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false));
-	       fileButton.setText("OPEN FILE");
-	     
-	       //Listener for the file open button (fileButton)
-	       Listener fileOpenListener = new Listener() {
-	
-	           public void handleEvent(Event e) {
-	               String newFile = buildFileDialog();
-	               if(newFile != ""){
-	                   fileName = newFile;
-	                   //TODO: create new tab for file
-	                   //openFile(fileName);
-	                   openResultsXML(fileName);
-	                   
-	                   //int len = folder.getChildren().length;
-	                   int len = folder.getItemCount();
-	                   System.out.println("Number of tabs: " + len);
-	                   folder.setSelection(len-1);
-	               }
-	           }
-	       };
-	        
-	     fileButton.addListener(SWT.Selection, fileOpenListener);
-	     
-	     folder = new CTabFolder(comp, SWT.CLOSE);
-	     folder.setSimple(false);
-	     folder.setBorderVisible(true);
-	     folder.setLayoutData(new GridData(GridData.FILL_BOTH));
-      }  
-      return comp;
+  public Composite getUI() {
+       //System.out.println("getUI");
+    return comp;
   }
 
   public String getDisplayName(Locale locale) {
