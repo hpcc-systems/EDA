@@ -742,7 +742,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         jobEntry.setTyp(this.GraphType.getText());
         jobEntry.setPeople(this.people);
         jobEntry.setFilePath(this.filePath);
-        if(Size.getText().equals("NO")){
+        if(Size.getText().equals("NO") || Size.getText().trim().equals("")){
         	jobEntry.setWidth("");
         	jobEntry.setHeight("");
         }
