@@ -21,48 +21,21 @@ import org.xml.sax.InputSource;
 
 public class FileInfoSoap {
 	ECLSoap soap;
-		//eda
-	private Boolean isHttps=false;
+		
 	private String serverHost;
 	private int serverPort;
 	private String user;
 	private String pass;
-	private Boolean allowInvalidCerts=false;	
 	private boolean fetchLogicalFiles = true;
 	private String numFilesToFetch = "1000";
 	private String pageStart = "0";
 	public boolean isLogonFail = false;
-	private ArrayList<String> errors;
 	public FileInfoSoap(String serverHost,int serverPort,String user, String pass){
 		this.serverHost = serverHost;
 		this.serverPort = serverPort;
 		this.user=user;
-		this.errors=new ArrayList<String>();
 		this.pass=pass;
 	}
-
-
-	public Boolean getAllowInvalidCerts() {
-		return allowInvalidCerts;
-	}
-
-	public void setAllowInvalidCerts(Boolean allowInvalidCerts) {
-		this.allowInvalidCerts = allowInvalidCerts;
-	}
-
-	public ArrayList<String> getErrors()
-	{
-		return errors;
-	}
-	public Boolean isHttps() {
-		return isHttps;
-	}
-
-
-	public void setHttps(Boolean isHttps) {
-		this.isHttps = isHttps;
-	}
-
 
 	public String buildSoapEnv (String fileName){
 		//http://192.168.80.132:8010/WsDfu/DFUQuery?ver_=1.19&wsdl
@@ -155,24 +128,15 @@ public class FileInfoSoap {
 		soap.setPort(this.serverPort);
 		soap.setUser(user);
 		soap.setPass(pass);
-		soap.setHttps(this.isHttps);
+		
 		String path = "/WsDfu/DFUQuery";
-        InputStream is=null;
-        try {
-			is = soap.doSoap(buildSoapEnv(""), path);
-        } catch (Exception e)
-        {
-        	errors.add("Error sending soap request:" + e.getMessage());
-        	e.printStackTrace();
-        }
+        InputStream is = soap.doSoap(buildSoapEnv(""), path);
         
 		try{
-
 			ArrayList<String> c = processReturn(is);
 			String[] clusters = new String[c.size()];
 		    return c.toArray(clusters);
 		}catch (Exception e){
-			errors.add(e.getMessage());
 			System.out.println("error");
 			System.out.println(e);
 		}
@@ -180,7 +144,6 @@ public class FileInfoSoap {
 	}
 	
 	public ArrayList<String[]> fetchFileMeta(String fileName){
-		errors=new ArrayList<String>();
 		String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
 				"		<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
 				"		<soap:Body>" +
@@ -190,31 +153,22 @@ public class FileInfoSoap {
 				"			</DFUDefFile>" +
 				"		</soap:Body>" +
 				"</soap:Envelope>";
-		
 		soap = new ECLSoap();
-
+		
 		soap.setHostname(serverHost);
-		soap.setAllowInvalidCerts(allowInvalidCerts);
 		soap.setPort(this.serverPort);
 		soap.setUser(user);
 		soap.setPass(pass);
-		soap.setHttps(isHttps);
 		
 		String path = "/WsDfu/DFUDefFile?ver_=1.2";
-		InputStream is=null;
-		try {
-			is = soap.doSoap(xml, path);
-		} catch (Exception e)
-		{
-			errors.add("Error making soap request to HPCC web service " + path + ":" + e.getMessage() + " soap data:" + xml);
-			return null;
-		}
+		
+		InputStream is = soap.doSoap(xml, path);
+	
 				
 		try{
 			if(soap.isLogonFail){
 				isLogonFail = soap.isLogonFail;
 				System.out.println("Authentication Failed, or you don't have permissions to read this file");
-				errors.add("Authentication Failed, or you don't have permissions to read this file");
 			}else{
 				if(is != null){
 					return processFileMeta(is);
@@ -222,7 +176,6 @@ public class FileInfoSoap {
 			}
 		}catch(Exception e){
 			System.out.println(e);
-			errors.add(e.getMessage());
 			e.printStackTrace();
 		}
 		return null;
@@ -236,7 +189,7 @@ public class FileInfoSoap {
         Document dom = db.parse(is);
 
         Element docElement = dom.getDocumentElement();
-        System.out.println(dom.getTextContent());
+        System.out.println("Keshav"+dom.getTextContent());
         NodeList dfuResponse = docElement.getElementsByTagName("DFUDefFileResponse");
         //DFUDefFileResponse
         //	defFile
@@ -276,20 +229,10 @@ public class FileInfoSoap {
                         	for (int k = 0; k < messages.getLength(); k++) {
                         		Element messageRow = (Element) messages.item(j);
                         		String code = messageRow.getTextContent();
-                        		//errors.add("HPCC Error " + code);
                         		System.out.println("code: " + code);
                         		if(code.equals("3")){
                         			isLogonFail = true;
-                        			errors.add("Authentication Failed, or you don't have permissions to read this file");
                         		}
-                        	}
-                        }
-                        NodeList messages2 = row.getElementsByTagName("Message");
-                        if (messages2 != null && messages2.getLength() > 0) {
-                        	for (int k = 0; k < messages2.getLength(); k++) {
-                        		Element messageRow = (Element) messages2.item(j);
-                        		String messagestr = "HPCC error:" + messageRow.getTextContent();
-                        		errors.add(messagestr);
                         	}
                         }
                     }
@@ -406,14 +349,13 @@ public class FileInfoSoap {
 		ArrayList<String[]> results = new ArrayList<String[]>();
 		 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 	        DocumentBuilder db = dbf.newDocumentBuilder();
-	        try {
 	        InputSource is = new InputSource(new StringReader(xml));
 	        Document dom = db.parse(is);
 	        
 	        Element docElement = dom.getDocumentElement();
 	        //System.out.println(docElement.getTextContent());
 	        NodeList fields = docElement.getElementsByTagName("Field");
-	       //System.out.println(fields.getLength());
+
 	       if (fields != null && fields.getLength() > 0) {
 	    	   
 	    	   for (int i = 0; i < fields.getLength(); i++) {
@@ -438,11 +380,6 @@ public class FileInfoSoap {
                		results.add(column);
 	    	   }
 	       }
-	        } catch (Exception e) {
-	        	errors.add("Error parsing xml response from HPCC:" + e.getMessage() + " xml:" + xml);
-	        	e.printStackTrace();
-	        	
-	        }
 	       return results;
 	}
 	
@@ -474,8 +411,7 @@ public class FileInfoSoap {
 		soap.setPort(this.serverPort);
 		soap.setUser(user);
 		soap.setPass(pass);
-		soap.setHttps(isHttps);
-
+		
 		String path = "/WsDfu/DFUBrowseData?ver_=1.1";
 		
 		InputStream is = soap.doSoap(xml, path);
@@ -615,24 +551,27 @@ public class FileInfoSoap {
 
 	
 	public static void main(String[] args){
-		FileInfoSoap c = new FileInfoSoap("10.239.227.6", 8010,"","");
+		FileInfoSoap c = new FileInfoSoap("192.168.254.128", 8010,"hpccdemo","hpccdemo");
 		/*String[] test = c.fetchFiles();
 		System.out.println("You have " + test.length + " Files");
 		for (int i = 0; i<test.length; i++){
 			System.out.println(test[i]);
 		}*/
 		
-		ArrayList<String[]> s = c.fetchFileMeta("~saltdemo::sampleusersguideinputdata");
-		ArrayList<String[]> s2 = c.fetchFileMeta("~thor::jc::test::product");
+		ArrayList<String[]> s = c.fetchFileMeta("~learn::preference::first::items1");
+		//ArrayList<String[]> s2 = c.fetchFileMeta("~intro::ks::class::example");
 		//ArrayList<String[]> s = c.fetchFileMeta("~in::aircraft_reference");
-		
+		//String s3 = c.recordXML("~intro::ks::class::example");
+		//System.out.println("MyCODE"+s3); 
 		if(s!= null && s.size()==1){
 			if(s.get(0)[0].equals("line")){
 				//nor rec
 				s = new ArrayList<String[]>();
+				System.out.println("Ye kya hua, kaise hua?"); 
 			}
 		}
 		if(s!= null){
+			System.out.println("dont get it "+s.size()); 
 			for(int i = 0; i<s.size(); i++){
 				System.out.println(s.get(i).length);
 				System.out.println("Type: " + s.get(i)[1]);
@@ -642,7 +581,7 @@ public class FileInfoSoap {
 		}
 		
 		
-		if(s2!= null && s2.size()==1){
+		/*if(s2!= null && s2.size()==1){
 			if(s2.get(0)[0].equals("line")){
 				//nor rec
 				s2 = new ArrayList<String[]>();
@@ -654,7 +593,7 @@ public class FileInfoSoap {
 				System.out.println("Label: " + s2.get(i)[0]);
 				System.out.println("Default Value: " + s2.get(i)[2]);
 			}
-		}
+		}*/
 		
 	}
 }
