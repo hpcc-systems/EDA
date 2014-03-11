@@ -422,7 +422,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 		    		  items = new String[]{"field","percentile","value"};
 		    		  types = new String[]{"STRING","REAL","REAL"};
 		    	  }
-		    	  else if(datasetName.getText().split("_")[1].equalsIgnoreCase("Frequency")){
+		    	  else if(datasetName.getText().split("_")[1].startsWith("Frequency")){
 		    		  String type = "";
 		    		  for(Iterator<RecordBO> I = rec.getRecords().iterator();I.hasNext();){
 							RecordBO ob = (RecordBO) I.next();

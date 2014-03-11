@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin id="ECLPluginception"
+	iconfile="pluginception.png"
+	description="Pluginception"
+	tooltip="Pluginception" 
+	category="HPCC EDA"
+	classname="org.hpccsystems.pentaho.job.eclpluginception.ECLPluginception">
+            
+    <libraries>
+	  <library name="../../hpcc-common/javaecl-0.1.0.jar"/>
+        <library name="../../hpcc-common/eclgui.jar"/>
+        <library name="eclpluginception.jar"/>
+    </libraries>            
+</plugin>

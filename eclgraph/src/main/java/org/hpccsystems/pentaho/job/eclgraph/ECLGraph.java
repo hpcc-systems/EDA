@@ -166,8 +166,8 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         		//String[] path = FilePath.split("\"");
         		logBasic(path[1]);//.replaceAll("manifest.xml", "")); 
         		Player axis = new Player();
-        		String haxis = "hAxis: {title: '";
-        		String Colours = "colors : ["; String fields = ""; String graph = "";String h = ""; String w = "";
+        		String haxis = "";//tooltip: { textStyle: { fontName: 'Arial', fontSize: 18, bold:false }},hAxis: {title: '
+        		String Colours = "colors : ["; String fields = ""; String graph = "";String h = ""; String w = "";String name = "";
         		if(getHeight().equals(""))
         			h = "400";
         		else
@@ -216,7 +216,8 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
 		        				fields += this.getDatasetName()+"."+p.getFirstName()+";\n";
 		        			i++;
 		        			f = false;
-		        			haxis += p.getFirstName().toUpperCase()+"', titleTextStyle:{color: 'Red', fontName:'Arial', fontSize:18, italic:0}},";
+		        			//haxis += p.getFirstName().toUpperCase()+"', titleTextStyle:{color: 'Red', fontName:'Arial', fontSize:18, italic:0}},";
+		        			name = p.getFirstName().toUpperCase();
 		        			continue;
 		        		}
 		        		Player P = (Player) it.next();
@@ -233,7 +234,7 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
 		        	
 			        try {
 			        	logBasic(haxis+Colours + getTyp());        	
-						Change(haxis+Colours, size, this.getTyp(), path[1].replaceAll("manifest.xml", ""));
+						Change(haxis+Colours, size, this.getTyp(), path[1].replaceAll("manifest.xml", ""),name);
 						logBasic("File Changed?");
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
@@ -437,7 +438,7 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         return true;
     }
     
-    public void Change(String Colours, String size, String Chart, String path) throws Exception,FileNotFoundException, TransformerException {
+    public void Change(String Colours, String size, String Chart, String path, String name) throws Exception,FileNotFoundException, TransformerException {
         File xmlFile = new File(path+Chart.toLowerCase()+".xslt");//"D:\\Users\\Public\\Documents\\HPCC Systems\\ECL\\MY\\visualizations\\google_charts\\files\\"
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -454,12 +455,17 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
     	Node nNode = nList.item(1);         	
     	if (nNode.getNodeType() == Node.ELEMENT_NODE) {    			
     		Element eElement = (Element) nNode;
-    		for(int i = 0; i<eElement.getElementsByTagName("xsl:text").getLength();i++){
-    			//
-    			String S = ",0.6);var options = {"+Colours+"};var "+Chart.toLowerCase()+" = new google.visualization."+Chart+"(document.getElementById('";
-    			System.out.println(eElement.getElementsByTagName("xsl:text").item(3).getTextContent());
-    			eElement.getElementsByTagName("xsl:text").item(3).setTextContent(S);
-    		}
+    		String S =");\n"+ 
+    				"			var zoomed = false;\n			var MAX = 20;\n			var options = {\n"+
+    				"						animation: {duration: 1000,easing: 'in'},\n"+
+    				"						tooltip: { textStyle: { fontName: 'Arial', fontSize: 18, bold:false }},\n"+
+    				"						hAxis: {viewWindow : {min : 0, max:4},title: '"+name+"', titleTextStyle:{color: 'Red', fontName:'Arial', fontSize:18, italic:0}},\n"+
+    				"						"+Colours+"\n"+						
+    				"			};\n"+
+    				"			function draw";	
+        	    eElement.getElementsByTagName("xsl:text").item(1).setTextContent(S);
+        		
+        		//System.out.println(eElement.getElementsByTagName("xsl:text").item(1).getTextContent());
     			
     	}
 
