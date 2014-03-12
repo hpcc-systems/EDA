@@ -72,6 +72,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
   
 	public static final String[] PROP = { NAME, OPTION, DATTYPE};
 	
+	private boolean flag = true;private int cnt = 0;
 	java.util.List people;	
 	private String filePath;
 	private String normlist = "";
@@ -215,7 +216,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 		
         datasetNameOriginal = buildCombo("Original Dataset Name :", jobEntryName, lsMod, middle, margin, datasetGroup, datasets1);
         
-        datasetName = buildCombo("Dataset Name :", datasetNameOriginal, lsMod, middle, margin*2, datasetGroup, datasets);
+        datasetName = buildCombo("Derived Dataset :", datasetNameOriginal, lsMod, middle, margin*2, datasetGroup, datasets);
 		
         GraphType = buildCombo("Graph Type :", datasetName, lsMod, middle, margin*2, datasetGroup, new String[]{"PieChart", "LineChart","ScatterChart","BarChart"});
         
@@ -593,11 +594,22 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 
             public void handleEvent(Event e) {
             	
-            	normlist = new String();            	
-				for(int i = 0; i<table.getItemCount(); i++){
-					String s1 = table.getItem(i).getText(0)+","+table.getItem(i).getText(1)+","+table.getItem(i).getText(2)+"-"; 
+            	normlist = new String();cnt = 0;flag = true;    	
+				for(int i = 0; i<table.getItemCount(); i++){					
+					String s1 = table.getItem(i).getText(0)+","+table.getItem(i).getText(1)+","+table.getItem(i).getText(2)+"-";
+					
+					if(!table.getItem(i).getText(1).equalsIgnoreCase("XAxis")){
+						cnt += 1;
+					}
+					
 					normlist += s1;					
-				}				
+				}	
+				for(int i = 0; i<table.getItemCount(); i++){
+					if(table.getItem(i).getText(1).equalsIgnoreCase("Color")){
+						flag = false;
+						break;
+					}
+				}
 				ok();
             }
         };
@@ -700,8 +712,14 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
     	boolean isValid = true;
     	String errors = "";
     	
-    	
-    	
+    	if(cnt == normlist.split("-").length){
+    		isValid = false;
+    		errors += "Specify one field as X-Axis!\r\n";
+    	}
+    	if(flag == false){
+    		isValid = false;
+    		errors += "Choose a color or X-Axis option in the \"Color-XAxis Option Column\"!\r\n";
+    	}
     	if(this.jobEntryName.getText().equals("")){
     		isValid = false;
     		errors += "\"Job Entry Name\" is a required field!\r\n";
@@ -716,7 +734,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
    		}
    		if(this.normlist.equals("")){
    			isValid = false;
-   			errors += "You need to select a field to produce Graph\r\n";
+   			errors += "You need to select a field from the \"Columns From Graph\" Tab to produce Graph\r\n";
    		}   		
    		
     	if(!isValid){
