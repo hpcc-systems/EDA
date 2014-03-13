@@ -73,6 +73,8 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 	public static final String[] PROP = { NAME, OPTION, DATTYPE};
 	
 	private boolean flag = true;private int cnt = 0;
+	private boolean Scatterflag = true;private boolean Lineflag = true;private boolean Barflag = true;private boolean Pieflag1 = true;
+	private boolean Pieflag2 = true;
 	java.util.List people;	
 	private String filePath;
 	private String normlist = "";
@@ -593,21 +595,71 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         Listener okListener = new Listener() {
 
             public void handleEvent(Event e) {
-            	
-            	normlist = new String();cnt = 0;flag = true;    	
+            	Boolean chart = false;
+            	if(GraphType.getText().equalsIgnoreCase("PieChart"))
+            		chart = true;
+            	normlist = new String();cnt = 0;flag = true;Scatterflag = true;Lineflag = true;Barflag = true;Pieflag1 = true;Pieflag2=true;    	
 				for(int i = 0; i<table.getItemCount(); i++){					
 					String s1 = table.getItem(i).getText(0)+","+table.getItem(i).getText(1)+","+table.getItem(i).getText(2)+"-";
 					
-					if(!table.getItem(i).getText(1).equalsIgnoreCase("XAxis")){
+					if(!table.getItem(i).getText(1).equalsIgnoreCase("XAxis") && chart == false){
 						cnt += 1;
 					}
 					
+					
+					
 					normlist += s1;					
 				}	
-				for(int i = 0; i<table.getItemCount(); i++){
-					if(table.getItem(i).getText(1).equalsIgnoreCase("Color")){
-						flag = false;
-						break;
+				if(chart == false){
+					for(int i = 0; i<table.getItemCount(); i++){
+						if(table.getItem(i).getText(1).equalsIgnoreCase("Color")){
+							flag = false;
+							break;
+						}						
+					}
+				}
+				if(flag == true && cnt != table.getItemCount()){
+					if(GraphType.getText().equalsIgnoreCase("ScatterChart")){
+						for(int i = 0; i<table.getItemCount(); i++){
+							if(table.getItem(i).getText(2).equalsIgnoreCase("String")){
+								Scatterflag = false;
+								break;
+							}
+						}
+					}
+					if(GraphType.getText().equalsIgnoreCase("LineChart")){
+						for(int i = 0; i<table.getItemCount(); i++){
+							if(!table.getItem(i).getText(1).equalsIgnoreCase("XAxis") && table.getItem(i).getText(2).equalsIgnoreCase("String")){
+								Lineflag = false;
+								break;
+							}
+						}
+					}
+					if(chart == true){						
+						for(int i = 0; i<table.getItemCount(); i++){
+							if(table.getItemCount()>2 || table.getItemCount()<=1){
+								Pieflag1 = false;
+								break;
+							}
+							else{
+								if(table.getItem(0).getText(2).equalsIgnoreCase("String") && table.getItem(1).getText(2).equalsIgnoreCase("String")){
+									Pieflag2 = false;
+									break;
+								}
+								if(!table.getItem(0).getText(2).equalsIgnoreCase("String") && !table.getItem(1).getText(2).equalsIgnoreCase("String")){
+									Pieflag2 = false;
+									break;
+								}
+							}
+						}
+					}
+					if(GraphType.getText().equalsIgnoreCase("BarChart")){
+						for(int i = 0; i<table.getItemCount(); i++){
+							if(!table.getItem(i).getText(1).equalsIgnoreCase("XAxis") && table.getItem(i).getText(2).equalsIgnoreCase("String")){
+								Barflag = false;
+								break;
+							}
+						}
 					}
 				}
 				ok();
@@ -720,6 +772,27 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
     		isValid = false;
     		errors += "Choose a color or X-Axis option in the \"Color-XAxis Option Column\"!\r\n";
     	}
+    	if(Scatterflag == false){
+    		isValid = false;
+    		errors += "Every Variable must be Numeric! \r\n";
+    	}
+    	if(Lineflag == false){
+    		isValid = false;
+    		errors += "Variables plotted on Y-Axis should be Numeric!\r\n";    		
+    	}
+    	if(Barflag == false){
+    		isValid = false;
+    		errors += "Variables plotted on Y-Axis should be Numeric!\r\n";    		
+    	}
+    	if(Pieflag1 == false){
+    		isValid = false;
+    		errors += "Only 2 Variables need to be Selected!\r\n";
+    	}
+    	if(Pieflag2 == false){
+    		isValid = false;
+    		errors += "One Varible should be String and other Numeric!\r\n";
+    	}
+    	
     	if(this.jobEntryName.getText().equals("")){
     		isValid = false;
     		errors += "\"Job Entry Name\" is a required field!\r\n";
