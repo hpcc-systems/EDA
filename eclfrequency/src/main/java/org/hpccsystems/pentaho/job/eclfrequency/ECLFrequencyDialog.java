@@ -597,6 +597,7 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 		            			if(s[0].startsWith(NameFilter.getText())){
 		            				TreeItem I = new TreeItem(tab, SWT.NONE);
 		            				I.setText(0,s[0]);
+									I.setText(1,s[2]);
 		            				if(s[1].equalsIgnoreCase("true")) 
 		            					I.setChecked(true);
 		            			}
