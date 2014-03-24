@@ -214,7 +214,7 @@ public class ECLFilter extends ECLJobEntry{//extends JobEntryBase implements Clo
         
         logBasic("{Project Job} Previous =" + result.getLogText());
         
-        ecl += "OUTPUT(Filter);";
+        //ecl += "OUTPUT(Filter);";
         
         result.setResult(true);
         
