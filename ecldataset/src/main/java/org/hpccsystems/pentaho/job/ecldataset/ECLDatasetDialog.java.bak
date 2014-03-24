@@ -62,7 +62,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.hpccsystems.javaecl.FileInfoSoap;
+
 import org.hpccsystems.javaecl.HPCCServerInfo;
 import org.hpccsystems.eclguifeatures.AutoPopulate;
 import org.hpccsystems.eclguifeatures.ErrorNotices;
@@ -260,16 +260,14 @@ public class ECLDatasetDialog extends ECLJobEntryDialog{//extends JobEntryDialog
 						currentLogicalFile = file;
 						//value has changed
 						//System.out.println("fetch field list: " + file);
-						ArrayList<String[]> details = hsi.fetchFileDetails(file);
-						FileInfoSoap c = new FileInfoSoap(serverHost,serverPort,user,pass);
-						String format = c.getFileType(file);
-						System.out.println("Format TYPE::::::" + format);
+						//ArrayList<String[]> details = hsi.fetchFileDetails(file);
+						ArrayList<String[]> details = Details(file,hsi,"");
 						if(hsi.isLogonFail){
 							ErrorNotices en = new ErrorNotices();
 							en.openSaveErrorDialog(getParent(), "Permission Denied!\r\nCan not fetch field definitions, please make sure you have permissions to that file\r\nYou should also verify your user/pass in Global Variables");
 							//en.openDialog("Permission Denied", "You either do not have permissions to access this file or your credentials for the server are wrong.", "");
 						}
-						if(!format.equalsIgnoreCase("csv") && details != null && details.size()>0){
+						if(details != null && details.size()>0){
 							ErrorNotices en = new ErrorNotices();
 							if(en.openComfirmDialog(getParent(), "Do you want to replace your current Record Structure on the\r\nFields tab with the one stored on the server?")){
 								ct.setRecordList(jobEntry.ArrayListToRecordList(details));
@@ -291,7 +289,8 @@ public class ECLDatasetDialog extends ECLJobEntryDialog{//extends JobEntryDialog
 								}
 								
 							}
-						}
+						}						
+						
 					}
             	}else{
             		//System.out.println("No text in logica File button");
