@@ -4,8 +4,10 @@
  */
 package org.hpccsystems.pentaho.job.eclfilter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
@@ -82,6 +84,7 @@ public class ECLFilterDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
     private Button wOK, wCancel;
     private boolean backupChanged;
     private SelectionAdapter lsDef;
+    List people = new ArrayList();
 
     public ECLFilterDialog(Shell parent, JobEntryInterface jobEntryInt, Repository rep, JobMeta jobMeta) {
         super(parent, jobEntryInt, rep, jobMeta);
@@ -129,7 +132,7 @@ public class ECLFilterDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
         //formLayout.marginHeight = Const.FORM_MARGIN; //5
         
         shell.setLayout(formLayout);
-        shell.setSize(800,600); //800 X 600 (width X Height)
+        shell.setSize(900,720); //800 X 600 (width X Height)
 
         int middle = props.getMiddlePct(); //35. This value is defined in org.pentaho.di.core.Const.
         int margin = Const.MARGIN; //4. This value is defined in org.pentaho.di.core.Const.
@@ -294,7 +297,7 @@ public class ECLFilterDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
         GridData mapperCompData = new GridData();
 		mapperCompData.grabExcessHorizontalSpace = true;
 		compForGrp3.setLayout(mapperCompLayout);
-		compForGrp3.setLayoutData(mapperCompData);
+		compForGrp3.setLayoutData(mapperCompData);   
 		
 		Map<String, String[]> mapDataSets = null;
 		try {
@@ -302,10 +305,10 @@ public class ECLFilterDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		 
+		
 		//Create a Mapper
 		String[] cmbValues = {""};
-		tblMapper = new MainMapper(compForGrp3, mapDataSets, cmbValues, "filter");
+		tblMapper = new MainMapper(compForGrp3, mapDataSets, cmbValues, "filter",jobEntry.getPeople());
 		if (jobEntry.getFilterStatement() != null) {
 			tblMapper.setFilterStatement(jobEntry.getFilterStatement());//populate current
 			tblMapper.setOldFilterStatement(jobEntry.getFilterStatement());//populate old if save isn't hit
@@ -314,7 +317,7 @@ public class ECLFilterDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
 		
 		//tblMapper.setLayoutStyle("filter");
 		//Add the existing Mapper RecordList
-        if(jobEntry.getMapperRecList() != null){
+        if(jobEntry.getMapperRecList() != null){  
         	mapperRecList = jobEntry.getMapperRecList();
             tblMapper.setMapperRecList(jobEntry.getMapperRecList());
         }
@@ -396,7 +399,10 @@ public class ECLFilterDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
             recordsetName.setText(jobEntry.getRecordsetName());
         }
        
-       
+         if(jobEntry.getPeople() != null){
+         	people = jobEntry.getPeople();
+         	MainMapper.tv.setInput(people);
+         }
 
 
         //shell.pack();
@@ -481,6 +487,7 @@ public class ECLFilterDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
         jobEntry.setFilterStatement(tblMapper.getFilterStatement());
         System.out.println("setting filter statement : " + tblMapper.getFilterStatement());
         tblMapper.setOldexpression(tblMapper.getFilterStatement());//update filter statement that its changed and oked
+        jobEntry.setPeople(tblMapper.getPeople());
         dispose();
     }
 
