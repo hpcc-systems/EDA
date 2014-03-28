@@ -96,8 +96,10 @@ public class ECLPercentile extends ECLJobEntry{//extends JobEntryBase implements
 	        String percents = "";String normalize = "";int high = 0;
 	        for(int i = 0; i<norm.length; i++){
 	        	String[] S = norm[i].split("-");
+	        	if(S.length>1){
 	        	if(high < S[1].split(",").length)
 	        		high = S[1].split(",").length;
+	        	}
 	        	if(i != norm.length-1){ 
         			value += "LEFT."+S[0]+",";
         			field += "\'"+S[0]+"\',";
@@ -109,7 +111,8 @@ public class ECLPercentile extends ECLJobEntry{//extends JobEntryBase implements
         			normalize += S[0]+"P[COUNTER]";
         		}
 	        	percents += "SET OF INTEGER "+S[0]+"P := [0,1,5,10,25,50,75,90,95,99,100";
-    			if(!S[1].equals(" "))
+	        	
+    			if(S.length>1)
     				percents += ","+S[1]+"];\n";
     			else
     				percents += "];\n";
@@ -175,7 +178,7 @@ public class ECLPercentile extends ECLJobEntry{//extends JobEntryBase implements
 	        for(int i = 0; i<norm.length; i++){
 	        	String[] S = norm[i].split("-");
 	        	percentile += S[0]+"_"+getName()+":=TABLE(percentileTab(field='"+S[0]+"'),{field,percentiles,value});\n";
-	        	percentile += "OUTPUT("+S[0]+"_"+getName()+",THOR);\n";
+	        	percentile += "OUTPUT("+S[0]+"_"+getName()+",NAMED('"+S[0]+"'));\n";
 	        }
         	
 	        RowMetaAndData data = new RowMetaAndData();
@@ -214,7 +217,10 @@ public class ECLPercentile extends ECLJobEntry{//extends JobEntryBase implements
         		String[] S = strLine[i].split("-");
         		Cols P = new Cols();
         		P.setFirstName(S[0]);
-        		P.setNumber(S[1]);
+        		if(S.length>1)
+        			P.setNumber(S[1]);
+        		else
+        			P.setNumber("");
         		fields.add(P);
         	}
         }
