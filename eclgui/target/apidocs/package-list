@@ -5,6 +5,7 @@ com.hpccsystems.ui.constants
 org.hpccsystems.eclguifeatures
 org.hpccsystems.ecljobentrybase
 org.hpccsystems.mapper
+org.hpccsystems.mapper.filter
 org.hpccsystems.recordlayout
 org.hpccsystems.saltui.concept
 org.hpccsystems.saltui.concept.edit

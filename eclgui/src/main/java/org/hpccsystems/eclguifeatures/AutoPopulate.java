@@ -230,6 +230,9 @@ public class AutoPopulate {
     	
     }
     
+    public String[] parseOutlierRules(List<JobEntryCopy> jobs) throws Exception{
+    	return parseDefinitions(jobs,"eclType","rules");  
+    }
     
     public String[] merge(String[] x, String[] y) {
 

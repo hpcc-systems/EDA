@@ -28,6 +28,7 @@ import org.hpccsystems.javaecl.Dataset;
 import org.hpccsystems.recordlayout.RecordBO;
 import org.hpccsystems.recordlayout.RecordList;
 import org.hpccsystems.mapper.*;
+import org.hpccsystems.mapper.filter.PersonForFilter;
 import org.hpccsystems.ecljobentrybase.*;
 
 
@@ -37,14 +38,32 @@ import org.hpccsystems.ecljobentrybase.*;
  */
 public class ECLFilter extends ECLJobEntry{//extends JobEntryBase implements Cloneable, JobEntryInterface {
     
+	private String Name = "";
     private String recordsetName = "";
     private String inRecordName = "";
     private String outRecordName = "";
     private String filterFormat = "";
     private String filterStatement = "";
     private RecordList recordList = new RecordList();
+    private List people = new ArrayList();
     
     private MapperRecordList mapperRecList = new MapperRecordList();
+    
+    public List getPeople() {
+		return people;
+	}
+
+	public void setPeople(List people) {
+		this.people = people;
+	}
+
+	public String getName(){
+		return Name;
+	}
+    
+	public void setName(String Name){
+		this.Name = Name;
+	}
 
     public String getRecordsetName() {
         return recordsetName;
@@ -192,6 +211,37 @@ public class ECLFilter extends ECLJobEntry{//extends JobEntryBase implements Clo
 		}
 	}
 	
+	public String savePeople(){
+    	String out = "";
+    	
+    	Iterator it = people.iterator();
+    	boolean isFirst = true;
+    	while(it.hasNext()){
+    		if(!isFirst){out+="|";}
+    		PersonForFilter p = (PersonForFilter) it.next();
+    		out +=  p.getColumns().toString()+"-"+p.getOperators().toString()+"-"+p.getValue()+"-"+p.getBoolean_operators().toString();
+            isFirst = false;
+    	}
+    	return out;
+    }
+
+    public void openPeople(String in){
+        String[] strLine = in.split("[|]");
+        int len = strLine.length;
+        if(len>0){
+        	people = new ArrayList();
+        	for(int i = 0; i<len; i++){
+        		String[] S = strLine[i].split("-");
+        		PersonForFilter P = new PersonForFilter();
+        		P.setColumns(Integer.parseInt(S[0]));
+        		P.setOperators(Integer.parseInt(S[1]));
+        		P.setValue(S[2]);   
+        		P.setBoolean_operators(Integer.parseInt(S[3]));
+        		people.add(P);
+        	}
+        }
+    }
+	
 
     @Override
     public Result execute(Result prevResult, int k) throws KettleException {
@@ -201,20 +251,24 @@ public class ECLFilter extends ECLJobEntry{//extends JobEntryBase implements Clo
         	return result;
  		}
         Filter filter = new Filter();
-        filter.setName(this.getRecordsetName());
+        filter.setName(this.getName());
 
         filter.setInRecordName(this.getInRecordName());
-       
-        filter.setFilterStatement(this.getFilterStatement());
+        
+        if(this.filterStatement.isEmpty()){
+        	filter.setFilterStatement(this.getFilterStatement());
+        }else{
+        	filter.setFilterStatement("~"+this.getFilterStatement());
+        }
         
         String ecl = filter.ecl();
-
+        
         logBasic("{Project Job} Execute = " + ecl);
         //System.out.println("PROJECT JOB ---->>>> : "+project.ecl());
         
         logBasic("{Project Job} Previous =" + result.getLogText());
         
-        //ecl += "OUTPUT(Filter);";
+        ecl += "OUTPUT(Filter);";
         
         result.setResult(true);
         
@@ -254,7 +308,8 @@ public class ECLFilter extends ECLJobEntry{//extends JobEntryBase implements Clo
             	openRecordListForMapper(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "mapperRecList")));
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "filterStatement")) != null)
             	setFilterStatement(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "filterStatement")));
-            
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "people")) != null)
+                openPeople(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "people")));
             
         } catch (Exception e) {
             throw new KettleXMLException("ECL Project Job Plugin Unable to read step info from XML node", e);
@@ -274,6 +329,7 @@ public class ECLFilter extends ECLJobEntry{//extends JobEntryBase implements Clo
         retval += "		<recordList><![CDATA[" + this.saveRecordList() + "]]></recordList>" + Const.CR;
         retval += "		<mapperRecList><![CDATA[" + this.saveRecordListForMapper() + "]]></mapperRecList>" + Const.CR;
         retval += "		<filterStatement><![CDATA[" + this.filterStatement + "]]></filterStatement>" + Const.CR;
+        retval += "		<people><![CDATA[" + this.savePeople() + "]]></people>" + Const.CR;
         
         return retval;
 
@@ -299,6 +355,8 @@ public class ECLFilter extends ECLJobEntry{//extends JobEntryBase implements Clo
             
             if(rep.getStepAttributeString(id_jobentry, "filterStatement") != null)
             	filterStatement = rep.getStepAttributeString(id_jobentry, "filterStatement"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "people") != null)
+                this.openPeople(rep.getStepAttributeString(id_jobentry, "people")); //$NON-NLS-1$
         } catch (Exception e) {
             throw new KettleException("Unexpected Exception", e);
         }
@@ -313,6 +371,7 @@ public class ECLFilter extends ECLJobEntry{//extends JobEntryBase implements Clo
             rep.saveStepAttribute(id_job, getObjectId(), "recordList", this.saveRecordList()); //$NON-NLS-1$
             rep.saveStepAttribute(id_job, getObjectId(), "mapperRecList", this.saveRecordListForMapper()); //$NON-NLS-1$
             rep.saveStepAttribute(id_job, getObjectId(), "filterStatement", this.filterStatement); //$NON-NLS-1$
+            rep.saveStepAttribute(id_job, getObjectId(), "people", this.savePeople()); //$NON-NLS-1$
             
         } catch (Exception e) {
             throw new KettleException("Unable to save info into repository" + id_job, e);
