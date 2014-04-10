@@ -7,7 +7,11 @@ package org.hpccsystems.pentaho.job.ecloutliers;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.hpccsystems.javaecl.Filter;
 import org.hpccsystems.javaecl.Table;
+import org.hpccsystems.mapper.MainMapperForOutliers;
+import org.hpccsystems.mapper.MapperRecordList;
 import org.pentaho.di.cluster.SlaveServer;
 import org.pentaho.di.compatibility.Value;
 import org.pentaho.di.core.Const;
@@ -32,6 +36,33 @@ public class ECLOutliers extends ECLJobEntry{//extends JobEntryBase implements C
 	private String DatasetName = "";
 	private java.util.List people = new ArrayList();
 	private String resultDataset = "";
+	public String filterStatement = "";
+	private MapperRecordList mapperRecList = new MapperRecordList();
+	private List rules = new ArrayList();
+	
+	public List<String> getRulesList() {
+		return rules;
+	}
+
+	public void setRulesList(List<String> rulesList) {
+		this.rules = rulesList;
+	}
+
+	public MapperRecordList getMapperRecList() {
+		return mapperRecList;
+	}
+
+	public void setMapperRecList(MapperRecordList mapperRecList) {
+		this.mapperRecList = mapperRecList;
+	}
+		
+	public String getFilterStatement() {
+		return filterStatement;
+	}
+	
+	public void setFilterStatement(String filterStatement) {
+		this.filterStatement = filterStatement;
+	}
 	
     public String getresultDatasetName() {
         return resultDataset;
@@ -68,8 +99,7 @@ public class ECLOutliers extends ECLJobEntry{//extends JobEntryBase implements C
     @Override
     public Result execute(Result prevResult, int k) throws KettleException {
     	
-    	
-        Result result = prevResult;
+        /*Result result = prevResult;
         if(result.isStopped()){
         	return result;
         }
@@ -117,47 +147,65 @@ public class ECLOutliers extends ECLJobEntry{//extends JobEntryBase implements C
 	        result.setRows(list);
 	        result.setLogText("ECLPercentileBuckets executed, ECL code added");
 	        return result;
-        }
+        }*/
+    	
+    	Result result = modifyResults(prevResult);
+        if(result.isStopped()){
+        	return result;
+ 		}
+        Filter filter = new Filter();
+        filter.setName(this.getName());
+
+        filter.setInRecordName(this.getDatasetName());
+       
+        filter.setFilterStatement(this.getFilterStatement());
         
+        String ecl = filter.ecl();
+
+        logBasic("{Project Job} Execute = " + ecl);
+        
+        logBasic("{Project Job} Previous =" + result.getLogText());
+        
+        ecl += "OUTPUT(Outliers);";
+        
+        result.setResult(true);
+        
+        RowMetaAndData data = new RowMetaAndData();
+        data.addValue("ecl", Value.VALUE_TYPE_STRING, ecl);
+        
+        List list = result.getRows();
+        list.add(data);
+        String eclCode = parseEclFromRowData(list);
+        
+        result.setRows(list);
+        return result;
     }
     
-    public String savePeople(){
+    public String saveRules(){
     	String out = "";
-    	
-    	Iterator it = people.iterator();
+    	rules = getRulesList();
+    	   
+    	Iterator it = rules.iterator();
     	boolean isFirst = true;
     	while(it.hasNext()){
-    		if(!isFirst){out+="|";}
-    		Player p = (Player) it.next();
-    		out +=  p.getFirstName()+"-"+p.getMin()+"-"+p.getMax();
+    		if(!isFirst){
+    			out+="|";
+    		}
+    		String p = (String)it.next();
+    		out +=  p;
             isFirst = false;
     	}
     	return out;
     }
 
-    public void openPeople(String in){
-        String[] strLine = in.split("[|]");
+    public void openRules(String in){
+        String[] strLine = in.split("\\|");
         int len = strLine.length;
         if(len>0){
-        	people = new ArrayList();
+        	rules = new ArrayList();
         	for(int i = 0; i<len; i++){
-        		String[] S = strLine[i].split("-");
-        		Player P = new Player();
-        		P.setFirstName(S[0]);
-        		if(S.length == 2){
-        			P.setMin(S[1]);
-        			P.setMax("");
-        		}
-        		else if(S.length == 3){
-        			P.setMin(S[1]);
-                	P.setMax(S[2]);
-        		}
-        		else if(S.length == 1){
-        			P.setMin("");
-        			P.setMax("");
-        		}
-        		
-        		people.add(P);
+        		String S = strLine[i];
+        		rules.add(S);
         	}
         }
     }
@@ -172,12 +220,16 @@ public class ECLOutliers extends ECLJobEntry{//extends JobEntryBase implements C
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "dataset_name")) != null)
                 setDatasetName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "dataset_name")));
             
-            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "people")) != null)
-                openPeople(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "people")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "rules")) != null)
+                openRules(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "rules")));
 
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "resultdataset")) != null)
                 setresultDatasetName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "resultdataset")));
-
+            
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "filterStatement")) != null)
+            	setFilterStatement(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "filterStatement")));
+            
+            
         } catch (Exception e) {
             throw new KettleXMLException("ECL Dataset Job Plugin Unable to read step info from XML node", e);
         }
@@ -189,9 +241,10 @@ public class ECLOutliers extends ECLJobEntry{//extends JobEntryBase implements C
         
         retval += super.getXML();
         retval += "		<name><![CDATA[" + Name + "]]></name>" + Const.CR;
-        retval += "		<people><![CDATA[" + this.savePeople() + "]]></people>" + Const.CR;
+        retval += "		<rules eclIsDef=\"true\" eclType=\"rules\"><![CDATA[" + this.saveRules() + "]]></rules>" + Const.CR;
         retval += "		<dataset_name><![CDATA[" + DatasetName + "]]></dataset_name>" + Const.CR;
         retval += "		<resultdataset eclIsGraphable=\"true\" eclType=\"dataset\"><![CDATA[" + resultDataset + "]]></resultdataset>" + Const.CR;
+        retval += "		<filterStatement><![CDATA[" + this.filterStatement + "]]></filterStatement>" + Const.CR;
         
         return retval;
 
@@ -206,11 +259,14 @@ public class ECLOutliers extends ECLJobEntry{//extends JobEntryBase implements C
         	if(rep.getStepAttributeString(id_jobentry, "datasetName") != null)
                 DatasetName = rep.getStepAttributeString(id_jobentry, "datasetName"); //$NON-NLS-1$
 
-            if(rep.getStepAttributeString(id_jobentry, "people") != null)
-                this.openPeople(rep.getStepAttributeString(id_jobentry, "people")); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "rules") != null)
+                this.openRules(rep.getStepAttributeString(id_jobentry, "rules")); //$NON-NLS-1$
             
             if(rep.getStepAttributeString(id_jobentry, "resultdataset") != null)
                 resultDataset = rep.getStepAttributeString(id_jobentry, "resultdataset"); //$NON-NLS-1$
+            
+            if(rep.getStepAttributeString(id_jobentry, "filterStatement") != null)
+            	filterStatement = rep.getStepAttributeString(id_jobentry, "filterStatement"); //$NON-NLS-1$
 
         } catch (Exception e) {
             throw new KettleException("Unexpected Exception", e);
@@ -223,9 +279,11 @@ public class ECLOutliers extends ECLJobEntry{//extends JobEntryBase implements C
         	
         	rep.saveStepAttribute(id_job, getObjectId(), "Name", Name); //$NON-NLS-1$
         	
-            rep.saveStepAttribute(id_job, getObjectId(), "people", this.savePeople()); //$NON-NLS-1$
+            rep.saveStepAttribute(id_job, getObjectId(), "rules", this.saveRules()); //$NON-NLS-1$
 
             rep.saveStepAttribute(id_job, getObjectId(), "resultdataset", resultDataset); //$NON-NLS-1$
+            
+            rep.saveStepAttribute(id_job, getObjectId(), "filterStatement", this.filterStatement); //$NON-NLS-1$
 
         } catch (Exception e) {
             throw new KettleException("Unable to save info into repository" + id_job, e);
