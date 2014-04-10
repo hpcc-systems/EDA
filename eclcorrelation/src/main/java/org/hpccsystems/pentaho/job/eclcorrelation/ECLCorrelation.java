@@ -20,6 +20,7 @@ import org.pentaho.di.repository.ObjectId;
 import org.pentaho.di.repository.Repository;
 import org.w3c.dom.Node;
 import org.hpccsystems.ecljobentrybase.*;
+import org.hpccsystems.javaecl.Filter;
 
 /**
  *
@@ -31,8 +32,17 @@ public class ECLCorrelation extends ECLJobEntry{//extends JobEntryBase implement
     private java.util.List fields = new ArrayList();
     private String method = "";
     private String fieldList = "";
+    private String rule = "";
     
-    public String getDatasetName() {
+    public String getRule() {
+		return rule;
+	}
+
+	public void setRule(String rule) {
+		this.rule = rule;
+	}
+
+	public String getDatasetName() {
         return datasetName;
     }
 
@@ -70,7 +80,8 @@ public class ECLCorrelation extends ECLJobEntry{//extends JobEntryBase implement
         if(result.isStopped()){
         	return result;
         }
-        else{
+        else{	
+        	
         	String[] fieldNames = fieldList.split(",");String field = "";
         	String normlist = "";
         	for(int i = 0; i<fieldNames.length; i++){
@@ -83,10 +94,22 @@ public class ECLCorrelation extends ECLJobEntry{//extends JobEntryBase implement
         			normlist += "LEFT."+fieldNames[i];
         		}
         	}
-			String ecl = "URecCorr := RECORD\nUNSIGNED uid;\n"+this.datasetName+";\nEND;\n";
-        	ecl += "URecCorr TransCorr("+this.datasetName+" L, INTEGER C) := TRANSFORM\nSELF.uid := C;\nSELF := L;\nEND;\n"; 
-        	ecl += "MyDSCorr := PROJECT("+datasetName+",TransCorr(LEFT,COUNTER));\n";
         	
+        	String ecl ="";
+        	
+    		if(!(this.rule.isEmpty())) //Added for accommodating the new outlier rules   
+    		{
+    			ecl+="OutlierRule := "+this.getDatasetName()+"(~"+this.getRule().trim()+");\r\n";
+    			ecl += "URecCorr := RECORD\nUNSIGNED uid;\n"+"OutlierRule"+";\nEND;\n";
+            	ecl += "URecCorr TransCorr("+"OutlierRule"+" L, INTEGER C) := TRANSFORM\nSELF.uid := C;\nSELF := L;\nEND;\n"; 
+            	ecl += "MyDSCorr := PROJECT("+"OutlierRule"+",TransCorr(LEFT,COUNTER));\n";
+       		}
+    		else{
+    			ecl += "URecCorr := RECORD\nUNSIGNED uid;\n"+this.datasetName+";\nEND;\n";
+            	ecl += "URecCorr TransCorr("+this.datasetName+" L, INTEGER C) := TRANSFORM\nSELF.uid := C;\nSELF := L;\nEND;\n"; 
+            	ecl += "MyDSCorr := PROJECT("+datasetName+",TransCorr(LEFT,COUNTER));\n";
+    		}
+    		
         	ecl += "NumFieldCorr := RECORD\nUNSIGNED id;\nUNSIGNED4 number;\nREAL8 value;STRING field;\nEND;\n";
         	ecl += "OutDSCorr := NORMALIZE(MyDSCorr,"+fieldNames.length+", TRANSFORM(NumFieldCorr,SELF.id:=LEFT.uid,SELF.number:=COUNTER;" +
         			"SELF.field:=CHOOSE(COUNTER,"+field+");SELF.value:=CHOOSE(COUNTER,"+normlist+")));\n";
@@ -198,6 +221,8 @@ public class ECLCorrelation extends ECLJobEntry{//extends JobEntryBase implement
                 openFields(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "fields")));
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "fieldList")) != null)
                 setFieldList(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "fieldList")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "rule")) != null)
+                setRule(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "rule")));
 
             
         } catch (Exception e) {
@@ -215,7 +240,7 @@ public class ECLCorrelation extends ECLJobEntry{//extends JobEntryBase implement
         retval += "		<fieldList><![CDATA[" + fieldList + "]]></fieldList>" + Const.CR;
         retval += "		<fields><![CDATA[" + this.saveFields() + "]]></fields>" + Const.CR;
         retval += "		<dataset_name><![CDATA[" + datasetName + "]]></dataset_name>" + Const.CR;
-
+        retval += "		<rule><![CDATA[" + rule + "]]></rule>" + Const.CR;
         
         return retval;
 
@@ -232,6 +257,8 @@ public class ECLCorrelation extends ECLJobEntry{//extends JobEntryBase implement
                 this.openFields(rep.getStepAttributeString(id_jobentry, "fields")); //$NON-NLS-1$
             if(rep.getStepAttributeString(id_jobentry, "fieldList") != null)
                 fieldList = rep.getStepAttributeString(id_jobentry, "fieldList"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "rule") != null)
+                rule = rep.getStepAttributeString(id_jobentry, "rule"); //$NON-NLS-1$
 
         } catch (Exception e) {
             throw new KettleException("Unexpected Exception", e);
@@ -244,6 +271,7 @@ public class ECLCorrelation extends ECLJobEntry{//extends JobEntryBase implement
             rep.saveStepAttribute(id_job, getObjectId(), "fields", this.saveFields()); //$NON-NLS-1$
             rep.saveStepAttribute(id_job, getObjectId(), "method", method); //$NON-NLS-1$
             rep.saveStepAttribute(id_job, getObjectId(), "fieldList", fieldList); //$NON-NLS-1$
+            rep.saveStepAttribute(id_job, getObjectId(), "rule", rule); //$NON-NLS-1$
         } catch (Exception e) {
             throw new KettleException("Unable to save info into repository" + id_job, e);
         }

@@ -5,8 +5,10 @@
 package org.hpccsystems.pentaho.job.eclcorrelation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -55,6 +57,8 @@ import org.pentaho.di.ui.trans.step.BaseStepDialog;
 import org.hpccsystems.eclguifeatures.AutoPopulate;
 import org.hpccsystems.eclguifeatures.ErrorNotices;
 import org.hpccsystems.ecljobentrybase.*;
+import org.hpccsystems.mapper.MainMapperForOutliers;
+import org.hpccsystems.pentaho.job.ecloutliers.ECLOutliers;
 import org.hpccsystems.recordlayout.RecordLabels;
 import org.hpccsystems.recordlayout.RecordList;
 /**
@@ -75,6 +79,10 @@ public class ECLCorrelationDialog extends ECLJobEntryDialog{//extends JobEntryDi
 	private SelectionAdapter lsDef;
     private String fieldList;
     java.util.List fields;
+    private Combo Rule;
+    
+    String outlierRules[] = null;
+    //private List outlierRules  = new ArrayList();
     
     public ECLCorrelationDialog(Shell parent, JobEntryInterface jobEntryInt, Repository rep, JobMeta jobMeta) {
         super(parent, jobEntryInt, rep, jobMeta);
@@ -89,6 +97,7 @@ public class ECLCorrelationDialog extends ECLJobEntryDialog{//extends JobEntryDi
         final Display display = parentShell.getDisplay();
         
         String datasets[] = null;
+        String outlRules[] = null;
 
         final AutoPopulate ap = new AutoPopulate();
         try{
@@ -99,7 +108,15 @@ public class ECLCorrelationDialog extends ECLJobEntryDialog{//extends JobEntryDi
             System.out.println(e.toString());
             datasets = new String[]{""};
         }
-
+        
+        try{
+        	outlRules = ap.parseOutlierRules(this.jobMeta.getJobCopies());
+        	//outlierRules = Arrays.asList(outlRules);
+        }catch (Exception e){
+            System.out.println("Error Parsing existing outlier rules");
+            System.out.println(e.toString());
+            outlRules = new String[]{""};
+        }
 
         shell = new Shell(parentShell, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MIN | SWT.MAX);
         fields = new ArrayList();
@@ -166,7 +183,7 @@ public class ECLCorrelationDialog extends ECLJobEntryDialog{//extends JobEntryDi
         Group fieldsGroup = new Group(compForGrp, SWT.SHADOW_NONE);
         props.setLook(fieldsGroup);
         fieldsGroup.setText("Details");
-        fieldsGroup.setLayout(groupLayout);
+        fieldsGroup.setLayout(groupLayout); 
         FormData fieldsGroupFormat = new FormData();
         fieldsGroupFormat.top = new FormAttachment(generalGroup, margin);
         fieldsGroupFormat.width = 340;
@@ -174,10 +191,36 @@ public class ECLCorrelationDialog extends ECLJobEntryDialog{//extends JobEntryDi
         fieldsGroupFormat.left = new FormAttachment(middle, 0);
         fieldsGroupFormat.right = new FormAttachment(100, 0);
         fieldsGroup.setLayoutData(fieldsGroupFormat);
+        
+        Group ruleGroup = new Group(compForGrp, SWT.SHADOW_NONE);
+        props.setLook(ruleGroup);
+        ruleGroup.setText("Outlier Rule");
+        ruleGroup.setLayout(groupLayout);
+        FormData ruleFormData = new FormData();
+        ruleFormData.top = new FormAttachment(fieldsGroup, margin);
+        ruleFormData.width = 340;
+        ruleFormData.height = 65;
+        ruleFormData.left = new FormAttachment(middle, 0);
+        ruleFormData.right = new FormAttachment(100, 0);
+        ruleGroup.setLayoutData(ruleFormData);
 
         item1.setControl(compForGrp);
         Method = buildCombo("Method:", jobEntryName, lsMod, middle, margin, fieldsGroup, new String[]{"Pearson", "Spearman"});
         datasetName = buildCombo("Dataset Name:", Method, lsMod, middle, margin, fieldsGroup, datasets);
+        
+		String rul = "";
+		for(int i=0; i<outlRules.length; i++){
+			rul += "|";
+			rul += outlRules[i];
+		}
+		outlierRules = rul.split("\\|");
+		
+	        Rule = buildCombo("Rule:", jobEntryName, lsMod, middle, margin, ruleGroup, outlierRules );
+		    //Rule = new Combo(ruleGroup, SWT.DROP_DOWN);
+		    //Rule.select(arg0)
+		    //Rule.setText("Select an Outlier Rule");
+			Rule.setItems(outlierRules);
+			//Rule.setItems(new String[]{rul,"test"});
         
         TabItem item2 = new TabItem(tab, SWT.NULL);
         item2.setText("Fields Selected");
@@ -193,6 +236,7 @@ public class ECLCorrelationDialog extends ECLJobEntryDialog{//extends JobEntryDi
         // Expand both horizontally and vertically
         sc2.setExpandHorizontal(true);
         sc2.setExpandVertical(true);
+        
         item2.setControl(sc2);
         Button button = new Button(compForGrp2, SWT.PUSH);
         button.setText("Add Columns");
@@ -603,6 +647,10 @@ public class ECLCorrelationDialog extends ECLJobEntryDialog{//extends JobEntryDi
         	tv.setInput(fields);        	
         }
         
+        if(jobEntry.getRule() != null){
+        	Rule.setText(jobEntry.getRule());
+        }
+        
         shell.pack();
         shell.open();
         while (!shell.isDisposed()) {
@@ -661,6 +709,7 @@ public class ECLCorrelationDialog extends ECLJobEntryDialog{//extends JobEntryDi
         jobEntry.setMethod(this.Method.getText());
         jobEntry.setFields(fields);
         jobEntry.setFieldList(this.fieldList);
+        jobEntry.setRule(this.Rule.getText());
         dispose();
     }
 
