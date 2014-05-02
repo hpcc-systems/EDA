@@ -1,0 +1,33 @@
+<assembly>
+   <id>dist</id>
+   <formats>
+     <format>zip</format>
+   </formats>
+   <files>
+     <file>
+       <source>target/${project.artifactId}.jar</source>
+       <outputDirectory></outputDirectory>
+       <fileMode>0644</fileMode>
+     </file>
+     <file>
+       <source>src/main/resources/plugin/${iconfile}</source>
+       <outputDirectory>plugin</outputDirectory>
+       <fileMode>0644</fileMode>
+     </file>
+     <file>
+       <source>src/main/resources/plugin/plugin.xml</source>
+       <outputDirectory>plugin</outputDirectory>
+       <fileMode>0644</fileMode>
+     </file>
+   </files>
+   <dependencySets>
+       <dependencySet>
+           <outputDirectory>plugin</outputDirectory>
+           <includes>
+               <include>org.hpccsystems:javaecl:0.1.0</include>
+           </includes>
+           <fileMode>0644</fileMode>
+       </dependencySet>
+   </dependencySets>
+</assembly>
+

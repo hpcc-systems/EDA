@@ -1068,7 +1068,7 @@ class SortOption {
 	  
 	  public static final String ASC = "ASC";
 
-	  public final static String[] INSTANCES = { ASC, DESC };
+	  public final static String[] INSTANCES = { DESC, ASC };
 	
 }
 
@@ -1079,7 +1079,7 @@ class ColOption {
 	  
 	  public static final String VAL = "FREQUENCY";
 
-	  public final static String[] INSTANCES1 = { NAME, VAL };
+	  public final static String[] INSTANCES1 = { VAL, NAME };
 	
 }
 
