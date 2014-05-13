@@ -38,6 +38,43 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
     private String mode = "";
     private String flag = "";
     private String Number = "";
+    private String label ="";
+	private String outputName ="";
+	private String persist = "";
+	private String defJobName = "";
+	
+	public String getDefJobName() {
+		return defJobName;
+	}
+
+	public void setDefJobName(String defJobName) {
+		this.defJobName = defJobName;
+	}
+	
+	public String getPersistOutputChecked() {
+		return persist;
+	}
+
+	public void setPersistOutputChecked(String persist) {
+		this.persist = persist;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getOutputName() {
+		return outputName;
+	}
+
+	public void setOutputName(String outputName) {
+		this.outputName = outputName;
+	}
+    
 	public void setPeople(java.util.List people){
 		this.people = people;
 	}
@@ -170,11 +207,30 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
 	        		ecl += "MedianTable := TABLE(MedianValues,{field;Median := AVE(GROUP, MedianValues.value);},field);\n";
 	        		if(cnt == 0){
 	        			ecl += getSingle()+" := MedianTable;\n";
-	        			ecl += "OUTPUT("+getSingle()+",THOR);\n";
+	        			if(persist.equalsIgnoreCase("true")){
+	    	        		if(outputName != null && !(outputName.trim().equals(""))){
+	    	        			ecl += "OUTPUT("+getSingle()+",,'~eda::univariate::"+outputName+"', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
+	    	        		}else{
+	    	        			ecl += "OUTPUT("+getSingle()+",,'~eda::univariate::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
+	    	        		}
+	    	        	}
+	    	        	else{
+	    	        		ecl += "OUTPUT("+getSingle()+",NAMED('Univariate'));\n";
+	    	        	}
 	        		}
 	        		else{
 	        			ecl += getSingle()+" := JOIN(SingleUni,Mediantable,LEFT.field = RIGHT.field);\n";
-	        			ecl += "OUTPUT("+getSingle()+",THOR);\n";
+	        			if(persist.equalsIgnoreCase("true")){
+	    	        		if(outputName != null && !(outputName.trim().equals(""))){
+	    	        			ecl += "OUTPUT("+getSingle()+",,'~eda::univariate::"+outputName+"', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
+	    	        		}else{
+	    	        			ecl += "OUTPUT("+getSingle()+",,'~eda::univariate::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
+	    	        		}
+	    	        	}
+	    	        	else{
+	    	        		ecl += "OUTPUT("+getSingle()+",NAMED('Univariate'));\n";
+	    	        	}
+	        			//ecl += "OUTPUT("+getSingle()+",THOR);\n";
 	        		}
 	        	}
 	        	
@@ -183,13 +239,32 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
 	        		ecl += "modT := TABLE(MTable,{field;cnt:=MAX(GROUP,vals)},field);\n";
 	        		ecl += "Modes:=JOIN(MTable,ModT,LEFT.field=RIGHT.field AND LEFT.vals=RIGHT.cnt);\n";
 	        		ecl += getMode()+" := TABLE(Modes,{field;mode:=value;cnt});\n";
-	        		ecl += "OUTPUT("+getMode()+",THOR);\n";
+	        		if(persist.equalsIgnoreCase("true")){
+    	        		if(outputName != null && !(outputName.trim().equals(""))){
+    	        			ecl += "OUTPUT("+getMode()+",,'~eda::univariate::"+outputName+"', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
+    	        		}else{
+    	        			ecl += "OUTPUT("+getMode()+",,'~eda::univariate::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
+    	        		}
+    	        	}
+    	        	else{
+    	        		ecl += "OUTPUT("+getMode()+",NAMED('Univariate'));\n";
+    	        	}
+	        		//ecl += "OUTPUT("+getMode()+",THOR);\n";
 	        	}
 	        	
         	}
         	if(cnt>0 && check[1].equals("false")){
         		ecl += getSingle()+" := SingleUni;\n";
-        		ecl += "OUTPUT("+getSingle()+",THOR);\n";
+        		if(persist.equalsIgnoreCase("true")){
+	        		if(outputName != null && !(outputName.trim().equals(""))){
+	        			ecl += "OUTPUT("+getSingle()+",,'~eda::univariate::"+outputName+"', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
+	        		}else{
+	        			ecl += "OUTPUT("+getSingle()+",,'~eda::univariate::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
+	        		}
+	        	}
+	        	else{
+	        		ecl += "OUTPUT("+getSingle()+",NAMED('Univariate'));\n";
+	        	}
         	}
 
         	
@@ -262,6 +337,17 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
             	if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "mode")) != null)
                     setMode(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "mode")));
             //}
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "output_name")) != null)
+            	setOutputName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "output_name")));
+                
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "label")) != null)
+                setLabel(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "label")));
+                
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "persist_Output_Checked")) != null)
+                setPersistOutputChecked(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "persist_Output_Checked")));
+            
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "defJobName")) != null)
+                setDefJobName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "defJobName")));
             
         } catch (Exception e) {
             throw new KettleXMLException("ECL Dataset Job Plugin Unable to read step info from XML node", e);
@@ -285,6 +371,10 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
         	if(getCheckList().split(",")[2].equals("true"))
         		retval += "		<mode eclIsGraphable=\"true\"><![CDATA[" + mode + "]]></mode>" + Const.CR;
         }
+        retval += "		<label><![CDATA[" + label + "]]></label>" + Const.CR;
+        retval += "		<output_name><![CDATA[" + outputName + "]]></output_name>" + Const.CR;
+        retval += "		<persist_Output_Checked><![CDATA[" + persist + "]]></persist_Output_Checked>" + Const.CR;
+        retval += "		<defJobName><![CDATA[" + defJobName + "]]></defJobName>" + Const.CR;
         return retval;
 
     }
@@ -310,6 +400,14 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
                 single = rep.getStepAttributeString(id_jobentry, "single"); //$NON-NLS-1$
             if(rep.getStepAttributeString(id_jobentry, "mode") != null)
             	mode = rep.getStepAttributeString(id_jobentry, "mode"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "outputName") != null)
+            	outputName = rep.getStepAttributeString(id_jobentry, "outputName"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "label") != null)
+            	label = rep.getStepAttributeString(id_jobentry, "label"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "persist_Output_Checked") != null)
+            	persist = rep.getStepAttributeString(id_jobentry, "persist_Output_Checked"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "defJobName") != null)
+            	defJobName = rep.getStepAttributeString(id_jobentry, "defJobName"); //$NON-NLS-1$
         } catch (Exception e) {
             throw new KettleException("Unexpected Exception", e);
         }
@@ -326,6 +424,10 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
             rep.saveStepAttribute(id_job, getObjectId(), "mode", mode); //$NON-NLS-1$
             rep.saveStepAttribute(id_job, getObjectId(), "flag", flag); //$NON-NLS-1$
             rep.saveStepAttribute(id_job, getObjectId(), "Number", Number); //$NON-NLS-1$
+            rep.saveStepAttribute(id_job, getObjectId(), "outputName", outputName);
+        	rep.saveStepAttribute(id_job, getObjectId(), "label", label);
+        	rep.saveStepAttribute(id_job, getObjectId(), "persist_Output_Checked", persist);
+        	rep.saveStepAttribute(id_job, getObjectId(), "defJobName", defJobName);
         } catch (Exception e) {
             throw new KettleException("Unable to save info into repository" + id_job, e);
         }

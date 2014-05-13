@@ -35,6 +35,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
@@ -98,6 +99,12 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
     
 	private SelectionAdapter lsDef;
 
+	public Button chkBox;
+    public static Text outputName;
+    public static Label label;
+    private String persist;
+    private Composite composite;
+    private String defJobName;
 	
     public ECLFrequencyDialog(Shell parent, JobEntryInterface jobEntryInt,
 			Repository rep, JobMeta jobMeta) {
@@ -122,12 +129,14 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
             //Object[] jec = this.jobMeta.getJobCopies().toArray();
         	
             datasets = ap.parseDatasetsRecordsets(this.jobMeta.getJobCopies());
+            defJobName = ap.getGlobalVariable(this.jobMeta.getJobCopies(), "jobName");
             
         }catch (Exception e){
             System.out.println("Error Parsing existing Datasets");
             System.out.println(e.toString());
             datasets = new String[]{""};
         }
+        
 
         shell = new Shell(parentShell, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MIN | SWT.MAX);
         people = new ArrayList();
@@ -140,7 +149,7 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
         TabFolder tab = new TabFolder(shell, SWT.FILL | SWT.RESIZE | SWT.MIN | SWT.MAX);
         FormData datatab = new FormData();
         
-        datatab.height = 270;
+        datatab.height = 400;
         datatab.width = 650;
         tab.setLayoutData(datatab);
         
@@ -202,13 +211,82 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
         datasetGroupFormat.height = 100;
         datasetGroupFormat.left = new FormAttachment(middle, 0);
         datasetGroup.setLayoutData(datasetGroupFormat);
-		
-		
+        
         datasetName = buildCombo("Dataset Name :    ", jobEntryName, lsMod, middle, margin, datasetGroup, datasets);
 		
-        
-        
         sort = buildCombo("Sort :    ", datasetName, lsMod, middle, margin, datasetGroup, new String[]{"NO", "YES"});
+        
+        //Begin
+        
+        Group perGroup = new Group(compForGrp, SWT.SHADOW_NONE);
+        props.setLook(perGroup);
+        perGroup.setText("Persist");
+        perGroup.setLayout(groupLayout);
+        FormData perGroupFormat = new FormData();
+        perGroupFormat.top = new FormAttachment(datasetGroup, margin);
+        perGroupFormat.width = 400;
+        perGroupFormat.height = 80;
+        perGroupFormat.left = new FormAttachment(middle, 0);
+        //perGroupFormat.right = new FormAttachment(100, 0);
+        perGroup.setLayoutData(perGroupFormat);
+        
+        composite = new Composite(perGroup, SWT.NONE);
+        composite.setLayout(new FormLayout());
+        composite.setBackground(new Color(null, 255, 255, 255));
+
+        final Composite composite_1 = new Composite(composite, SWT.NONE);
+        composite_1.setLayout(new GridLayout(2, false));
+        final FormData fd_composite_1 = new FormData();
+        fd_composite_1.top = new FormAttachment(0);
+        fd_composite_1.left = new FormAttachment(0, 10);
+        fd_composite_1.bottom = new FormAttachment(0, 34);
+        fd_composite_1.right = new FormAttachment(0, 390);
+        composite_1.setLayoutData(fd_composite_1);
+        composite_1.setBackground(new Color(null, 255, 255, 255));
+        
+        label = new Label(composite_1, SWT.NONE);
+        label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        label.setText("Logical Name:");
+        label.setBackground(new Color(null, 255, 255, 255));
+
+        outputName = new Text(composite_1, SWT.BORDER);
+        outputName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        outputName.setEnabled(false);
+        if(jobEntry.getPersistOutputChecked()!= null && jobEntry.getPersistOutputChecked().equals("true")){
+        	outputName.setEnabled(true);
+        }
+        
+        final Composite composite_2 = new Composite(composite, SWT.NONE);
+        composite_2.setLayout(new GridLayout(1, false));
+        final FormData fd_composite_2 = new FormData();
+        fd_composite_2.top = new FormAttachment(0, 36);
+        fd_composite_2.bottom = new FormAttachment(100, 0);
+        fd_composite_2.right = new FormAttachment(0, 390);
+        fd_composite_2.left = new FormAttachment(0, 10);
+        composite_2.setLayoutData(fd_composite_2);
+        composite_2.setBackground(new Color(null, 255, 255, 255));
+
+        chkBox = new Button(composite_2, SWT.CHECK);
+        chkBox.setText("Persist Ouput");
+        chkBox.setBackground(new Color(null, 255, 255, 255));
+        
+        chkBox.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+            	Button button = (Button) e.widget;
+            	if(button.getSelection()){
+            		persist = "true";
+            		outputName.setEnabled(true);
+            	}
+            	else{
+            		persist = "false";
+            		outputName.setText("");
+            		outputName.setEnabled(false);
+            	}
+
+            }
+        });
+        //End 
         
         item1.setControl(compForGrp);
         /**
@@ -597,6 +675,7 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 		            			if(s[0].startsWith(NameFilter.getText())){
 		            				TreeItem I = new TreeItem(tab, SWT.NONE);
 		            				I.setText(0,s[0]);
+		            				I.setText(1,s[2]);
 		            				if(s[1].equalsIgnoreCase("true")) 
 		            					I.setChecked(true);
 		            			}
@@ -824,6 +903,26 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
         	number = Integer.parseInt(jobEntry.getNumber());
         }
         
+        if (jobEntry.getPersistOutputChecked() != null && chkBox != null) {
+        	chkBox.setSelection(jobEntry.getPersistOutputChecked().equals("true")?true:false);
+        }
+        
+        if(chkBox != null && chkBox.getSelection()){
+        	for (Control control : composite_1.getChildren()) {
+        		if(!control.isDisposed()){
+					if (jobEntry.getOutputName() != null && outputName != null) {
+			        	outputName.setText(jobEntry.getOutputName());
+					}
+					if (jobEntry.getLabel() != null && label != null) {
+			    		label.setText(jobEntry.getLabel());
+					}
+        		}
+        	}
+		}
+        if(jobEntry.getDefJobName() != null){
+        	defJobName = jobEntry.getDefJobName();
+        }
+        
         shell.pack();
         shell.open();
         while (!shell.isDisposed()) {
@@ -881,6 +980,22 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
         jobEntry.setoutTables(outTables);
         jobEntry.setflag(flag);
         jobEntry.setNumber(Integer.toString(number));
+        if(chkBox.getSelection() && outputName != null){
+        	jobEntry.setOutputName(outputName.getText());
+        }
+        
+        if(chkBox.getSelection() && label != null){
+        	jobEntry.setLabel(label.getText());
+        }
+        
+        if(chkBox != null){
+        	jobEntry.setPersistOutputChecked(chkBox.getSelection()?"true":"false");
+        }
+        if(defJobName.trim().equals("")){
+        	defJobName = "Spoon-job";
+        }
+        jobEntry.setDefJobName(defJobName);
+        
         dispose();
     }
 

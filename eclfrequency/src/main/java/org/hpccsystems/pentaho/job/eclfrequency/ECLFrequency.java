@@ -37,6 +37,42 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	private String outTables[] = null;
 	private String flag = "";
     private String Number = "";
+    private String label ="";
+	private String outputName ="";
+	private String persist = "";
+	private String defJobName = "";
+	
+	public String getDefJobName() {
+		return defJobName;
+	}
+
+	public void setDefJobName(String defJobName) {
+		this.defJobName = defJobName;
+	}
+	
+	public String getPersistOutputChecked() {
+		return persist;
+	}
+
+	public void setPersistOutputChecked(String persist) {
+		this.persist = persist;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getOutputName() {
+		return outputName;
+	}
+
+	public void setOutputName(String outputName) {
+		this.outputName = outputName;
+	}
     
 	public void setPeople(java.util.List people){
 		this.people = people;
@@ -121,19 +157,19 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
         }
         else{
         	//String sort = Sort;
-	        String fieldStr = ""; String frequency = "";String[] norm = this.normList.split("-");String valueStr = "";String[] dataT = data_type.split(",");
+	        String fieldStr = ""; String frequency = "";String[] norm = this.normList.split("-");String valueStr = "";String[] dataT = data_type.toLowerCase().split(",");
 	        String fieldNum = "";String valueNum = "";int str = 0;int notstr = 0;outTables = new String[norm.length];
 	        for(int i = 0; i < norm.length; i++){
 	        	String[] cols = norm[i].split(",");
-	        	if(dataT[i].startsWith("string")){ 
+	        	if(dataT[i].startsWith("integer") || dataT[i].startsWith("decimal") || dataT[i].startsWith("real") || dataT[i].startsWith("unicode")){ 
+	        		valueNum += "LEFT."+cols[0]+",";
+        			fieldNum += "\'"+cols[0]+"\',";
+        			notstr++;
+        		}
+        		else{
         			valueStr += "LEFT."+cols[0]+",";
         			fieldStr += "\'"+cols[0]+"\',";
         			str++;
-        		}
-        		else{
-        			valueNum += "LEFT."+cols[0]+",";
-        			fieldNum += "\'"+cols[0]+"\',";
-        			notstr++;
         		}
 	        }
 	        if(valueStr.length()>0){
@@ -167,12 +203,32 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        	if(getSort().equals("NO") || getSort().equals("")){
 	        		if(dataT[j].startsWith("string")) {
 	        			frequency += cols[0]+"_Frequency"+getNumber()+":= TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent});\n";
-	        			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
+	        			//frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
+	        			if(persist.equalsIgnoreCase("true")){
+	        	    		if(outputName != null && !(outputName.trim().equals(""))){
+	        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::frequency::"+outputName+"', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"_"+j+"'))"+";\n";
+	        	    		}else{
+	        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::frequency::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"_"+j+"'))"+";\n";
+	        	    		}
+	        	    	}
+	        	    	else{
+	        	    		frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED('Frequency_"+cols[0]+"_"+j+"'));\n";
+	        	    	}
 	        			
 	        		}
 	        		else{
 	        			frequency += cols[0]+"_Frequency"+getNumber()+":=TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent});\n";
-	        			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
+	        			//frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
+	        			if(persist.equalsIgnoreCase("true")){
+	        	    		if(outputName != null && !(outputName.trim().equals(""))){
+	        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::frequency::"+outputName+"', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"_"+j+"'))"+";\n";
+	        	    		}else{
+	        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::frequency::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"_"+j+"'))"+";\n";
+	        	    		}
+	        	    	}
+	        	    	else{
+	        	    		frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED('Frequency_"+cols[0]+"_"+j+"'));\n";
+	        	    	}
 	        			
 	        		}
 	        	}
@@ -192,7 +248,17 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        						frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),"+cols[0]+");\n";
 	        				}
 	        					
-	        				frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
+	        				//frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
+	        				if(persist.equalsIgnoreCase("true")){
+		        	    		if(outputName != null && !(outputName.trim().equals(""))){
+		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::frequency::"+outputName+"', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"_"+j+"'))"+";\n";
+		        	    		}else{
+		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::frequency::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"_"+j+"'))"+";\n";
+		        	    		}
+		        	    	}
+		        	    	else{
+		        	    		frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED('Frequency_"+cols[0]+"_"+j+"'));\n";
+		        	    	}
 	        				
 	        			}
 	        			else{
@@ -200,7 +266,17 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        					frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),frequency);\n";
 	        				else
 	        					frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),frequency);\n";
-	        				frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
+	        				//frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
+	        				if(persist.equalsIgnoreCase("true")){
+		        	    		if(outputName != null && !(outputName.trim().equals(""))){
+		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::frequency::"+outputName+"', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"_"+j+"'))"+";\n";
+		        	    		}else{
+		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::frequency::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"_"+j+"'))"+";\n";
+		        	    		}
+		        	    	}
+		        	    	else{
+		        	    		frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED('Frequency_"+cols[0]+"_"+j+"'));\n";
+		        	    	}
 
 
 	        			}
@@ -219,7 +295,17 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        					else
 	        						frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),-"+cols[0]+");\n";
 	        				}
-	        				frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
+	        				//frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
+	        				if(persist.equalsIgnoreCase("true")){
+		        	    		if(outputName != null && !(outputName.trim().equals(""))){
+		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::frequency::"+outputName+"', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"_"+j+"'))"+";\n";
+		        	    		}else{
+		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::frequency::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"_"+j+"'))"+";\n";
+		        	    		}
+		        	    	}
+		        	    	else{
+		        	    		frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED('Frequency_"+cols[0]+"_"+j+"'));\n";
+		        	    	}
 	        				
 	        			}
 	        			else{
@@ -227,7 +313,17 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        					frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),-frequency);\n";
 	        				else
 	        					frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),-frequency);\n";
-	        				frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
+	        				//frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
+	        				if(persist.equalsIgnoreCase("true")){
+		        	    		if(outputName != null && !(outputName.trim().equals(""))){
+		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::frequency::"+outputName+"', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"_"+j+"'))"+";\n";
+		        	    		}else{
+		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::frequency::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"_"+j+"'))"+";\n";
+		        	    		}
+		        	    	}
+		        	    	else{
+		        	    		frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED('Frequency_"+cols[0]+"_"+j+"'));\n";
+		        	    	}
 	        				
 	        			}
 	        		}
@@ -335,8 +431,19 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
                 openPeople(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "people")));
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "data_type")) != null)
             	data_type = (XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "data_type")));
+           
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "output_name")) != null)
+                setOutputName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "output_name")));
+            
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "label")) != null)
+                setLabel(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "label")));
+            
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "persist_Output_Checked")) != null)
+                setPersistOutputChecked(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "persist_Output_Checked")));
             //if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "outTables")) != null)
               //  openOutTables(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "outTables")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "defJobName")) != null)
+                setDefJobName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "defJobName")));
             String[] S = normList.split("-");
         	this.outTables = new String[S.length];        	
         	for(int i = 0; i<S.length; i++){
@@ -366,6 +473,10 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
         retval += "		<dataset_name><![CDATA[" + DatasetName + "]]></dataset_name>" + Const.CR;
         retval += "		<flag><![CDATA[" + flag + "]]></flag>" + Const.CR;
         retval += "		<Number><![CDATA[" + Number + "]]></Number>" + Const.CR;
+        retval += "		<label><![CDATA[" + label + "]]></label>" + Const.CR;
+        retval += "		<output_name><![CDATA[" + outputName + "]]></output_name>" + Const.CR;
+        retval += "		<persist_Output_Checked><![CDATA[" + persist + "]]></persist_Output_Checked>" + Const.CR;
+        retval += "		<defJobName><![CDATA[" + defJobName + "]]></defJobName>" + Const.CR;
         return retval;
 
     }
@@ -396,7 +507,17 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
             	data_type = (rep.getStepAttributeString(id_jobentry, "data_type")); //$NON-NLS-1$
             //if(rep.getStepAttributeString(id_jobentry, "outTables") != null)
                 //this.openOutTables(rep.getStepAttributeString(id_jobentry, "outTables")); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "outputName") != null)
+            	outputName = rep.getStepAttributeString(id_jobentry, "outputName"); //$NON-NLS-1$
             
+            if(rep.getStepAttributeString(id_jobentry, "label") != null)
+            	label = rep.getStepAttributeString(id_jobentry, "label"); //$NON-NLS-1$
+            
+            if(rep.getStepAttributeString(id_jobentry, "persist_Output_Checked") != null)
+            	persist = rep.getStepAttributeString(id_jobentry, "persist_Output_Checked"); //$NON-NLS-1$
+            
+            if(rep.getStepAttributeString(id_jobentry, "defJobName") != null)
+            	defJobName = rep.getStepAttributeString(id_jobentry, "defJobName"); //$NON-NLS-1$
             
         } catch (Exception e) {
             throw new KettleException("Unexpected Exception", e);
@@ -419,6 +540,10 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
             rep.saveStepAttribute(id_job, getObjectId(), "outTables", this.saveOutTables()); //$NON-NLS-1$
             rep.saveStepAttribute(id_job, getObjectId(), "flag", flag); //$NON-NLS-1$
             rep.saveStepAttribute(id_job, getObjectId(), "Number", Number); //$NON-NLS-1$
+            rep.saveStepAttribute(id_job, getObjectId(), "outputName", outputName);
+        	rep.saveStepAttribute(id_job, getObjectId(), "label", label);
+        	rep.saveStepAttribute(id_job, getObjectId(), "persist_Output_Checked", persist);
+        	rep.saveStepAttribute(id_job, getObjectId(), "defJobName", defJobName);
             
         } catch (Exception e) {
             throw new KettleException("Unable to save info into repository" + id_job, e);
