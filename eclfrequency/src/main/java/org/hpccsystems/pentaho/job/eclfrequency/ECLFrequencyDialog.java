@@ -544,17 +544,27 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 				AutoPopulate ap = new AutoPopulate();
               try{
           		
-                  String[] items = ap.fieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
+                 // String[] items = ap.fieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
                   RecordList rec = ap.rawFieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
+                  //org.hpccsystems.recordlayout.RecordBO[] items = (org.hpccsystems.recordlayout.RecordBO[])rec.getRecords().toArray();
                   
-                  for(int i = 0; i < items.length; i++){
+                  for(int i = 0; i < rec.getRecords().size(); i++){
               		TreeItem item = new TreeItem(tab, SWT.NONE);
-              		item.setText(0,items[i].toLowerCase());
-              		item.setText(1,rec.getRecords().get(i).getColumnType()+rec.getRecords().get(i).getColumnWidth());
-              		if(rec.getRecords().get(i).getColumnType().startsWith("String")){
-              			item.setBackground(0, new Color(null,211,211,211));
+              		item.setText(0, rec.getRecords().get(i).getColumnName().toLowerCase());
+              		String type = "String";
+              		String width = "";
+              		try{
+              			type = rec.getRecords().get(i).getColumnType();
+                  		width = rec.getRecords().get(i).getColumnWidth();
+                  		item.setText(1,type+width);
+                  		if(rec.getRecords().get(i).getColumnType().startsWith("String")){
+                  			item.setBackground(0, new Color(null,211,211,211));
+                  		}
+              		}catch (Exception e){
+              			System.out.println("Frequency Cant look up column type");
               		}
-              		field.add(new String[]{items[i].toLowerCase(),"false",rec.getRecords().get(i).getColumnType()+rec.getRecords().get(i).getColumnWidth()});
+              		
+              		field.add(new String[]{rec.getRecords().get(i).getColumnName().toLowerCase(),"false",type+width});
               	}
                   
                   

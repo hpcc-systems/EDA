@@ -53,11 +53,10 @@ import org.pentaho.di.job.entry.JobEntryInterface;
 import org.pentaho.di.repository.Repository;
 import org.pentaho.di.ui.job.dialog.JobDialog;
 import org.pentaho.di.ui.trans.step.BaseStepDialog;
-
 import org.hpccsystems.eclguifeatures.AutoPopulate;
 import org.hpccsystems.eclguifeatures.ErrorNotices;
 import org.hpccsystems.ecljobentrybase.*;
-import org.hpccsystems.mapper.MainMapperForOutliers;
+//import org.hpccsystems.mapper.MainMapperForOutliers;
 import org.hpccsystems.pentaho.job.ecloutliers.ECLOutliers;
 import org.hpccsystems.recordlayout.RecordLabels;
 import org.hpccsystems.recordlayout.RecordList;
@@ -437,15 +436,23 @@ public class ECLCorrelationDialog extends ECLJobEntryDialog{//extends JobEntryDi
               RecordList rec = ap.rawFieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
               
               for(int i = 0; i < items.length; i++){
-          		TreeItem item = new TreeItem(tab, SWT.NONE);
-          		item.setText(0,items[i].toLowerCase());
-          		item.setText(1, rec.getRecords().get(i).getColumnType());
-          		if(rec.getRecords().get(i).getColumnType().startsWith("String")){
-          			item.setBackground(0, new Color(null,211,211,211));
-          			//item.setGrayed(true);
-          		}
-          		field.add(new String[]{items[i].toLowerCase(),"false",rec.getRecords().get(i).getColumnType()});
-          	}
+            		TreeItem item = new TreeItem(tab, SWT.NONE);
+            		item.setText(0,items[i].toLowerCase());
+            		String type = "String";
+            		String width = "";
+            		try{
+            			type = rec.getRecords().get(i).getColumnType();
+                		width = rec.getRecords().get(i).getColumnWidth();
+                		item.setText(1,type+width);
+                		if(rec.getRecords().get(i).getColumnType().startsWith("String")){
+                			item.setBackground(0, new Color(null,211,211,211));
+                		}
+            		}catch (Exception e){
+            			System.out.println("Frequency Cant look up column type");
+            		}
+            		
+            		field.add(new String[]{items[i].toLowerCase(),"false",type+width});
+            	}
               
               
           }catch (Exception ex){
