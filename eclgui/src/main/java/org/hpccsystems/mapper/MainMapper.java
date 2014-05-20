@@ -545,7 +545,7 @@ public class MainMapper {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		GridData data = new GridData(GridData.FILL_BOTH);
-		data.heightHint = 400;
+		data.heightHint = 350;
 		comp2.setLayout(layout);
 		comp2.setLayoutData(data);
 		
@@ -604,6 +604,7 @@ public class MainMapper {
 		layout.numColumns = 3;
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
+		data.heightHint = 128;
 		compTreePanel.setLayout(layout);
 		compTreePanel.setLayoutData(data);
 		
@@ -630,7 +631,7 @@ public class MainMapper {
 		treeInputDataSet = new Tree(compTreePanel, SWT.SINGLE | SWT.BORDER);
 		
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-	    gridData.heightHint = 100;
+	    gridData.heightHint = 80;
 	    treeInputDataSet.setLayoutData(gridData);
 	    boolean includeInput = false;
 	    if(this.layoutStyle.equalsIgnoreCase("transform")){
@@ -669,7 +670,7 @@ public class MainMapper {
 		
 	    final Tree treeFunctions = new Tree(compTreePanel, SWT.SINGLE | SWT.BORDER);
 	    gridData = new GridData(GridData.FILL_HORIZONTAL);
-	    gridData.heightHint = 100;
+	    gridData.heightHint = 80;
 	    treeFunctions.setLayoutData(gridData);
 	    Map<String, List<String>> mapFunctionValues = Utils.getFunctionValueMap();
 	    Utils.fillTreeForFunctions(treeFunctions, mapFunctionValues);
@@ -817,7 +818,7 @@ public class MainMapper {
 	    int style = SWT.FULL_SELECTION | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL;
 	    final Table tblOperators = new Table(compTreePanel, style);
 		gridData = new GridData();
-		gridData.heightHint = 100;
+		gridData.heightHint = 80;
 		gridData.widthHint = 100;
 		tblOperators.setLayoutData(gridData);
 		
@@ -861,7 +862,7 @@ public class MainMapper {
 			compVar.setLayout(new GridLayout(4, false));
 			sc.setContent(compVar);
 			
-			sc.setMinSize(720, 90);
+			sc.setMinSize(620, 80);
 			sc.setExpandHorizontal(true);
 		    sc.setExpandVertical(true);
 		    
@@ -872,7 +873,7 @@ public class MainMapper {
 	        tv.setInput(people);
 	        
 	        GridData gd = new GridData(GridData.FILL_BOTH);
-	        gd.horizontalSpan = 3;
+	        gd.horizontalSpan = 2;
 	        final Table table = tv.getTable();
 	        table.setLayoutData(gd);
 	        table.setLinesVisible(true);
@@ -880,7 +881,7 @@ public class MainMapper {
 	        
 	        final TableColumn tc0 = new TableColumn(table, SWT.LEFT);
 		    tc0.setText("Columns");
-		    tc0.setWidth(180);
+		    tc0.setWidth(160);
 		    tc0.setImage(RecordLabels.getImage("unchecked"));
 		    tc0.addListener(SWT.Selection, new Listener() {
 				@Override
@@ -912,15 +913,15 @@ public class MainMapper {
 	        
 		    TableColumn tc1 = new TableColumn(table, SWT.CENTER);
 		    tc1.setText("Operator");
-		    tc1.setWidth(180);
+		    tc1.setWidth(150);
 		    
 		    TableColumn tc2 = new TableColumn(table, SWT.CENTER);
 		    tc2.setText("Value");
-		    tc2.setWidth(180);
+		    tc2.setWidth(160);
 		    
 		    TableColumn tc3 = new TableColumn(table, SWT.CENTER);
 		    tc3.setText("Boolean Operator");
-		    tc3.setWidth(180);
+		    tc3.setWidth(150);
 		    
 		    List<String> ls = new ArrayList<String>();
  			
@@ -1072,7 +1073,7 @@ public class MainMapper {
 			txtExpression = new Text(group3, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 			gridData = new GridData (GridData.FILL_BOTH);
 			gridData.horizontalSpan = 6;
-			gridData.widthHint = 680;
+			gridData.widthHint = 620;
 			txtExpression.setLayoutData(gridData);
 			txtExpression.setText(filterStatement);
 		}

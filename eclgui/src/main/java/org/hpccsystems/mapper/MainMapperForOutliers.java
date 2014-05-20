@@ -570,7 +570,7 @@ public class MainMapperForOutliers {
 		treeInputDataSet = new Tree(compTreePanel, SWT.SINGLE | SWT.BORDER);
 		
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-	    gridData.heightHint = 100;
+	    gridData.heightHint = 80;
 	    gridData.widthHint = 120;
 	    treeInputDataSet.setLayoutData(gridData);
 	    boolean includeInput = false;
@@ -613,7 +613,7 @@ public class MainMapperForOutliers {
 	    int style = SWT.FULL_SELECTION | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL;
 	    final Table tblOperators = new Table(compTreePanel, style);
 		gridData = new GridData();
-		gridData.heightHint = 100;
+		gridData.heightHint = 80;
 		gridData.widthHint = 100;
 		tblOperators.setLayoutData(gridData);
 		
@@ -651,7 +651,7 @@ public class MainMapperForOutliers {
 		
 		txtValue = new Text(compTreePanel, SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		gridData = new GridData (GridData.FILL_BOTH);
-		gridData.widthHint = 100;
+		gridData.widthHint = 80;
 		gridData.heightHint = 100;
 		txtValue.setLayoutData(gridData);
 		txtValue.addMouseListener(new MouseListener() {
@@ -687,7 +687,7 @@ public class MainMapperForOutliers {
 		 int booleanStyle = SWT.FULL_SELECTION | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL;
 		    final Table tblBoolean = new Table(compTreePanel, booleanStyle);
 			gridData = new GridData();
-			gridData.heightHint = 100;
+			gridData.heightHint = 80;
 			gridData.widthHint = 100;
 			tblBoolean.setLayoutData(gridData);
 			
@@ -724,7 +724,15 @@ public class MainMapperForOutliers {
 			});
 			
 		
-		Label lblEclText = new Label(group1, SWT.NONE);
+		Composite compRuleSt = new Composite(group1, SWT.NONE);	
+		layout = new GridLayout();
+		layout.numColumns = 1;
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		compRuleSt.setLayout(layout);
+		compRuleSt.setLayoutData(data);
+		
+		Label lblEclText = new Label(compRuleSt, SWT.NONE);
 		if(this.layoutStyle.equalsIgnoreCase("transform")){
 			lblEclText.setText("ECL Text:");
 		}else{
@@ -734,23 +742,32 @@ public class MainMapperForOutliers {
 		gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
 		lblEclText.setLayoutData(gridData);
 		
-		txtExpression = new Text(group1, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		txtExpression = new Text(compRuleSt, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		gridData = new GridData (GridData.FILL_BOTH);
-		gridData.horizontalSpan = 2;
+		gridData.widthHint = 200;
+		gridData.heightHint = 50;
 		txtExpression.setLayoutData(gridData);
 		txtExpression.setText(filterStatement);
 		
-		Label lblRules = new Label(group1, SWT.NONE);
+		Composite compRule = new Composite(group1, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 1;
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		compRule.setLayout(layout);
+		compRule.setLayoutData(data);
+		
+		Label lblRules = new Label(compRule, SWT.NONE);
 		lblRules.setText("Rules:");
 		
 		final AutoPopulate ap = new AutoPopulate();
 		
 		int ruleStyle = SWT.FULL_SELECTION | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL;
-	    final Table ruleTable = new Table(group1, ruleStyle);
+	    final Table ruleTable = new Table(compRule, ruleStyle);
 	    
 		GridData gridData1 = new GridData();
-		gridData1.heightHint = 120;
-		gridData1.widthHint = 400;
+		gridData1.heightHint = 100;
+		gridData1.widthHint = 370;
 		ruleTable.setLayoutData(gridData1);
 		
 		String outlRules[] = null;
