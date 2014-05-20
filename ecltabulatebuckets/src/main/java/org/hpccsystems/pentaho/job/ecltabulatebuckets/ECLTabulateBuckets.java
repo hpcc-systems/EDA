@@ -35,6 +35,42 @@ public class ECLTabulateBuckets extends ECLJobEntry{//extends JobEntryBase imple
 	private java.util.List people = new ArrayList();
 	private java.util.List rows = new ArrayList();
 	private java.util.List layers = new ArrayList();
+	private String label ="";
+	private String outputName ="";
+	private String persist = "";
+	private String defJobName = "";
+	
+	public String getDefJobName() {
+		return defJobName;
+	}
+
+	public void setDefJobName(String defJobName) {
+		this.defJobName = defJobName;
+	}
+	
+	public String getPersistOutputChecked() {
+		return persist;
+	}
+
+	public void setPersistOutputChecked(String persist) {
+		this.persist = persist;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getOutputName() {
+		return outputName;
+	}
+
+	public void setOutputName(String outputName) {
+		this.outputName = outputName;
+	}
 	
 	public void setPeople(java.util.List people){
 		this.people = people;
@@ -163,14 +199,33 @@ public class ECLTabulateBuckets extends ECLJobEntry{//extends JobEntryBase imple
         				smoking +
         				"INTEGER cnt := COUNT(GROUP);\nEND;\n";
         		ecl += "MyTable := TABLE(Smokin,MyRec,left_bucket,right_bucket,left_field,right_field,"+group+");\n";
-        		ecl += "OUTPUT(MyTable,THOR);\n";
+        		if(persist.equalsIgnoreCase("true")){
+            		if(outputName != null && !(outputName.trim().equals(""))){
+            			ecl += "OUTPUT(MyTable"+",,'~eda::tabulateBuckets::"+outputName+"', __compressed__, overwrite,NAMED('TabulateBuckets'))"+";\n";
+            		}else{
+            			ecl += "OUTPUT(MyTable"+",,'~eda::tabulateBuckets::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('TabulateBuckets'))"+";\n";
+            		}
+            	}
+            	else{
+            		ecl += "OUTPUT(MyTable,NAMED('TabulateBuckets'));\n";
+            	}
+        		//ecl += "OUTPUT(MyTable,THOR);\n";
         	}
         	else{
         	      	
 	        	ecl += "MyRec := RECORD\nJhakaas.left_bucket;\nJhakaas.right_bucket;\nJhakaas.left_field;\nJhakaas.right_field;\nINTEGER cnt := COUNT(GROUP);\nEND;\n";
 	        	ecl += "MyTable := SORT(TABLE(Jhakaas,MyRec,left_bucket,right_bucket,left_field,right_field),left_field,right_field);\n";
 	        	
-	        	ecl += "OUTPUT(MyTable,THOR);\n";        	
+	        	if(persist.equalsIgnoreCase("true")){
+            		if(outputName != null && !(outputName.trim().equals(""))){
+            			ecl += "OUTPUT(MyTable"+",,'~eda::tabulateBuckets::"+outputName+"', __compressed__, overwrite,NAMED('TabulateBuckets'))"+";\n";
+            		}else{
+            			ecl += "OUTPUT(MyTable"+",,'~eda::tabulateBuckets::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('TabulateBuckets'))"+";\n";
+            		}
+            	}
+            	else{
+            		ecl += "OUTPUT(MyTable,NAMED('TabulateBuckets'));\n";
+            	}        	
         	}
         	result.setResult(true);
             
@@ -290,6 +345,14 @@ public class ECLTabulateBuckets extends ECLJobEntry{//extends JobEntryBase imple
                 openRows(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "rows")));
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "layers")) != null)
                 openLayers(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "layers")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "label")) != null)
+                setLabel(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "label")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "outputName")) != null)
+                setOutputName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "outputName")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "persist_Output_Checked")) != null)
+                setPersistOutputChecked(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "persist_Output_Checked")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "defJobName")) != null)
+                setDefJobName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "defJobName")));
             
         } catch (Exception e) {
             throw new KettleXMLException("ECL Dataset Job Plugin Unable to read step info from XML node", e);
@@ -305,6 +368,10 @@ public class ECLTabulateBuckets extends ECLJobEntry{//extends JobEntryBase imple
         retval += "		<people><![CDATA[" + this.savePeople() + "]]></people>" + Const.CR;
         retval += "		<rows><![CDATA[" + this.saveRows() + "]]></rows>" + Const.CR;
         retval += "		<layers><![CDATA[" + this.saveLayers() + "]]></layers>" + Const.CR;
+        retval += "		<label><![CDATA[" + label + "]]></label>" + Const.CR;
+        retval += "		<outputName><![CDATA[" + outputName + "]]></outputName>" + Const.CR;
+        retval += "		<persist_Output_Checked><![CDATA[" + persist + "]]></persist_Output_Checked>" + Const.CR;
+        retval += "		<defJobName><![CDATA[" + defJobName + "]]></defJobName>" + Const.CR;
         return retval;
 
     }
@@ -321,7 +388,14 @@ public class ECLTabulateBuckets extends ECLJobEntry{//extends JobEntryBase imple
                 this.openRows(rep.getStepAttributeString(id_jobentry, "rows")); //$NON-NLS-1$
             if(rep.getStepAttributeString(id_jobentry, "layers") != null)
                 this.openLayers(rep.getStepAttributeString(id_jobentry, "layers")); //$NON-NLS-1$
-
+            if(rep.getStepAttributeString(id_jobentry, "outputName") != null)
+            	outputName = rep.getStepAttributeString(id_jobentry, "outputName"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "label") != null)
+            	label = rep.getStepAttributeString(id_jobentry, "label"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "persist_Output_Checked") != null)
+            	persist = rep.getStepAttributeString(id_jobentry, "persist_Output_Checked"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "defJobName") != null)
+            	defJobName = rep.getStepAttributeString(id_jobentry, "defJobName"); //$NON-NLS-1$
             
         } catch (Exception e) {
             throw new KettleException("Unexpected Exception", e);
@@ -334,7 +408,10 @@ public class ECLTabulateBuckets extends ECLJobEntry{//extends JobEntryBase imple
             rep.saveStepAttribute(id_job, getObjectId(), "people", this.savePeople()); //$NON-NLS-1$
             rep.saveStepAttribute(id_job, getObjectId(), "rows", this.saveRows()); //$NON-NLS-1$
             rep.saveStepAttribute(id_job, getObjectId(), "layers", this.saveLayers()); //$NON-NLS-1$
-            
+            rep.saveStepAttribute(id_job, getObjectId(), "outputName", outputName);
+        	rep.saveStepAttribute(id_job, getObjectId(), "label", label);
+        	rep.saveStepAttribute(id_job, getObjectId(), "persist_Output_Checked", persist);
+        	rep.saveStepAttribute(id_job, getObjectId(), "defJobName", defJobName);
             
         } catch (Exception e) {
             throw new KettleException("Unable to save info into repository" + id_job, e);

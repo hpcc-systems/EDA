@@ -42,6 +42,7 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
 	private String outputName ="";
 	private String persist = "";
 	private String defJobName = "";
+	public static int ct = 0;
 	
 	public String getDefJobName() {
 		return defJobName;
@@ -202,68 +203,72 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
 	        	ecl += "TYPEOF(T) to(P le, Splits ri):=TRANSFORM\nSELF.pos:=1+le.pos-ri.Seq;\nSELF:=le;\nEND;\n";
 	        	ecl += "outfile := JOIN(P,Splits,LEFT.field=RIGHT.field,to(LEFT,RIGHT),LOOKUP);\n";
 	        	if(check[1].equals("true")){
+	        		ct++;
 	        		ecl += "MyT := TABLE(outfile,{field;SET OF UNSIGNED poso := IF(n%2=0,[n/2,n/2 + 1],[(n+1)/2]);},field);\n";
 	        		ecl += "MedianValues:=JOIN(outfile,MyT,LEFT.field=RIGHT.field AND LEFT.pos IN RIGHT.poso);\n";
 	        		ecl += "MedianTable := TABLE(MedianValues,{field;Median := AVE(GROUP, MedianValues.value);},field);\n";
 	        		if(cnt == 0){
+	        			
 	        			ecl += getSingle()+" := MedianTable;\n";
 	        			if(persist.equalsIgnoreCase("true")){
 	    	        		if(outputName != null && !(outputName.trim().equals(""))){
-	    	        			ecl += "OUTPUT("+getSingle()+",,'~eda::univariate::"+outputName+"', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
+	    	        			ecl += "OUTPUT("+getSingle()+",,'~eda::univariate::"+outputName+"', __compressed__, overwrite,NAMED('Univariate"+ct+"'))"+";\n";
 	    	        		}else{
-	    	        			ecl += "OUTPUT("+getSingle()+",,'~eda::univariate::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
+	    	        			ecl += "OUTPUT("+getSingle()+",,'~eda::univariate::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Univariate"+ct+"'))"+";\n";
 	    	        		}
 	    	        	}
 	    	        	else{
-	    	        		ecl += "OUTPUT("+getSingle()+",NAMED('Univariate'));\n";
+	    	        		ecl += "OUTPUT("+getSingle()+",NAMED('Univariate"+ct+"'));\n";
 	    	        	}
 	        		}
 	        		else{
 	        			ecl += getSingle()+" := JOIN(SingleUni,Mediantable,LEFT.field = RIGHT.field);\n";
 	        			if(persist.equalsIgnoreCase("true")){
 	    	        		if(outputName != null && !(outputName.trim().equals(""))){
-	    	        			ecl += "OUTPUT("+getSingle()+",,'~eda::univariate::"+outputName+"', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
+	    	        			ecl += "OUTPUT("+getSingle()+",,'~eda::univariate::"+outputName+"', __compressed__, overwrite,NAMED('Univariate"+ct+"'))"+";\n";
 	    	        		}else{
-	    	        			ecl += "OUTPUT("+getSingle()+",,'~eda::univariate::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
+	    	        			ecl += "OUTPUT("+getSingle()+",,'~eda::univariate::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Univariate"+ct+"'))"+";\n";
 	    	        		}
 	    	        	}
 	    	        	else{
-	    	        		ecl += "OUTPUT("+getSingle()+",NAMED('Univariate'));\n";
+	    	        		ecl += "OUTPUT("+getSingle()+",NAMED('Univariate"+ct+"'));\n";
 	    	        	}
 	        			//ecl += "OUTPUT("+getSingle()+",THOR);\n";
 	        		}
 	        	}
 	        	
 	        	if(check[2].equals("true")){
+	        		ct++;
 	        		ecl += "MTable := TABLE(outfile,{field;value;vals := COUNT(GROUP);},field,value);\n";
 	        		ecl += "modT := TABLE(MTable,{field;cnt:=MAX(GROUP,vals)},field);\n";
 	        		ecl += "Modes:=JOIN(MTable,ModT,LEFT.field=RIGHT.field AND LEFT.vals=RIGHT.cnt);\n";
 	        		ecl += getMode()+" := TABLE(Modes,{field;mode:=value;cnt});\n";
 	        		if(persist.equalsIgnoreCase("true")){
     	        		if(outputName != null && !(outputName.trim().equals(""))){
-    	        			ecl += "OUTPUT("+getMode()+",,'~eda::univariate::"+outputName+"', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
+    	        			ecl += "OUTPUT("+getMode()+",,'~eda::univariate::"+outputName+"', __compressed__, overwrite,NAMED('Univariate"+ct+"'))"+";\n";
     	        		}else{
-    	        			ecl += "OUTPUT("+getMode()+",,'~eda::univariate::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
+    	        			ecl += "OUTPUT("+getMode()+",,'~eda::univariate::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Univariate"+ct+"'))"+";\n";
     	        		}
     	        	}
     	        	else{
-    	        		ecl += "OUTPUT("+getMode()+",NAMED('Univariate'));\n";
+    	        		ecl += "OUTPUT("+getMode()+",NAMED('Univariate"+ct+"'));\n";
     	        	}
 	        		//ecl += "OUTPUT("+getMode()+",THOR);\n";
 	        	}
 	        	
         	}
         	if(cnt>0 && check[1].equals("false")){
+        		ct++;
         		ecl += getSingle()+" := SingleUni;\n";
         		if(persist.equalsIgnoreCase("true")){
 	        		if(outputName != null && !(outputName.trim().equals(""))){
-	        			ecl += "OUTPUT("+getSingle()+",,'~eda::univariate::"+outputName+"', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
+	        			ecl += "OUTPUT("+getSingle()+",,'~eda::univariate::"+outputName+"', __compressed__, overwrite,NAMED('Univariate"+ct+"'))"+";\n";
 	        		}else{
-	        			ecl += "OUTPUT("+getSingle()+",,'~eda::univariate::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
+	        			ecl += "OUTPUT("+getSingle()+",,'~eda::univariate::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Univariate"+ct+"'))"+";\n";
 	        		}
 	        	}
 	        	else{
-	        		ecl += "OUTPUT("+getSingle()+",NAMED('Univariate'));\n";
+	        		ecl += "OUTPUT("+getSingle()+",NAMED('Univariate"+ct+"'));\n";
 	        	}
         	}
 
@@ -290,7 +295,7 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
     	boolean isFirst = true;
     	while(it.hasNext()){
     		if(!isFirst){out+="|";}
-    		Cols p = (Cols) it.next();
+    		Player p = (Player) it.next();
     		out +=  p.getFirstName();
             isFirst = false;
     	}
@@ -304,7 +309,7 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
         	people = new ArrayList();
         	for(int i = 0; i<len; i++){
         		String S = strLine[i];
-        		Cols P = new Cols();
+        		Player P = new Player();
         		P.setFirstName(S);
         		people.add(P);
         	}
