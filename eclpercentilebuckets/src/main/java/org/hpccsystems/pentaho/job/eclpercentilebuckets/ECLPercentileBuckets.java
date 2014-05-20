@@ -33,7 +33,42 @@ public class ECLPercentileBuckets extends ECLJobEntry{//extends JobEntryBase imp
 	private String DatasetName = "";
 	private String normList = "";
 	private java.util.List people = new ArrayList();
+	private String label ="";
+	private String outputName ="";
+	private String persist = "";
+	private String defJobName = "";
 	
+	public String getDefJobName() {
+		return defJobName;
+	}
+
+	public void setDefJobName(String defJobName) {
+		this.defJobName = defJobName;
+	}
+	
+	public String getPersistOutputChecked() {
+		return persist;
+	}
+
+	public void setPersistOutputChecked(String persist) {
+		this.persist = persist;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getOutputName() {
+		return outputName;
+	}
+
+	public void setOutputName(String outputName) {
+		this.outputName = outputName;
+	}
 	
     public void setPeople(java.util.List people){
 		this.people = people;
@@ -159,12 +194,23 @@ public class ECLPercentileBuckets extends ECLJobEntry{//extends JobEntryBase imp
                    isFirst = false;
             }
             ecl += "Denormed:=DENORMALIZE(Orig,Tab3,LEFT.uid=RIGHT.id,denorm(LEFT,RIGHT,COUNTER));\n";
+            
         	ecl += "OUTPUT(Denormed,THOR);\n";
         	ecl += "Reco := RECORD\nTab2.Field;\nTab2.bucket;\nminval := MIN(GROUP,Tab3.value);\nmaxval := MAX(GROUP,Tab3.value);\nEND;\n";
         	ecl += "TabRec := TABLE(Tab2,Reco,field,bucket);\n";
         	for(int i = 0;i <norm.length; i++){
         		String[] S = norm[i].split(",");
-        		ecl += "OUTPUT(TabRec(field='"+S[0]+"'),THOR);\n";
+        		if(persist.equalsIgnoreCase("true")){
+            		if(outputName != null && !(outputName.trim().equals(""))){
+            			ecl += "OUTPUT(TabRec(field='"+S[0]+"')"+",,'~eda::percentileBuckets::"+outputName+S[0]+"', __compressed__, overwrite,NAMED('PercentileBuckets_"+S[0]+"_"+i+"'))"+";\n";
+            		}else{
+            			ecl += "OUTPUT(TabRec(field='"+S[0]+"')"+",,'~eda::percentileBuckets::"+defJobName+S[0]+"', __compressed__, overwrite,NAMED('PercentileBuckets__"+S[0]+"_"+i+"'))"+";\n";
+            		}
+            	}
+            	else{
+            		ecl += "OUTPUT(TabRec(field='"+S[0]+"'),NAMED('PercentileBuckets__"+S[0]+"_"+i+"')"+");\n";
+            	}
+        		//ecl += "OUTPUT(TabRec(field='"+S[0]+"'),THOR);\n";
         	}
         	
         	
@@ -234,7 +280,18 @@ public class ECLPercentileBuckets extends ECLJobEntry{//extends JobEntryBase imp
             
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "people")) != null)
                 openPeople(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "people")));
-
+            
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "output_name")) != null)
+                setOutputName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "output_name")));
+            
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "label")) != null)
+                setLabel(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "label")));
+            
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "persist_Output_Checked")) != null)
+                setPersistOutputChecked(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "persist_Output_Checked")));
+            
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "defJobName")) != null)
+                setDefJobName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "defJobName")));
     
         } catch (Exception e) {
             throw new KettleXMLException("ECL Dataset Job Plugin Unable to read step info from XML node", e);
@@ -251,6 +308,11 @@ public class ECLPercentileBuckets extends ECLJobEntry{//extends JobEntryBase imp
         retval += "		<Ties><![CDATA[" + Ties + "]]></Ties>" + Const.CR;
         retval += "		<normList><![CDATA[" + this.getnormList() + "]]></normList>" + Const.CR;
         retval += "		<dataset_name><![CDATA[" + DatasetName + "]]></dataset_name>" + Const.CR;
+        
+        retval += "		<label><![CDATA[" + label + "]]></label>" + Const.CR;
+        retval += "		<output_name><![CDATA[" + outputName + "]]></output_name>" + Const.CR;
+        retval += "		<persist_Output_Checked><![CDATA[" + persist + "]]></persist_Output_Checked>" + Const.CR;
+        retval += "		<defJobName><![CDATA[" + defJobName + "]]></defJobName>" + Const.CR;
         
         return retval;
 
@@ -273,6 +335,18 @@ public class ECLPercentileBuckets extends ECLJobEntry{//extends JobEntryBase imp
             
             if(rep.getStepAttributeString(id_jobentry, "people") != null)
                 this.openPeople(rep.getStepAttributeString(id_jobentry, "people")); //$NON-NLS-1$
+            
+            if(rep.getStepAttributeString(id_jobentry, "outputName") != null)
+            	outputName = rep.getStepAttributeString(id_jobentry, "outputName"); //$NON-NLS-1$
+            
+            if(rep.getStepAttributeString(id_jobentry, "label") != null)
+            	label = rep.getStepAttributeString(id_jobentry, "label"); //$NON-NLS-1$
+            
+            if(rep.getStepAttributeString(id_jobentry, "persist_Output_Checked") != null)
+            	persist = rep.getStepAttributeString(id_jobentry, "persist_Output_Checked"); //$NON-NLS-1$
+            
+            if(rep.getStepAttributeString(id_jobentry, "defJobName") != null)
+            	defJobName = rep.getStepAttributeString(id_jobentry, "defJobName"); //$NON-NLS-1$
     
         } catch (Exception e) {
             throw new KettleException("Unexpected Exception", e);
@@ -290,6 +364,11 @@ public class ECLPercentileBuckets extends ECLJobEntry{//extends JobEntryBase imp
         	rep.saveStepAttribute(id_job, getObjectId(), "normList", this.getnormList()); //$NON-NLS-1$
         	
             rep.saveStepAttribute(id_job, getObjectId(), "people", this.savePeople()); //$NON-NLS-1$
+            
+            rep.saveStepAttribute(id_job, getObjectId(), "outputName", outputName);
+        	rep.saveStepAttribute(id_job, getObjectId(), "label", label);
+        	rep.saveStepAttribute(id_job, getObjectId(), "persist_Output_Checked", persist);
+        	rep.saveStepAttribute(id_job, getObjectId(), "defJobName", defJobName);
         } catch (Exception e) {
             throw new KettleException("Unable to save info into repository" + id_job, e);
         }

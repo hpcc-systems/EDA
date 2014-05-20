@@ -49,6 +49,43 @@ public class ECLFilter extends ECLJobEntry{//extends JobEntryBase implements Clo
     
     private MapperRecordList mapperRecList = new MapperRecordList();
     
+    private String label ="";
+	private String outputName ="";
+	private String persist = "";
+	private String jobName = "";
+	
+	public String getJobName() {
+		return jobName;
+	}
+
+	public void setJobName(String jobName) {
+		this.jobName = jobName;
+	}
+	
+	public String getPersistOutputChecked() {
+		return persist;
+	}
+
+	public void setPersistOutputChecked(String persist) {
+		this.persist = persist;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getOutputName() {
+		return outputName;
+	}
+
+	public void setOutputName(String outputName) {
+		this.outputName = outputName;
+	}
+    
     public List getPeople() {
 		return people;
 	}
@@ -268,7 +305,18 @@ public class ECLFilter extends ECLJobEntry{//extends JobEntryBase implements Clo
         
         logBasic("{Project Job} Previous =" + result.getLogText());
         
-        ecl += "OUTPUT(Filter);";
+        if(persist.equalsIgnoreCase("true")){
+    		if(outputName != null && !(outputName.trim().equals(""))){
+    			ecl += "OUTPUT(Filter"+",,'~eda::filter::"+outputName+"', __compressed__, overwrite,NAMED('Filter'))"+";\n";
+    		}else{
+    			ecl += "OUTPUT(Filter"+",,'~eda::filter::"+jobName+"_"+"', __compressed__, overwrite,NAMED('Filter'))"+";\n";
+    		}
+    	}
+    	else{
+    		ecl += "OUTPUT(Filter,NAMED('Filter'));\n";
+    	}
+        
+        //ecl += "OUTPUT(Filter);";
         
         result.setResult(true);
         
@@ -310,7 +358,16 @@ public class ECLFilter extends ECLJobEntry{//extends JobEntryBase implements Clo
             	setFilterStatement(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "filterStatement")));
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "people")) != null)
                 openPeople(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "people")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "output_name")) != null)
+                setOutputName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "output_name")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "label")) != null)
+                setLabel(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "label")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "persist_Output_Checked")) != null)
+                setPersistOutputChecked(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "persist_Output_Checked")));
             
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "jobName")) != null)
+                setJobName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "jobName")));
+
         } catch (Exception e) {
             throw new KettleXMLException("ECL Project Job Plugin Unable to read step info from XML node", e);
         }
@@ -330,6 +387,10 @@ public class ECLFilter extends ECLJobEntry{//extends JobEntryBase implements Clo
         retval += "		<mapperRecList><![CDATA[" + this.saveRecordListForMapper() + "]]></mapperRecList>" + Const.CR;
         retval += "		<filterStatement><![CDATA[" + this.filterStatement + "]]></filterStatement>" + Const.CR;
         retval += "		<people><![CDATA[" + this.savePeople() + "]]></people>" + Const.CR;
+        retval += "		<label><![CDATA[" + label + "]]></label>" + Const.CR;
+        retval += "		<output_name><![CDATA[" + outputName + "]]></output_name>" + Const.CR;
+        retval += "		<persist_Output_Checked><![CDATA[" + persist + "]]></persist_Output_Checked>" + Const.CR;
+        retval += "		<jobName><![CDATA[" + jobName + "]]></jobName>" + Const.CR;
         
         return retval;
 
@@ -357,6 +418,18 @@ public class ECLFilter extends ECLJobEntry{//extends JobEntryBase implements Clo
             	filterStatement = rep.getStepAttributeString(id_jobentry, "filterStatement"); //$NON-NLS-1$
             if(rep.getStepAttributeString(id_jobentry, "people") != null)
                 this.openPeople(rep.getStepAttributeString(id_jobentry, "people")); //$NON-NLS-1$
+            
+            if(rep.getStepAttributeString(id_jobentry, "outputName") != null)
+            	outputName = rep.getStepAttributeString(id_jobentry, "outputName"); //$NON-NLS-1$
+            
+            if(rep.getStepAttributeString(id_jobentry, "label") != null)
+            	label = rep.getStepAttributeString(id_jobentry, "label"); //$NON-NLS-1$
+            
+            if(rep.getStepAttributeString(id_jobentry, "persist_Output_Checked") != null)
+            	persist = rep.getStepAttributeString(id_jobentry, "persist_Output_Checked"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "jobName") != null)
+            	jobName = rep.getStepAttributeString(id_jobentry, "jobName"); //$NON-NLS-1$
+            
         } catch (Exception e) {
             throw new KettleException("Unexpected Exception", e);
         }
@@ -372,6 +445,11 @@ public class ECLFilter extends ECLJobEntry{//extends JobEntryBase implements Clo
             rep.saveStepAttribute(id_job, getObjectId(), "mapperRecList", this.saveRecordListForMapper()); //$NON-NLS-1$
             rep.saveStepAttribute(id_job, getObjectId(), "filterStatement", this.filterStatement); //$NON-NLS-1$
             rep.saveStepAttribute(id_job, getObjectId(), "people", this.savePeople()); //$NON-NLS-1$
+            
+            rep.saveStepAttribute(id_job, getObjectId(), "outputName", outputName);
+        	rep.saveStepAttribute(id_job, getObjectId(), "label", label);
+        	rep.saveStepAttribute(id_job, getObjectId(), "persist_Output_Checked", persist);
+        	rep.saveStepAttribute(id_job, getObjectId(), "jobName", jobName);
             
         } catch (Exception e) {
             throw new KettleException("Unable to save info into repository" + id_job, e);

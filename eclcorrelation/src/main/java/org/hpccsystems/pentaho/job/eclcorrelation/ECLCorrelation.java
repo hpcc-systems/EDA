@@ -33,6 +33,43 @@ public class ECLCorrelation extends ECLJobEntry{//extends JobEntryBase implement
     private String method = "";
     private String fieldList = "";
     private String rule = "";
+    private String label ="";
+	private String outputName ="";
+	private String persist = "";
+	
+	private String defJobName = "";
+	
+	public String getDefJobName() {
+		return defJobName;
+	}
+
+	public void setDefJobName(String defJobName) {
+		this.defJobName = defJobName;
+	}
+	
+	public String getPersistOutputChecked() {
+		return persist;
+	}
+
+	public void setPersistOutputChecked(String persist) {
+		this.persist = persist;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getOutputName() {
+		return outputName;
+	}
+
+	public void setOutputName(String outputName) {
+		this.outputName = outputName;
+	}
     
     public String getRule() {
 		return rule;
@@ -149,14 +186,32 @@ public class ECLCorrelation extends ECLJobEntry{//extends JobEntryBase implement
 	        	ecl += "PearRec := RECORD\nUNSIGNED left_number;\nUNSIGNED right_number;\nSTRING left_field;\nSTRING right_field;\nREAL8 Pearson;\nEND;\nnCorr := COUNT(MyDSCorr);\n";
 	        	ecl += "PearRec Tran(with_x L, single R) := TRANSFORM\nSELF.Pearson := (L.e_xyP - nCorr*L.meanP*R.meanP)/(nCorr*L.sdP*R.sdP);\nSELF := L;\nEND;\n";
 	        	ecl += "pears := JOIN(with_x,single,LEFT.right_number=RIGHT.number,Tran(LEFT,RIGHT),LOOKUP);\n";
-	        	ecl += "OUTPUT(SORT(TABLE(pears,{left_field,right_field,Pearson}),left_field),THOR);\n";
+	        	if(persist.equalsIgnoreCase("true")){
+            		if(outputName != null && !(outputName.trim().equals(""))){
+            			ecl += "OUTPUT(SORT(TABLE(pears,{left_field,right_field,Pearson}),left_field)"+",,'~eda::correlation::"+outputName+"', __compressed__, overwrite,NAMED('Correlation'))"+";\n";
+            		}else{
+            			ecl += "OUTPUT(SORT(TABLE(pears,{left_field,right_field,Pearson}),left_field)"+",,'~eda::correlation::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Correlation'))"+";\n";
+            		}
+            	}
+            	else{
+            		ecl += "OUTPUT(SORT(TABLE(pears,{left_field,right_field,Pearson}),left_field),NAMED('Correlation'));\n";
+            	}
         	}
         	else if(this.method.equalsIgnoreCase("Spearman")){
 	        	ecl += "SPearRec := RECORD\nUNSIGNED left_number;\nUNSIGNED right_number;\nSTRING left_field;\nSTRING right_field;\nREAL8 Spearman;\nEND;\nnCorr := COUNT(MyDSCorr);\n";
 	        	ecl += "SPearRec Tran(with_x L, single R) := TRANSFORM\nSELF.Spearman := (L.e_xyS - nCorr*L.meanS*R.meanS)/(nCorr*L.sdS*R.sdS);\nSELF := L;\nEND;\n";
 	        	ecl += "Spears := JOIN(with_x,single,LEFT.right_number=RIGHT.number,Tran(LEFT,RIGHT),LOOKUP);\n";
-	        	ecl += "OUTPUT(SORT(TABLE(Spears,{left_field,right_field,Spearman}),left_field),THOR);\n";
-
+	        	if(persist.equalsIgnoreCase("true")){
+            		if(outputName != null && !(outputName.trim().equals(""))){
+            			ecl += "OUTPUT(SORT(TABLE(Spears,{left_field,right_field,Spearman}),left_field)"+",,'~eda::correlation::"+outputName+"', __compressed__, overwrite,NAMED('Correlation'))"+";\n";
+            		}else{
+            			ecl += "OUTPUT(SORT(TABLE(Spears,{left_field,right_field,Spearman}),left_field)"+",,'~eda::correlation::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Correlation'))"+";\n";
+            		}
+            	}
+            	else{
+            		ecl += "OUTPUT(SORT(TABLE(Spears,{left_field,right_field,Spearman}),left_field),NAMED('Correlation'));\n";
+            	}
+	        	
         	}
         	
         	logBasic(ecl);
@@ -223,7 +278,14 @@ public class ECLCorrelation extends ECLJobEntry{//extends JobEntryBase implement
                 setFieldList(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "fieldList")));
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "rule")) != null)
                 setRule(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "rule")));
-
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "output_name")) != null)
+                setOutputName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "output_name")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "label")) != null)
+                setLabel(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "label")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "persist_Output_Checked")) != null)
+                setPersistOutputChecked(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "persist_Output_Checked")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "defJobName")) != null)
+                setDefJobName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "defJobName")));
             
         } catch (Exception e) {
             throw new KettleXMLException("ECL Dataset Job Plugin Unable to read step info from XML node", e);
@@ -241,6 +303,10 @@ public class ECLCorrelation extends ECLJobEntry{//extends JobEntryBase implement
         retval += "		<fields><![CDATA[" + this.saveFields() + "]]></fields>" + Const.CR;
         retval += "		<dataset_name><![CDATA[" + datasetName + "]]></dataset_name>" + Const.CR;
         retval += "		<rule><![CDATA[" + rule + "]]></rule>" + Const.CR;
+        retval += "		<label><![CDATA[" + label + "]]></label>" + Const.CR;
+        retval += "		<output_name><![CDATA[" + outputName + "]]></output_name>" + Const.CR;
+        retval += "		<persist_Output_Checked><![CDATA[" + persist + "]]></persist_Output_Checked>" + Const.CR;
+        retval += "		<defJobName><![CDATA[" + defJobName + "]]></defJobName>" + Const.CR;
         
         return retval;
 
@@ -259,6 +325,14 @@ public class ECLCorrelation extends ECLJobEntry{//extends JobEntryBase implement
                 fieldList = rep.getStepAttributeString(id_jobentry, "fieldList"); //$NON-NLS-1$
             if(rep.getStepAttributeString(id_jobentry, "rule") != null)
                 rule = rep.getStepAttributeString(id_jobentry, "rule"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "outputName") != null)
+            	outputName = rep.getStepAttributeString(id_jobentry, "outputName"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "label") != null)
+            	label = rep.getStepAttributeString(id_jobentry, "label"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "persist_Output_Checked") != null)
+            	persist = rep.getStepAttributeString(id_jobentry, "persist_Output_Checked"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "defJobName") != null)
+            	defJobName = rep.getStepAttributeString(id_jobentry, "defJobName"); //$NON-NLS-1$
 
         } catch (Exception e) {
             throw new KettleException("Unexpected Exception", e);
@@ -272,6 +346,10 @@ public class ECLCorrelation extends ECLJobEntry{//extends JobEntryBase implement
             rep.saveStepAttribute(id_job, getObjectId(), "method", method); //$NON-NLS-1$
             rep.saveStepAttribute(id_job, getObjectId(), "fieldList", fieldList); //$NON-NLS-1$
             rep.saveStepAttribute(id_job, getObjectId(), "rule", rule); //$NON-NLS-1$
+            rep.saveStepAttribute(id_job, getObjectId(), "outputName", outputName);
+        	rep.saveStepAttribute(id_job, getObjectId(), "label", label);
+        	rep.saveStepAttribute(id_job, getObjectId(), "persist_Output_Checked", persist);
+        	rep.saveStepAttribute(id_job, getObjectId(), "defJobName", defJobName);
         } catch (Exception e) {
             throw new KettleException("Unable to save info into repository" + id_job, e);
         }
