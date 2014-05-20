@@ -48,7 +48,7 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
 	
 	private String Name = "";
 	private String Typ = "";
-	private String DatasetName = "";
+	private String DatasetName = "";  
 	private String normList = "";
 	private String DatasetNameOriginal = "";
 	private java.util.List people = new ArrayList();
@@ -193,6 +193,9 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         	return result;
         }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 5321a09bc3fa68322f562f57db1a16fc35a5975e
         else{        	
         		String[] path = null;
         		String[] flag = FilePath.split("-");
@@ -203,12 +206,15 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         		}
         		//String[] path = FilePath.split("\"");
         		logBasic(path[1]);//.replaceAll("manifest.xml", "")); 
+<<<<<<< HEAD
 =======
         else{        		
         		
         		String[] path = FilePath.split("\"");
         		logBasic(path[1].replaceAll("manifest.xml", "")); 
 >>>>>>> 45320053d50cd1f69e42a261625e082f6a2ed5f0
+=======
+>>>>>>> 5321a09bc3fa68322f562f57db1a16fc35a5975e
         		Player axis = new Player();
         		String haxis = "";//tooltip: { textStyle: { fontName: 'Arial', fontSize: 18, bold:false }},hAxis: {title: '
         		String Colours = "colors : ["; String fields = ""; String graph = "";String h = ""; String w = "";String name = "";
@@ -465,6 +471,9 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
             if(rep.getStepAttributeString(id_jobentry, "people") != null)
                 this.openPeople(rep.getStepAttributeString(id_jobentry, "people")); //$NON-NLS-1$
             
+            if(rep.getStepAttributeString(id_jobentry, "people") != null)
+                this.openPeople(rep.getStepAttributeString(id_jobentry, "people")); //$NON-NLS-1$
+            
             if(rep.getStepAttributeString(id_jobentry, "outputName") != null)
             	outputName = rep.getStepAttributeString(id_jobentry, "outputName"); //$NON-NLS-1$
             
@@ -476,6 +485,7 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
             
             if(rep.getStepAttributeString(id_jobentry, "defJobName") != null)
             	defJobName = rep.getStepAttributeString(id_jobentry, "defJobName"); //$NON-NLS-1$
+            
             
         } catch (Exception e) {
             throw new KettleException("Unexpected Exception", e);
@@ -513,7 +523,7 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         	rep.saveStepAttribute(id_job, getObjectId(), "persist_Output_Checked", persist);
             
         	rep.saveStepAttribute(id_job, getObjectId(), "defJobName", defJobName);
-        	
+            
         } catch (Exception e) {
             throw new KettleException("Unable to save info into repository" + id_job, e);
         }

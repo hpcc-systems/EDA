@@ -238,7 +238,7 @@ public class ECLCorrelation extends ECLJobEntry{//extends JobEntryBase implement
     	boolean isFirst = true;
     	while(it.hasNext()){
     		if(!isFirst){out+="|";}
-    		Cols p = (Cols) it.next();
+    		Player p = (Player) it.next();
     		out +=  p.getFirstName();
             isFirst = false;
     	}
@@ -252,7 +252,7 @@ public class ECLCorrelation extends ECLJobEntry{//extends JobEntryBase implement
         	fields = new ArrayList();
         	for(int i = 0; i<len; i++){
         		String S = strLine[i];
-        		Cols P = new Cols();
+        		Player P = new Player();
         		P.setFirstName(S);
         		fields.add(P);
         	}

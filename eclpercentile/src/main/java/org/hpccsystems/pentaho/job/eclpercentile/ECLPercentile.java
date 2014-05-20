@@ -263,8 +263,13 @@ public class ECLPercentile extends ECLJobEntry{//extends JobEntryBase implements
         	for(int i = 0; i<len; i++){
         		String[] S = strLine[i].split("-");
         		Cols P = new Cols();
-        		P.setFirstName(S[0]);
-        		P.setNumber(S[1]);
+        		if(S.length == 1){
+        			P.setFirstName(S[0]);
+        		}
+        		else if(S.length ==2){
+        			P.setFirstName(S[0]);
+        			P.setNumber(S[1]);
+        		}
         		fields.add(P);
         	}
         }

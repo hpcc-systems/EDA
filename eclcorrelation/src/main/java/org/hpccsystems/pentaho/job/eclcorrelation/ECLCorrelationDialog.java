@@ -10,10 +10,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -37,6 +40,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -59,6 +63,8 @@ import org.hpccsystems.eclguifeatures.ErrorNotices;
 import org.hpccsystems.ecljobentrybase.*;
 //import org.hpccsystems.mapper.MainMapperForOutliers;
 import org.hpccsystems.pentaho.job.ecloutliers.ECLOutliers;
+import org.hpccsystems.recordlayout.AddColumnsDialog;
+import org.hpccsystems.recordlayout.RecordBO;
 import org.hpccsystems.recordlayout.RecordLabels;
 import org.hpccsystems.recordlayout.RecordList;
 /**
@@ -67,7 +73,7 @@ import org.hpccsystems.recordlayout.RecordList;
  */
 public class ECLCorrelationDialog extends ECLJobEntryDialog{//extends JobEntryDialog implements JobEntryDialogInterface {
 	
-	
+	public static final String NAME = "Name";
 	public static final String[] PROP = { "Name" };
     private ECLCorrelation jobEntry;
     private Text jobEntryName;
@@ -371,22 +377,13 @@ public class ECLCorrelationDialog extends ECLJobEntryDialog{//extends JobEntryDi
 	    if(fields != null && fields.size() > 0) {
             
             for (Iterator iterator = fields.iterator(); iterator.hasNext();) {
-                    Cols obj = (Cols) iterator.next();
+                    Player obj = (Player) iterator.next();
             }
 	    }
         tv.setInput(fields);
         table.setRedraw(true);
         
-        table.setHeaderVisible(true);
-	    table.setLinesVisible(true);
-	    table.addListener (SWT.Selection, new Listener () {
-            public void handleEvent (Event event) {
-            	if(event.detail == SWT.CHECK){	
-            		tv.refresh();
-                    table.redraw();
-            	}
-            }
-        });
+        
 	    Button del = new Button(compForGrp2, SWT.PUSH);
 	    del.setText("Delete");
 	    del.addSelectionListener(new SelectionAdapter(){
@@ -417,9 +414,9 @@ public class ECLCorrelationDialog extends ECLJobEntryDialog{//extends JobEntryDi
 	    });
 
 
-
 	    // Add a listener to change the tableviewer's input
 	    button.addSelectionListener(new SelectionAdapter() {
+<<<<<<< HEAD
 	      public void widgetSelected(SelectionEvent event) {
 	    	    final Shell shellFilter = new Shell(display);
 				FormLayout layoutFilter = new FormLayout();
@@ -591,83 +588,271 @@ public class ECLCorrelationDialog extends ECLJobEntryDialog{//extends JobEntryDi
 		            }
 		        });
 		        
+=======
+		      public void widgetSelected(SelectionEvent event) {
+		    	    final Shell shellFilter = new Shell(display);
+					FormLayout layoutFilter = new FormLayout();
+					layoutFilter.marginWidth = 25;
+					layoutFilter.marginHeight = 25;
+					shellFilter.setLayout(layoutFilter);
+					shellFilter.setText("Filter Columns");
+					
+					Label filter = new Label(shellFilter, SWT.NONE);
+					filter.setText("Filter: ");
+					final Text NameFilter = new Text(shellFilter, SWT.SINGLE | SWT.BORDER);
+					
+					final ArrayList<String[]> field = new ArrayList<String[]>();
+					final Tree tab = new Tree(shellFilter, SWT.CHECK | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+					tab.setHeaderVisible(true);
+					tab.setLinesVisible(true);
+					
+				    final TreeColumn column1 = new TreeColumn(tab, SWT.LEFT);
+				    column1.setText("Fields");
+				    column1.setWidth(200);
+				    column1.setImage(RecordLabels.getImage("unchecked"));
+				    
+				    final TreeColumn column2 = new TreeColumn(tab, SWT.LEFT);			   
+				    column2.setWidth(0);
+				    
+				    column1.addListener(SWT.Selection, new Listener() {
+						@Override
+						public void handleEvent(Event event) {
+					        boolean checkBoxFlag = false;
+					        for (int i = 0; i < tab.getItemCount(); i++) {
+					            if (tab.getItems()[i].getChecked()) {
+					                checkBoxFlag = true;
+					                
+					            }
+					        }
+					        if (checkBoxFlag) {
+					            for (int m = 0; m < tab.getItemCount(); m++) {
+					                tab.getItems()[m].setChecked(false);
+					                column1.setImage(RecordLabels.getImage("unchecked"));				                
+					                tab.deselectAll();
+					            }
+					        } else {
+					            for (int m = 0; m < tab.getItemCount(); m++) {
+					            	if(!tab.getItem(m).getText(1).equals("string")){
+					            		tab.getItem(m).setChecked(true);
+					            		column1.setImage(RecordLabels.getImage("checked"));
+					            	}
+					            }
+					        } 		
+					        for(int m = 0; m<tab.getItemCount(); m++){
+					        	if(tab.getItem(m).getChecked()){
+					        		String st = tab.getItem(m).getText();
+					        		
+					        		int idx = 0; String type = "";
+					 	   	      	 for(Iterator<String[]> it2 = field.iterator(); it2.hasNext(); ){
+					 	   	     	 	 String[] s = it2.next();
+					 	   	     	 	 type = s[2];
+					 	   	     		 if(s[0].equalsIgnoreCase(st)){
+					 	   	     				idx = field.indexOf(s);
+					 	   	     				break;
+					 	   	     		 }
+					 	   	     	 }
+					 	   	     	 field.remove(idx);
+					 	   	     	 field.add(idx,new String[]{st,"true",type});
+					 	   	     	 // to find index of the selected item in the original field array list
+					        	}
+					        	if(!tab.getItem(m).getChecked()){
+					        		String st = tab.getItem(m).getText();
+					        		
+					        		int idx = 0; String type = "";
+					 	   	      	 for(Iterator<String[]> it2 = field.iterator(); it2.hasNext(); ){
+					 	   	     	 	 String[] s = it2.next();
+					 	   	     	 	 type = s[2];
+					 	   	     		 if(s[0].equalsIgnoreCase(st)){
+					 	   	     				idx = field.indexOf(s);
+					 	   	     				break;
+					 	   	     		 }
+					 	   	     	 }
+					 	   	     	 field.remove(idx);
+					 	   	     	 field.add(idx,new String[]{st,"false",type});
+					 	   	     	 // to find index of the selected item in the original field array list
+					        	}
+					        }
+			                tab.redraw();
+					    } 
+					});
+				    
+				    Button okFilter = new Button(shellFilter, SWT.PUSH);
+					okFilter.setText("     OK     ");
+					Button CancelFilter = new Button(shellFilter, SWT.PUSH);
+					CancelFilter.setText("   Cancel   ");
+				    				
+					AutoPopulate ap = new AutoPopulate();
+	          try{
+	      		
+	              //String[] items = ap.fieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
+	              RecordList rec = ap.rawFieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
+                  
+                  for(int i = 0; i < rec.getRecords().size(); i++){
+                      TreeItem item = new TreeItem(tab, SWT.NONE);
+                      item.setText(0, rec.getRecords().get(i).getColumnName().toLowerCase());
+                      String type = "String";
+                      String width = "";
+                      try{
+                             type = rec.getRecords().get(i).getColumnType();
+                             width = rec.getRecords().get(i).getColumnWidth();
+                             item.setText(1,type+width);
+                             if(rec.getRecords().get(i).getColumnType().startsWith("String")){
+                            	 item.setBackground(0, new Color(null,211,211,211));
+                             }
+                      }catch (Exception e){
+                             System.out.println("Frequency Cant look up column type");
+                      }
+                      
+                      field.add(new String[]{rec.getRecords().get(i).getColumnName().toLowerCase(),"false",type+width});
+                }
+	              
+	              
+	          }catch (Exception ex){
+	              System.out.println("failed to load record definitions");
+	              System.out.println(ex.toString());
+	              ex.printStackTrace();
+	          }
+	          FormData dat = new FormData();
+			        dat.top = new FormAttachment(NameFilter, 0, SWT.CENTER);
+			        filter.setLayoutData(dat);
+			        dat = new FormData();
+			        dat.left = new FormAttachment(filter, 75, SWT.LEFT);
+			        dat.right = new FormAttachment(100, 0);
+			        NameFilter.setLayoutData(dat);
+			        
+			        dat = new FormData(200,200);
+			        dat.top = new FormAttachment(filter, 25);
+			        dat.left = new FormAttachment(filter, 0, SWT.LEFT);
+			        dat.right = new FormAttachment(100, 0);
+			        tab.setLayoutData(dat);
+			        
+			        dat = new FormData();
+			        dat.top = new FormAttachment(tab, 25);
+			        dat.left = new FormAttachment(0, 45);
+			        okFilter.setLayoutData(dat);
+			        
+			        dat = new FormData();
+			        dat.top = new FormAttachment(tab, 25);
+			        dat.left = new FormAttachment(okFilter, 15);
+			        CancelFilter.setLayoutData(dat);
+>>>>>>> 5321a09bc3fa68322f562f57db1a16fc35a5975e
 		       
-		        
-		        tab.addListener(SWT.Selection, new Listener() {
-		    	     public void handleEvent(Event event) {
-		    	    	 if(((TreeItem)event.item).getText(1).equalsIgnoreCase("string")) 
-		    	    		 ((TreeItem)event.item).setChecked(false);
-		    	    	 String st = ((TreeItem)event.item).getText(0);
-		    	    	 String type = ((TreeItem)event.item).getText(1);
-		    	    	 boolean f = ((TreeItem)event.item).getChecked();
-		 	   	      	 int idx = 0; 
-		 	   	      	 for(Iterator<String[]> it2 = field.iterator(); it2.hasNext(); ){
-		 	   	     	 	 String[] s = it2.next();
-		 	   	     		 if(s[0].equalsIgnoreCase(st)){
-		 	   	     				idx = field.indexOf(s);
-		 	   	     				break;
-		 	   	     		 }
-		 	   	     	 }
-		 	   	     	 field.remove(idx);
-		 	   	     	 if(f)
-		 	   	     		 field.add(idx,new String[]{st,"true",type});
-		 	   	     	 else
-		 	   	     		 field.add(idx,new String[]{st,"false",type});
-		    	   	}
-		       });
-		        
-		        Listener okfilter = new Listener(){
-					@Override
-					public void handleEvent(Event arg0) {
-						ArrayList<String> check = new ArrayList<String>();
-						if(table.getItemCount() > 0){
-							for(int i = 0; i<table.getItemCount(); i++){
-								check.add(table.getItem(i).getText());
+			        NameFilter.addModifyListener(new ModifyListener(){
+			        	
+			            public void modifyText(ModifyEvent e){
+			            		
+			            		tab.setItemCount(0);		            		
+			            		for(Iterator<String[]> it1 = field.iterator(); it1.hasNext(); ){
+			            			String[] s = it1.next();
+			            			if(s[0].startsWith(NameFilter.getText())){
+			            				TreeItem I = new TreeItem(tab, SWT.NONE);
+			            				I.setText(0,s[0]);
+			            				//I.setText(1,s[2]);
+			            				if(s[1].equalsIgnoreCase("true")) 
+			            					I.setChecked(true);
+			            				/*if(s[2].equalsIgnoreCase("string")){ 
+			            					I.setChecked(false);
+			            					I.setBackground(new Color(null,211,211,211));
+			            				}*/
+			            			}
+			            		}
+			            		tab.setRedraw(true);
+			            		
+			            }
+			        });
+			        
+			       
+			        
+			        tab.addListener(SWT.Selection, new Listener() {
+			    	     public void handleEvent(Event event) {
+			    	    	 if(((TreeItem)event.item).getText(1).equalsIgnoreCase("string")) 
+			    	    		 ((TreeItem)event.item).setChecked(false);
+			    	    	 String st = ((TreeItem)event.item).getText(0);
+			    	    	 String type = ((TreeItem)event.item).getText(1);
+			    	    	 boolean f = ((TreeItem)event.item).getChecked();
+			 	   	      	 int idx = 0; 
+			 	   	      	 for(Iterator<String[]> it2 = field.iterator(); it2.hasNext(); ){
+			 	   	     	 	 String[] s = it2.next();
+			 	   	     		 if(s[0].equalsIgnoreCase(st)){
+			 	   	     				idx = field.indexOf(s);
+			 	   	     				break;
+			 	   	     		 }
+			 	   	     	 }
+			 	   	     	 field.remove(idx);
+			 	   	     	 if(f)
+			 	   	     		 field.add(idx,new String[]{st,"true",type});
+			 	   	     	 else
+			 	   	     		 field.add(idx,new String[]{st,"false",type});
+			    	   	}
+			       });
+			        
+			        Listener okfilter = new Listener(){
+						@Override
+						public void handleEvent(Event arg0) {
+							ArrayList<String> check = new ArrayList<String>();
+							if(table.getItemCount() > 0){
+								for(int i = 0; i<table.getItemCount(); i++){
+									check.add(table.getItem(i).getText());
+								}
 							}
-						}
-						
-						for(Iterator<String[]> it = field.iterator(); it.hasNext();){
-							String[] S = it.next();
-							if(S[1].equalsIgnoreCase("True") && !check.contains(S[0])){
-								Cols p = new Cols();
-								p.setFirstName(S[0]);
-								fields.add(p);
-								
+							
+							for(Iterator<String[]> it = field.iterator(); it.hasNext();){
+								String[] S = it.next();
+								if(S[1].equalsIgnoreCase("True") && !check.contains(S[0])){
+									Player p = new Player();
+									p.setFirstName(S[0]);
+									fields.add(p);
+									
+									
+								}
 								
 							}
 							
+							tv.setInput(fields);
+							
+							shellFilter.dispose();
+							
 						}
-						
-						tv.setInput(fields);
-						
-						shellFilter.dispose();
-						
+			        	
+			        };
+			        okFilter.addListener(SWT.Selection, okfilter);
+
+			        Listener cancelfilter = new Listener(){
+
+						@Override
+						public void handleEvent(Event arg0) {
+							shellFilter.dispose();
+							
+						}
+			        	
+			        };
+			        CancelFilter.addListener(SWT.Selection, cancelfilter);
+
+					shellFilter.pack();
+			        shellFilter.open();
+					while (!shellFilter.isDisposed()) {
+						if (!display.readAndDispatch())
+							display.sleep();
 					}
-		        	
-		        };
-		        okFilter.addListener(SWT.Selection, okfilter);
-
-		        Listener cancelfilter = new Listener(){
-
-					@Override
-					public void handleEvent(Event arg0) {
-						shellFilter.dispose();
-						
-					}
-		        	
-		        };
-		        CancelFilter.addListener(SWT.Selection, cancelfilter);
-
-				shellFilter.pack();
-		        shellFilter.open();
-				while (!shellFilter.isDisposed()) {
-					if (!display.readAndDispatch())
-						display.sleep();
-				}
-	      }
-	    });
-
+		      }
+		    });
+	    
+	    table.setHeaderVisible(true);
+	    table.setLinesVisible(true);
+	    table.addListener (SWT.Selection, new Listener () {
+            public void handleEvent (Event event) {
+            	if(event.detail == SWT.CHECK){	
+            		tv.refresh();
+                    table.redraw();
+            	}
+            }
+        });
+	    
+	    final CellEditor[] editors = new CellEditor[1];
+	    editors[0] = new TextCellEditor(table);
 	    tv.setColumnProperties(PROP);
+	    tv.setCellModifier(new PersonCellModifier(tv));
+	    tv.setCellEditors(editors);
         
         
         wOK = new Button(shell, SWT.PUSH);
@@ -861,7 +1046,35 @@ class Cols {
 
 }
 
+class Player { 
+	  private String firstName;
+	  private Integer coloroption;
+	  private String type;
 
+	  public String getFirstName() {
+		  return firstName;
+	  }
+
+	  public void setFirstName(String firstName) {
+		  this.firstName = firstName;
+	  }
+
+	  public String getTy() {
+		  return type;
+	  }
+
+	  public void setTy(String type) {
+		  this.type = type;
+	  }
+	  
+	  public Integer getColor() {
+		  return coloroption;
+	  }
+
+	  public void setColor(Integer coloroption) {
+		  this.coloroption = coloroption;
+	  }
+}
 
 
 
@@ -879,7 +1092,7 @@ class PlayerLabelProvider implements ITableLabelProvider {
 
 
 	public String getColumnText(Object arg0, int arg1) {
-	  Cols values = (Cols) arg0;
+	  Player values = (Player) arg0;
 
 	  switch(arg1){
 	  case 0:
@@ -924,3 +1137,34 @@ class PlayerContentProvider implements IStructuredContentProvider {
 }
 
 
+class PersonCellModifier implements ICellModifier {
+	  private Viewer viewer;
+
+	  public PersonCellModifier(Viewer viewer) {
+	    this.viewer = viewer;
+	  }
+
+	  public boolean canModify(Object element, String property) {
+	    // Allow editing of all values
+	    return true;
+	  }
+	  public Object getValue(Object element, String property) {
+	    Player p = (Player) element;
+	    if (ECLCorrelationDialog.NAME.equals(property))
+	      return p.getFirstName();
+	    else
+	      return null;
+	  }
+
+	  public void modify(Object element, String property, Object value) {
+	    if (element instanceof Item)
+	      element = ((Item) element).getData();
+
+	    Player p = (Player) element;
+	    if (ECLCorrelationDialog.NAME.equals(property))
+	      p.setFirstName((String) value);
+	   
+	    // Force the viewer to refresh
+	    viewer.refresh();
+	  }
+}
