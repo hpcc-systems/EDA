@@ -72,8 +72,11 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 	public static final String OPTION = "Color Option";
 	public static final String DATTYPE = "DataType";
   
-	public static final String[] PROP = { NAME, OPTION};
+	public static final String[] PROP = { NAME, OPTION, DATTYPE};
 	
+	private boolean flag = true;private int cnt = 0;
+	private boolean Scatterflag = true;private boolean Lineflag = true;private boolean Barflag = true;private boolean Pieflag1 = true;
+	private boolean Pieflag2 = true;
 	java.util.List people;	
 	private String filePath;
 	private String normlist = "";
@@ -81,7 +84,11 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
     private Text jobEntryName;
     private Combo datasetName;
     private Combo datasetNameOriginal;
-    private Combo GraphType;
+    private Combo GraphType;  
+    private Text GHeight;
+    private Text GWidth;
+    private Combo Size;
+    Group sizeGroup = null;
     ArrayList<String> Fieldfilter = new ArrayList<String>();
     
     String checkList[] = null;
@@ -97,6 +104,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 	private String persist;
 	private Composite composite;
 	private String defJobName;
+
 	
     public ECLGraphDialog(Shell parent, JobEntryInterface jobEntryInt,
 			Repository rep, JobMeta jobMeta) {
@@ -124,9 +132,8 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
             datasets1 = ap.parseDatasetsRecordsets(this.jobMeta.getJobCopies());
             datasets = ap.parseGraphableDefinitions(this.jobMeta.getJobCopies());
             checkList = ap.parseUnivariate(this.jobMeta.getJobCopies());
-            filePath = ap.getGlobalVariable(this.jobMeta.getJobCopies(), "compileFlags");
+            filePath = ap.getGlobalVariable(this.jobMeta.getJobCopies(), "compileFlags"); 
             defJobName = ap.getGlobalVariable(this.jobMeta.getJobCopies(), "jobName");
-            
         }catch (Exception e){
             System.out.println("Error Parsing existing Datasets");
             System.out.println(e.toString());
@@ -136,28 +143,39 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
             datasets1 = new String[]{""};
         }
 
-        shell = new Shell(parentShell, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MIN | SWT.MAX);
+        shell = new Shell(parentShell, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MIN | SWT.MAX );
         people = new ArrayList();
         
 
         TabFolder tab = new TabFolder(shell, SWT.FILL | SWT.RESIZE | SWT.MIN | SWT.MAX);
         FormData datatab = new FormData();
         
-        datatab.height = 370;
-        datatab.width = 650;
+        datatab.height = 580;
+        datatab.width = 680;
         tab.setLayoutData(datatab);
         
-        Composite compForGrp = new Composite(tab, SWT.NONE);
-        //compForGrp.setLayout(new FillLayout(SWT.VERTICAL));
-        compForGrp.setBackground(new Color(tab.getDisplay(),255,255,255));
-        compForGrp.setLayout(new FormLayout());
-        TabItem item1 = new TabItem(tab, SWT.NULL);
+        //Composite compForGrp = new Composite(tab, SWT.NONE | SWT.V_SCROLL | SWT.SHADOW_OUT);
         
+        //compForGrp.setBackground(new Color(tab.getDisplay(),255,255,255));
+        //compForGrp.setLayout(new FormLayout());
+        
+        TabItem item1 = new TabItem(tab, SWT.NULL);               
         item1.setText ("General");
+        
+        ScrolledComposite sc1 = new ScrolledComposite(tab, SWT.V_SCROLL);
+        sc1.setAlwaysShowScrollBars(true);
+        final Composite compForGrp1 = new Composite(sc1, SWT.NONE);
+        compForGrp1.setBackground(new Color(tab.getDisplay(),255,255,255));
+        compForGrp1.setLayout(new FormLayout());
+        sc1.setContent(compForGrp1);
+        sc1.setMinSize(400, 200);
+        sc1.setExpandHorizontal(true);
+        sc1.setExpandVertical(true);        
+        
         props.setLook(shell);
         JobDialog.setShellImage(shell, jobEntry);
 
-        ModifyListener lsMod = new ModifyListener() {
+        final ModifyListener lsMod = new ModifyListener() {
 
             public void modifyText(ModifyEvent e) {
                 jobEntry.setChanged();
@@ -169,18 +187,18 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 		layout.marginWidth = Const.FORM_MARGIN;
 		layout.marginHeight = Const.FORM_MARGIN;
 		
-		int middle = props.getMiddlePct();
-        int margin = Const.MARGIN;
+		final int middle = props.getMiddlePct();
+        final int margin = Const.MARGIN;
         
 		shell.setLayout(layout);
 		shell.setText("Graph");
 		
-		FormLayout groupLayout = new FormLayout();
+		final FormLayout groupLayout = new FormLayout();
         groupLayout.marginWidth = 10;
         groupLayout.marginHeight = 10;
 
         // Stepname line
-        Group generalGroup = new Group(compForGrp, SWT.SHADOW_NONE);
+        final Group generalGroup = new Group(compForGrp1, SWT.SHADOW_NONE);
         props.setLook(generalGroup);
         generalGroup.setText("General Details");
         generalGroup.setLayout(groupLayout);
@@ -195,25 +213,27 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 		
 		//All other contols
         //Dataset Declaration
-        Group datasetGroup = new Group(compForGrp, SWT.SHADOW_NONE);
+        final Group datasetGroup = new Group(compForGrp1, SWT.SHADOW_NONE);
         props.setLook(datasetGroup);
         datasetGroup.setText("Dataset and Graph Details");
         datasetGroup.setLayout(groupLayout);
         FormData datasetGroupFormat = new FormData();
         datasetGroupFormat.top = new FormAttachment(generalGroup, margin);
         datasetGroupFormat.width = 400;
-        datasetGroupFormat.height = 120;
+        datasetGroupFormat.height = 180;
         datasetGroupFormat.left = new FormAttachment(middle, 0);
         datasetGroup.setLayoutData(datasetGroupFormat);
 		
 		
-        datasetNameOriginal = buildCombo("Original Dataset Name : ", jobEntryName, lsMod, middle, margin, datasetGroup, datasets1);
+        datasetNameOriginal = buildCombo("Original Dataset Name :", jobEntryName, lsMod, middle, margin, datasetGroup, datasets1);
         
-        datasetName = buildCombo("Dataset Name :    ", datasetNameOriginal, lsMod, middle, margin, datasetGroup, datasets);
+        datasetName = buildCombo("Derived Dataset :", datasetNameOriginal, lsMod, middle, margin*2, datasetGroup, datasets);
 		
-        GraphType = buildCombo("Graph Type :", datasetName, lsMod, middle, margin, datasetGroup, new String[]{"PieChart", "LineChart","ScatterChart","BarChart"});
+        GraphType = buildCombo("Graph Type :", datasetName, lsMod, middle, margin*2, datasetGroup, new String[]{"PieChart", "LineChart","ScatterChart","BarChart"});
         
-        Group perGroup = new Group(compForGrp, SWT.SHADOW_NONE);
+        Size = buildCombo("Set Size :", GraphType, lsMod, middle, margin*2, datasetGroup, new String[]{"YES","NO"});
+        
+        final Group perGroup = new Group(compForGrp1, SWT.SHADOW_NONE);
         props.setLook(perGroup);
         perGroup.setText("Persist");
         perGroup.setLayout(groupLayout);
@@ -283,7 +303,50 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
             }
         });
         
-        item1.setControl(compForGrp);
+        Size.addSelectionListener(new SelectionAdapter(){
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if(sizeGroup != null)
+					sizeGroup.dispose();
+				if(Size.getText().equalsIgnoreCase("YES")){
+					 sizeGroup = new Group(compForGrp1, SWT.SHADOW_NONE);
+				     props.setLook(sizeGroup);
+				     sizeGroup.setText("Size of Graph");
+				     sizeGroup.setLayout(groupLayout);
+				     FormData GroupFormat = new FormData();
+				     GroupFormat.top = new FormAttachment(perGroup, margin); 
+				     GroupFormat.width = 400;
+				     GroupFormat.height = 100;
+				     GroupFormat.left = new FormAttachment(middle, 0);
+				     sizeGroup.setLayoutData(GroupFormat);
+				     sizeGroup.setSize(sizeGroup.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+				     sizeGroup.layout();
+				     
+				     GHeight = buildText("Height :", Size, lsMod, middle, margin*2, sizeGroup);
+				        
+				     GWidth = buildText("Width :", GHeight, lsMod, middle, margin*2, sizeGroup);
+				     
+				     if(jobEntry.getHeight() != null){
+				       	GHeight.setText(jobEntry.getHeight());
+				     }
+				        
+				     if(jobEntry.getWidth() != null){
+				     	GWidth.setText(jobEntry.getWidth());
+				     }
+				     
+				     compForGrp1.setSize(compForGrp1.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+	                 compForGrp1.layout();
+				}
+				
+				
+			}
+        	
+        });
+        
+        
+        
+        item1.setControl(sc1);
         /**
          * TableViewer in new Tab starts
          */
@@ -292,6 +355,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         item2.setText("Columns for Graph");
 		
         ScrolledComposite sc2 = new ScrolledComposite(tab, SWT.H_SCROLL | SWT.V_SCROLL);
+        sc2.setAlwaysShowScrollBars(true);
         Composite compForGrp2 = new Composite(sc2, SWT.NONE);
         compForGrp2.setLayout(new GridLayout(1, false));
         sc2.setContent(compForGrp2);
@@ -408,7 +472,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 	    	  AddColumnsDialog obj = new AddColumnsDialog(display);
 	    	  RecordList rec = null;
 	    	  String[] items = null;
-	    	  String[] types = null;
+	    	  String[] types = null;  
 	    	 
               try{          		
                   //String[] items = ap.fieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
@@ -428,19 +492,20 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 					e.printStackTrace();
 				}
             	  int i = 0;types = new String[items.length];
+            	  if(rec!=null){
             	  for(Iterator<RecordBO> I = rec.getRecords().iterator();I.hasNext();){
 						RecordBO ob = (RecordBO) I.next();						
 						types[i] = ob.getColumnType();
 						i++;
-						
-					}
+            	  }	
+				}
               }
               else{//(datasetName.getText() != null){
 		    	  if(datasetName.getText().split("_")[1].equalsIgnoreCase("Percentile")){
 		    		  items = new String[]{"field","percentile","value"};
 		    		  types = new String[]{"STRING","REAL","REAL"};
 		    	  }
-		    	  else if(datasetName.getText().split("_")[1].equalsIgnoreCase("Frequency")){
+		    	  else if(datasetName.getText().split("_")[1].startsWith("Frequency")){
 		    		  String type = "";
 		    		  for(Iterator<RecordBO> I = rec.getRecords().iterator();I.hasNext();){
 							RecordBO ob = (RecordBO) I.next();
@@ -499,11 +564,13 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 						int i = 0;
 						types[i] = "UNSIGNED DECIMAL8_8";
 						i++;
+						if(rec!=null){
 						for(Iterator<RecordBO> I = rec.getRecords().iterator();I.hasNext();){
 							RecordBO ob = (RecordBO) I.next();
 							types[i] = ob.getColumnType();
 							i++;
 						}
+					  }	
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -610,12 +677,73 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         Listener okListener = new Listener() {
 
             public void handleEvent(Event e) {
-            	
-            	normlist = new String();            	
-				for(int i = 0; i<table.getItemCount(); i++){
-					String s1 = table.getItem(i).getText(0)+","+table.getItem(i).getText(1)+","+table.getItem(i).getText(2)+"-"; 
+            	Boolean chart = false;
+            	if(GraphType.getText().equalsIgnoreCase("PieChart"))
+            		chart = true;
+            	normlist = new String();cnt = 0;flag = true;Scatterflag = true;Lineflag = true;Barflag = true;Pieflag1 = true;Pieflag2=true;    	
+				for(int i = 0; i<table.getItemCount(); i++){					
+					String s1 = table.getItem(i).getText(0)+","+table.getItem(i).getText(1)+","+table.getItem(i).getText(2)+"-";
+					
+					if(!table.getItem(i).getText(1).equalsIgnoreCase("XAxis") && chart == false){
+						cnt += 1;
+					}
+					
+					
+					
 					normlist += s1;					
-				}				
+				}	
+				if(chart == false){
+					for(int i = 0; i<table.getItemCount(); i++){
+						if(table.getItem(i).getText(1).equalsIgnoreCase("Color")){
+							flag = false;
+							break;
+						}						
+					}
+				}
+				if(flag == true && cnt != table.getItemCount()){
+					if(GraphType.getText().equalsIgnoreCase("ScatterChart")){
+						for(int i = 0; i<table.getItemCount(); i++){
+							if(table.getItem(i).getText(2).equalsIgnoreCase("String")){
+								Scatterflag = false;
+								break;
+							}
+						}
+					}
+					if(GraphType.getText().equalsIgnoreCase("LineChart")){
+						for(int i = 0; i<table.getItemCount(); i++){
+							if(!table.getItem(i).getText(1).equalsIgnoreCase("XAxis") && table.getItem(i).getText(2).equalsIgnoreCase("String")){
+								Lineflag = false;
+								break;
+							}
+						}
+					}
+					if(chart == true){						
+						for(int i = 0; i<table.getItemCount(); i++){
+							if(table.getItemCount()>2 || table.getItemCount()<=1){
+								Pieflag1 = false;
+								break;
+							}
+							else{
+								if(table.getItem(0).getText(2).equalsIgnoreCase("String") && table.getItem(1).getText(2).equalsIgnoreCase("String")){
+									Pieflag2 = false;
+									break;
+								}
+								if(!table.getItem(0).getText(2).equalsIgnoreCase("String") && !table.getItem(1).getText(2).equalsIgnoreCase("String")){
+									Pieflag2 = false;
+									break;
+								}
+							}
+						}
+					}
+					if(GraphType.getText().equalsIgnoreCase("BarChart")){
+						for(int i = 0; i<table.getItemCount(); i++){
+							if(!table.getItem(i).getText(1).equalsIgnoreCase("XAxis") && table.getItem(i).getText(2).equalsIgnoreCase("String")){
+								Barflag = false;
+								break;
+							}
+						}
+					}
+				}
 				ok();
             }
         };
@@ -671,6 +799,39 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         	filePath = jobEntry.getFilePath();
         }
         
+        if(jobEntry.getSize() != null){
+        	Size.setText(jobEntry.getSize());
+        	if(jobEntry.getSize().equals("YES")){
+        		sizeGroup = new Group(compForGrp1, SWT.SHADOW_NONE);
+			     props.setLook(sizeGroup);
+			     sizeGroup.setText("Size of Graph");
+			     sizeGroup.setLayout(groupLayout);
+			     FormData GroupFormat = new FormData();
+			     GroupFormat.top = new FormAttachment(perGroup, margin); 
+			     GroupFormat.width = 400;
+			     GroupFormat.height = 100;
+			     GroupFormat.left = new FormAttachment(middle, 0);
+			     sizeGroup.setLayoutData(GroupFormat);
+			     sizeGroup.setSize(sizeGroup.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+			     sizeGroup.layout();
+			     
+			     GHeight = buildText("Height :", Size, lsMod, middle, margin*2, sizeGroup);
+			        
+			     GWidth = buildText("Width :", GHeight, lsMod, middle, margin*2, sizeGroup);
+			     
+			     if(jobEntry.getHeight() != null){
+			       	GHeight.setText(jobEntry.getHeight());
+			     }
+			        
+			     if(jobEntry.getWidth() != null){
+			     	GWidth.setText(jobEntry.getWidth());
+			     }
+			     
+			     compForGrp1.setSize(compForGrp1.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+                 compForGrp1.layout();
+        	}
+        }
+        
         if (jobEntry.getPersistOutputChecked() != null && chkBox != null) {
         	chkBox.setSelection(jobEntry.getPersistOutputChecked().equals("true")?true:false);
         }
@@ -689,7 +850,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 		}
         if(jobEntry.getDefJobName() != null){
         	defJobName = jobEntry.getDefJobName();
-        } 
+        }
         
         shell.pack();
         shell.open();
@@ -705,7 +866,34 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
     	boolean isValid = true;
     	String errors = "";
     	
-    	
+    	if(cnt == normlist.split("-").length){
+    		isValid = false;
+    		errors += "Specify one field as X-Axis!\r\n";
+    	}
+    	if(flag == false){
+    		isValid = false;
+    		errors += "Choose a color or X-Axis option in the \"Color-XAxis Option Column\"!\r\n";
+    	}
+    	if(Scatterflag == false){
+    		isValid = false;
+    		errors += "Every Variable must be Numeric! \r\n";
+    	}
+    	if(Lineflag == false){
+    		isValid = false;
+    		errors += "Variables plotted on Y-Axis should be Numeric!\r\n";    		
+    	}
+    	if(Barflag == false){
+    		isValid = false;
+    		errors += "Variables plotted on Y-Axis should be Numeric!\r\n";    		
+    	}
+    	if(Pieflag1 == false){
+    		isValid = false;
+    		errors += "Only 2 Variables need to be Selected!\r\n";
+    	}
+    	if(Pieflag2 == false){
+    		isValid = false;
+    		errors += "One Varible should be String and other Numeric!\r\n";
+    	}
     	
     	if(this.jobEntryName.getText().equals("")){
     		isValid = false;
@@ -721,8 +909,8 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
    		}
    		if(this.normlist.equals("")){
    			isValid = false;
-   			errors += "You need to select a field to produce Graph\r\n";
-   		}
+   			errors += "You need to select a field from the \"Columns From Graph\" Tab to produce Graph\r\n";
+   		}   		
    		
     	if(!isValid){
     		ErrorNotices en = new ErrorNotices();
@@ -747,6 +935,16 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         jobEntry.setTyp(this.GraphType.getText());
         jobEntry.setPeople(this.people);
         jobEntry.setFilePath(this.filePath);
+        if(Size.getText().equals("NO") || Size.getText().trim().equals("")){
+        	jobEntry.setWidth("");
+        	jobEntry.setHeight("");
+        }
+        else{
+        	jobEntry.setWidth(this.GWidth.getText());
+        	jobEntry.setHeight(this.GHeight.getText());
+        }
+        	
+        jobEntry.setSize(Size.getText());
         if(checkList.length>0)
         	jobEntry.setTest(this.checkList[0]);// Only when one needs to plot Univariate statistics
         
@@ -794,7 +992,7 @@ class PersonCellModifier implements ICellModifier {
 	      return p.getFirstName();
 	    else if (ECLGraphDialog.OPTION.equals(property))
 	      return p.getColor();
-	    if (ECLGraphDialog.DATTYPE.equals(property))
+	    else if (ECLGraphDialog.DATTYPE.equals(property))
 		      return p.getTy();
 		    	    
 	    else
@@ -810,7 +1008,7 @@ class PersonCellModifier implements ICellModifier {
 	      p.setFirstName((String) value);
 	    else if (ECLGraphDialog.OPTION.equals(property))
 	      p.setColor((Integer) value);
-	    if (ECLGraphDialog.DATTYPE.equals(property))
+	    else if (ECLGraphDialog.DATTYPE.equals(property))
 		      p.setTy((String) value);
 		    
 	    // Force the viewer to refresh

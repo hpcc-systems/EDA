@@ -48,12 +48,15 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
 	
 	private String Name = "";
 	private String Typ = "";
-	private String DatasetName = "";
+	private String DatasetName = "";  
 	private String normList = "";
 	private String DatasetNameOriginal = "";
 	private java.util.List people = new ArrayList();
 	private String Test = "";
 	private String FilePath;
+	private String height = "";
+	private String width = "";
+	private String size = "";
 	
 	private String label ="";
 	private String outputName ="";
@@ -108,6 +111,30 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
 		this.Name = Name;
 	}
 
+	public String getSize(){
+		return size;
+	}
+    
+	public void setSize(String size){
+		this.size = size;
+	}
+
+	public String getHeight(){
+		return height;
+	}
+    
+	public void setHeight(String height){
+		this.height = height;
+	}
+	
+	public String getWidth(){
+		return width;
+	}
+    
+	public void setWidth(String width){
+		this.width = width;
+	}
+	
 	public String getTest(){
 		return Test;
 	}
@@ -165,13 +192,27 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         if(result.isStopped()){
         	return result;
         }
-        else{        		
-        		
-        		String[] path = FilePath.split("\"");
-        		logBasic(path[1].replaceAll("manifest.xml", "")); 
+        else{        	
+        		String[] path = null;
+        		String[] flag = FilePath.split("-");
+        		for(int i = 0; i<flag.length; i++){
+        			if(flag[i].startsWith("manifest")){
+        				path = flag[i].split("\"");
+        			} 
+        		}
+        		//String[] path = FilePath.split("\"");
+        		logBasic(path[1]);//.replaceAll("manifest.xml", "")); 
         		Player axis = new Player();
-        		String Colours = "colors : ["; String fields = ""; String graph = "";
-        	
+        		String haxis = "";//tooltip: { textStyle: { fontName: 'Arial', fontSize: 18, bold:false }},hAxis: {title: '
+        		String Colours = "colors : ["; String fields = ""; String graph = "";String h = ""; String w = "";String name = "";
+        		if(getHeight().equals(""))
+        			h = "400";
+        		else
+        			h = getHeight();
+        		if(getWidth().equals(""))
+        			w = "600";
+        		else w = getWidth();
+        		String size = "height: "+h+"px; width:"+w+"px;";//height: 400px; width: 600px;
 	        	
 	        	if(this.getTyp().equals("PieChart")){
 	        		String[] norm = normList.split("-");
@@ -212,6 +253,8 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
 		        				fields += this.getDatasetName()+"."+p.getFirstName()+";\n";
 		        			i++;
 		        			f = false;
+		        			//haxis += p.getFirstName().toUpperCase()+"', titleTextStyle:{color: 'Red', fontName:'Arial', fontSize:18, italic:0}},";
+		        			name = p.getFirstName().toUpperCase();
 		        			continue;
 		        		}
 		        		Player P = (Player) it.next();
@@ -227,8 +270,8 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
 		        	}	
 		        	
 			        try {
-			        	logBasic(Colours + getTyp());        	
-						Change(Colours, this.getTyp(), path[1].replaceAll("manifest.xml", ""));
+			        	logBasic(haxis+Colours + getTyp());        	
+						Change(haxis+Colours, size, this.getTyp(), path[1].replaceAll("manifest.xml", ""),name);
 						logBasic("File Changed?");
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
@@ -311,6 +354,13 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
                 setName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "name")));
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "Test")) != null)
                 setTest(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "Test")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "height")) != null)
+                setHeight(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "height")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "width")) != null)
+                setWidth(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "width")));
+            
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "Size")) != null)
+                setSize(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "Size")));
             
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "FilePath")) != null)
                 setFilePath(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "FilePath")));
@@ -356,6 +406,9 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         retval += "		<people><![CDATA[" + this.savePeople() + "]]></people>" + Const.CR;
         retval += "		<Typ><![CDATA[" + Typ + "]]></Typ>" + Const.CR;
         retval += "		<Test><![CDATA[" + Test + "]]></Test>" + Const.CR;
+        retval += "		<height><![CDATA[" + height + "]]></height>" + Const.CR;
+        retval += "		<width><![CDATA[" + width + "]]></width>" + Const.CR;
+        retval += "		<Size><![CDATA[" + size + "]]></Size>" + Const.CR;
         retval += "		<FilePath><![CDATA[" + FilePath + "]]></FilePath>" + Const.CR;
         retval += "		<normList><![CDATA[" + this.getnormList() + "]]></normList>" + Const.CR;
         retval += "		<dataset_name><![CDATA[" + DatasetName + "]]></dataset_name>" + Const.CR;
@@ -377,6 +430,15 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         	
         	if(rep.getStepAttributeString(id_jobentry, "Test") != null)
         		Test = rep.getStepAttributeString(id_jobentry, "Test"); //$NON-NLS-1$
+        	
+        	if(rep.getStepAttributeString(id_jobentry, "height") != null)
+        		height = rep.getStepAttributeString(id_jobentry, "height"); //$NON-NLS-1$
+        	
+        	if(rep.getStepAttributeString(id_jobentry, "width") != null)
+        		width = rep.getStepAttributeString(id_jobentry, "width"); //$NON-NLS-1$
+        	
+        	if(rep.getStepAttributeString(id_jobentry, "Size") != null)
+        		size = rep.getStepAttributeString(id_jobentry, "Size"); //$NON-NLS-1$
 
         	if(rep.getStepAttributeString(id_jobentry, "FilePath") != null)
         		FilePath = rep.getStepAttributeString(id_jobentry, "FilePath"); //$NON-NLS-1$
@@ -396,6 +458,9 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
             if(rep.getStepAttributeString(id_jobentry, "people") != null)
                 this.openPeople(rep.getStepAttributeString(id_jobentry, "people")); //$NON-NLS-1$
             
+            if(rep.getStepAttributeString(id_jobentry, "people") != null)
+                this.openPeople(rep.getStepAttributeString(id_jobentry, "people")); //$NON-NLS-1$
+            
             if(rep.getStepAttributeString(id_jobentry, "outputName") != null)
             	outputName = rep.getStepAttributeString(id_jobentry, "outputName"); //$NON-NLS-1$
             
@@ -407,6 +472,7 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
             
             if(rep.getStepAttributeString(id_jobentry, "defJobName") != null)
             	defJobName = rep.getStepAttributeString(id_jobentry, "defJobName"); //$NON-NLS-1$
+            
             
         } catch (Exception e) {
             throw new KettleException("Unexpected Exception", e);
@@ -423,6 +489,12 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         	
         	rep.saveStepAttribute(id_job, getObjectId(), "Test", Test); //$NON-NLS-1$
         	
+        	rep.saveStepAttribute(id_job, getObjectId(), "width", width); //$NON-NLS-1$
+        	
+        	rep.saveStepAttribute(id_job, getObjectId(), "height", height); //$NON-NLS-1$
+        	
+        	rep.saveStepAttribute(id_job, getObjectId(), "Size", size); //$NON-NLS-1$
+        	
         	rep.saveStepAttribute(id_job, getObjectId(), "FilePath", FilePath); //$NON-NLS-1$
         	
         	rep.saveStepAttribute(id_job, getObjectId(), "Name", Name); //$NON-NLS-1$
@@ -438,7 +510,7 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         	rep.saveStepAttribute(id_job, getObjectId(), "persist_Output_Checked", persist);
             
         	rep.saveStepAttribute(id_job, getObjectId(), "defJobName", defJobName);
-        	
+            
         } catch (Exception e) {
             throw new KettleException("Unable to save info into repository" + id_job, e);
         }
@@ -452,23 +524,34 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         return true;
     }
     
-    public void Change(String Colours, String Chart, String path) throws Exception,FileNotFoundException, TransformerException {
+    public void Change(String Colours, String size, String Chart, String path, String name) throws Exception,FileNotFoundException, TransformerException {
         File xmlFile = new File(path+Chart.toLowerCase()+".xslt");//"D:\\Users\\Public\\Documents\\HPCC Systems\\ECL\\MY\\visualizations\\google_charts\\files\\"
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.parse(xmlFile);
         NodeList nList = document.getElementsByTagName("xsl:template");
-
+        Node n = nList.item(0);
+        if (n.getNodeType() == Node.ELEMENT_NODE) {
+        	Element eElement1 = (Element) n;
+        	
+    		System.out.println(eElement1.getElementsByTagName("div").item(0).getAttributes().getNamedItem("style").getNodeValue()); 
+    		eElement1.getElementsByTagName("div").item(0).getAttributes().getNamedItem("style").setNodeValue(size);
+        }
     	Node nNode = nList.item(1);         	
     	if (nNode.getNodeType() == Node.ELEMENT_NODE) {    			
     		Element eElement = (Element) nNode;
-    		for(int i = 0; i<eElement.getElementsByTagName("xsl:text").getLength();i++){
-    			//
-    			String S = ",0.6);var options = {"+Colours+"};var "+Chart.toLowerCase()+" = new google.visualization."+Chart+"(document.getElementById('";
-    			System.out.println(eElement.getElementsByTagName("xsl:text").item(3).getTextContent());
-    			eElement.getElementsByTagName("xsl:text").item(3).setTextContent(S);
-    		}
+    		String S =");\n"+ 
+    				"			var zoomed = false;\n			var MAX = 20;\n			var options = {\n"+
+    				"						animation: {duration: 1000,easing: 'in'},\n"+
+    				"						tooltip: { textStyle: { fontName: 'Arial', fontSize: 18, bold:false }},\n"+
+    				"						hAxis: {viewWindow : {min : 0, max:4},title: '"+name+"', titleTextStyle:{color: 'Red', fontName:'Arial', fontSize:18, italic:0}},\n"+
+    				"						"+Colours+"\n"+						
+    				"			};\n"+
+    				"			function draw";	
+        	    eElement.getElementsByTagName("xsl:text").item(1).setTextContent(S);
+        		
+        		//System.out.println(eElement.getElementsByTagName("xsl:text").item(1).getTextContent());
     			
     	}
 

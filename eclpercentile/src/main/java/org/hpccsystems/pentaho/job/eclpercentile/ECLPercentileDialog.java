@@ -483,20 +483,30 @@ public class ECLPercentileDialog extends ECLJobEntryDialog{
 				CancelFilter.setText("   Cancel   ");
 			    				
 				AutoPopulate ap = new AutoPopulate();
+				RecordList rec = null;
           try{
       		
-              String[] items = ap.fieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
-              RecordList rec = ap.rawFieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
+              //String[] items = ap.fieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
+              rec = ap.rawFieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
               
-              for(int i = 0; i < items.length; i++){
-          		TreeItem item = new TreeItem(tab, SWT.NONE);
-          		item.setText(0,items[i].toLowerCase());
-          		item.setText(1, rec.getRecords().get(i).getColumnType());
-          		if(rec.getRecords().get(i).getColumnType().startsWith("String")){
-          			item.setBackground(0, new Color(null,211,211,211));
-          		}
-          		field.add(new String[]{items[i].toLowerCase(),"false",rec.getRecords().get(i).getColumnType()});
-          	}
+              for(int i = 0; i < rec.getRecords().size(); i++){
+                  TreeItem item = new TreeItem(tab, SWT.NONE);
+                  item.setText(0, rec.getRecords().get(i).getColumnName().toLowerCase());
+                  String type = "String";
+                  String width = "";
+                  try{
+                         type = rec.getRecords().get(i).getColumnType();
+                         width = rec.getRecords().get(i).getColumnWidth();
+                         item.setText(1,type+width);
+                         if(rec.getRecords().get(i).getColumnType().startsWith("String")){
+                        	 item.setBackground(0, new Color(null,211,211,211));
+                         }
+                  }catch (Exception e){
+                         System.out.println("Percentile Cant look up column type");
+                  }
+                  
+                  field.add(new String[]{rec.getRecords().get(i).getColumnName().toLowerCase(),"false",type+width});
+            }
               
               
           }catch (Exception ex){
@@ -538,13 +548,13 @@ public class ECLPercentileDialog extends ECLJobEntryDialog{
 		            			if(s[0].startsWith(NameFilter.getText())){
 		            				TreeItem I = new TreeItem(tab, SWT.NONE);
 		            				I.setText(0,s[0]);
-		            				I.setText(1,s[2]);
+		            				//I.setText(1,s[2]);
 		            				if(s[1].equalsIgnoreCase("true")) 
 		            					I.setChecked(true);
-		            				if(s[2].equalsIgnoreCase("string")){ 
+		            				/*if(s[2].equalsIgnoreCase("string")){ 
 		            					I.setChecked(false);
 		            					I.setBackground(new Color(null,211,211,211));
-		            				}
+		            				}*/
 		            			}
 		            		}
 		            		tab.setRedraw(true);

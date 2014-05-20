@@ -255,8 +255,15 @@ public class ECLPercentileBuckets extends ECLJobEntry{//extends JobEntryBase imp
         	for(int i = 0; i<len; i++){
         		String[] S = strLine[i].split("-");
         		Player P = new Player();
-        		P.setFirstName(S[0]);
-        		P.setBuckets(S[1]);
+        		if(S.length == 1){
+        			P.setFirstName(S[0]);
+        		}
+        		else if(S.length ==2){
+        			P.setFirstName(S[0]);
+        			P.setBuckets(S[1]);  
+        		}
+        		/*P.setFirstName(S[0]);
+        		P.setBuckets(S[1]);*/
         		people.add(P);
         	}
         }

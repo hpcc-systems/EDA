@@ -6,7 +6,10 @@ package org.hpccsystems.pentaho.job.eclfrequency;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
@@ -61,6 +64,7 @@ import org.pentaho.di.ui.trans.step.BaseStepDialog;
 
 import org.hpccsystems.eclguifeatures.AutoPopulate;
 import org.hpccsystems.eclguifeatures.ErrorNotices;
+import org.hpccsystems.recordlayout.RecordBO;
 import org.hpccsystems.recordlayout.RecordLabels;
 import org.hpccsystems.recordlayout.RecordList;
 import org.hpccsystems.ecljobentrybase.*;
@@ -95,6 +99,7 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
    
     private Button wOK, wCancel;
     private boolean backupChanged;
+    Map<String, String[]> mapDataSets = null;
     
     
 	private SelectionAdapter lsDef;
@@ -577,7 +582,8 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 				                column1.setImage(RecordLabels.getImage("checked"));
 				                tab.selectAll();
 				            }
-				        } 		
+				        }
+				        
 				        for(int m = 0; m<tab.getItemCount(); m++){
 				        	if(tab.getItem(m).getChecked()){
 				        		String st = tab.getItem(m).getText();
@@ -594,7 +600,7 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 				 	   	     	 field.add(idx,new String[]{st,"true",type});
 				 	   	     	 // to find index of the selected item in the original field array list
 				        	}
-				        	if(!tab.getItem(m).getChecked()){
+				        	else if(!tab.getItem(m).getChecked()){
 				        		String st = tab.getItem(m).getText();
 				        		String type = tab.getItem(m).getText(1);
 				        		int idx = 0; 
@@ -618,29 +624,43 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 				okFilter.setText("     OK     ");
 				Button CancelFilter = new Button(shellFilter, SWT.PUSH);
 				CancelFilter.setText("   Cancel   ");
-			    				
+			    
 				AutoPopulate ap = new AutoPopulate();
+				RecordList rec = null;
+		    	String[] items = null;
+		    	String[] types = null;
               try{
           		
-                  String[] items = ap.fieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
-                  RecordList rec = ap.rawFieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
+                  //items = ap.fieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
+                  //mapDataSets = ap.parseDefExpressionBuilder(jobMeta.getJobCopies(), datasetName.getText());
+                  rec = ap.rawFieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
                   
-                  for(int i = 0; i < items.length; i++){
-              		TreeItem item = new TreeItem(tab, SWT.NONE);
-              		item.setText(0,items[i].toLowerCase());
-              		item.setText(1,rec.getRecords().get(i).getColumnType()+rec.getRecords().get(i).getColumnWidth());
-              		if(rec.getRecords().get(i).getColumnType().startsWith("String")){
-              			item.setBackground(0, new Color(null,211,211,211));
-              		}
-              		field.add(new String[]{items[i].toLowerCase(),"false",rec.getRecords().get(i).getColumnType()+rec.getRecords().get(i).getColumnWidth()});
-              	}
-                  
+                  for(int i = 0; i < rec.getRecords().size(); i++){
+                      TreeItem item = new TreeItem(tab, SWT.NONE);
+                      item.setText(0, rec.getRecords().get(i).getColumnName().toLowerCase());
+                      String type = "String";
+                      String width = "";
+                      try{
+                             type = rec.getRecords().get(i).getColumnType();
+                             width = rec.getRecords().get(i).getColumnWidth();
+                             item.setText(1,type+width);
+                             if(rec.getRecords().get(i).getColumnType().startsWith("String")){
+                            	 item.setBackground(0, new Color(null,211,211,211));
+                             }
+                      }catch (Exception e){
+                             System.out.println("Frequency Cant look up column type");
+                      }
+                      
+                      field.add(new String[]{rec.getRecords().get(i).getColumnName().toLowerCase(),"false",type+width});
+                }
                   
               }catch (Exception ex){
                   System.out.println("failed to load record definitions");
                   System.out.println(ex.toString());
                   ex.printStackTrace();
               }
+              
+              
               FormData dat = new FormData();
 		        dat.top = new FormAttachment(NameFilter, 0, SWT.CENTER);
 		        filter.setLayoutData(dat);
@@ -698,7 +718,7 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 		 	   	     		 if(s[0].equalsIgnoreCase(st)){
 		 	   	     				idx = field.indexOf(s);
 		 	   	     				break;
-		 	   	     		 }
+		 	   	     		 } 
 		 	   	     	 }
 		 	   	     	 field.remove(idx);
 		 	   	     	 if(f)
