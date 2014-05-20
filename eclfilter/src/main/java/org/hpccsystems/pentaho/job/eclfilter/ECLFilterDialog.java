@@ -85,6 +85,13 @@ public class ECLFilterDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
     private boolean backupChanged;
     private SelectionAdapter lsDef;
     List people = new ArrayList();
+    
+    public Button chkBox;
+    public static Text outputName;
+    public static Label label;
+    private String persist;
+    private Composite composite;
+    private String jobName;
 
     public ECLFilterDialog(Shell parent, JobEntryInterface jobEntryInt, Repository rep, JobMeta jobMeta) {
         super(parent, jobEntryInt, rep, jobMeta);
@@ -112,6 +119,7 @@ public class ECLFilterDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
             //Object[] jec = this.jobMeta.getJobCopies().toArray();
             
             datasets = ap.parseDatasetsRecordsets(this.jobMeta.getJobCopies());
+            jobName = ap.getGlobalVariable(this.jobMeta.getJobCopies(), "jobName");
         }catch (Exception e){
             System.out.println("Error Parsing existing Datasets");
             System.out.println(e.toString());
@@ -131,8 +139,8 @@ public class ECLFilterDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
         //formLayout.marginWidth = Const.FORM_MARGIN; //5
         //formLayout.marginHeight = Const.FORM_MARGIN; //5
         
-        shell.setLayout(formLayout);
-        shell.setSize(900,720); //800 X 600 (width X Height)
+        shell.setLayout(formLayout);    
+        shell.setSize(740,650); //800 X 600 (width X Height)
 
         int middle = props.getMiddlePct(); //35. This value is defined in org.pentaho.di.core.Const.
         int margin = Const.MARGIN; //4. This value is defined in org.pentaho.di.core.Const.
@@ -219,9 +227,12 @@ public class ECLFilterDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
         generalGroup.setLayout(groupLayout);
         
         FormData generalGroupFormat = new FormData();
-        generalGroupFormat.height = 65;
-        generalGroupFormat.left = new FormAttachment(0, 5);
-        generalGroupFormat.right = new FormAttachment(100, -5);
+        generalGroupFormat.width = 400;
+        generalGroupFormat.height = 110;
+        generalGroupFormat.top = new FormAttachment(10, margin);
+        generalGroupFormat.left = new FormAttachment(30, 0);
+        /*generalGroupFormat.left = new FormAttachment(0, 5);
+        generalGroupFormat.right = new FormAttachment(100, -5);*/
         generalGroup.setLayoutData(generalGroupFormat);
         
         jobEntryName = buildText("Job Entry Name", null, lsMod, middle, margin, generalGroup);
@@ -234,10 +245,14 @@ public class ECLFilterDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
         distributeGroup.setLayout(groupLayout);
         
         FormData datasetGroupFormat = new FormData();
-        datasetGroupFormat.top = new FormAttachment(generalGroup, 5);
+        /*datasetGroupFormat.top = new FormAttachment(generalGroup, 5);
         datasetGroupFormat.bottom = new FormAttachment(generalGroup, 200);
         datasetGroupFormat.left = new FormAttachment(generalGroup, 0, SWT.LEFT);
-        datasetGroupFormat.right = new FormAttachment(generalGroup, 0, SWT.RIGHT);
+        datasetGroupFormat.right = new FormAttachment(generalGroup, 0, SWT.RIGHT);*/
+        datasetGroupFormat.top = new FormAttachment(generalGroup, margin);
+        datasetGroupFormat.width = 400;
+        datasetGroupFormat.height = 110;
+        datasetGroupFormat.left = new FormAttachment(30, 0);
         distributeGroup.setLayoutData(datasetGroupFormat);
         
        
@@ -269,11 +284,75 @@ public class ECLFilterDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
         });
         //tblOutput
          
-                
+        Group perGroup = new Group(compForGrp, SWT.SHADOW_NONE);
+        props.setLook(perGroup);
+        perGroup.setText("Persist");
+        perGroup.setLayout(groupLayout);
+        FormData perGroupFormat = new FormData();
+        perGroupFormat.top = new FormAttachment(distributeGroup, margin);
+        perGroupFormat.width = 400;
+        perGroupFormat.height = 80;
+        perGroupFormat.left = new FormAttachment(30, 0);
+        //perGroupFormat.right = new FormAttachment(100, 0);
+        perGroup.setLayoutData(perGroupFormat);
         
+        composite = new Composite(perGroup, SWT.NONE);
+        composite.setLayout(new FormLayout());
+        composite.setBackground(new Color(null, 255, 255, 255));
+
+        final Composite composite_1 = new Composite(composite, SWT.NONE);
+        composite_1.setLayout(new GridLayout(2, false));
+        final FormData fd_composite_1 = new FormData();
+        fd_composite_1.top = new FormAttachment(0);
+        fd_composite_1.left = new FormAttachment(0, 10);
+        fd_composite_1.bottom = new FormAttachment(0, 34);
+        fd_composite_1.right = new FormAttachment(0, 390);
+        composite_1.setLayoutData(fd_composite_1);
+        composite_1.setBackground(new Color(null, 255, 255, 255));
         
+        label = new Label(composite_1, SWT.NONE);
+        label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        label.setText("Logical Name:");
+        label.setBackground(new Color(null, 255, 255, 255));
         
-		
+       	outputName = new Text(composite_1, SWT.BORDER);
+        outputName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        outputName.setEnabled(false);
+        if(jobEntry.getPersistOutputChecked()!= null && jobEntry.getPersistOutputChecked().equals("true")){
+        	outputName.setEnabled(true);
+        }
+        
+        final Composite composite_2 = new Composite(composite, SWT.NONE);
+        composite_2.setLayout(new GridLayout(1, false));
+        final FormData fd_composite_2 = new FormData();
+        fd_composite_2.top = new FormAttachment(0, 36);
+        fd_composite_2.bottom = new FormAttachment(100, 0);
+        fd_composite_2.right = new FormAttachment(0, 390);
+        fd_composite_2.left = new FormAttachment(0, 10);
+        composite_2.setLayoutData(fd_composite_2);
+        composite_2.setBackground(new Color(null, 255, 255, 255));
+
+        chkBox = new Button(composite_2, SWT.CHECK);
+        chkBox.setText("Persist Ouput");
+        chkBox.setBackground(new Color(null, 255, 255, 255));
+        
+        chkBox.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+            	Button button = (Button) e.widget;
+            	if(button.getSelection()){
+            		persist = "true";
+            		outputName.setEnabled(true);
+            	}
+            	else{
+            		persist = "false";
+            		outputName.setText("");
+            		outputName.setEnabled(false);
+            	}
+            }
+        });
+        //End 
+        
 		//Tab Item 3 for "Transform Format" Tab
         //CTabItem item3 = new CTabItem(tabFolder, SWT.NONE);
 		TabItem item3 = new TabItem(tabFolder, SWT.NULL);
@@ -403,8 +482,27 @@ public class ECLFilterDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
          	people = jobEntry.getPeople();
          	MainMapper.tv.setInput(people);
          }
-
-
+         
+         if (jobEntry.getPersistOutputChecked() != null && chkBox != null) {
+         	chkBox.setSelection(jobEntry.getPersistOutputChecked().equals("true")?true:false);
+         }
+         
+         if(chkBox != null && chkBox.getSelection()){
+         	for (Control control : composite_1.getChildren()) {
+         		if(!control.isDisposed()){
+ 					if (jobEntry.getOutputName() != null && outputName != null) {
+ 			        	outputName.setText(jobEntry.getOutputName());
+ 					}
+ 					if (jobEntry.getLabel() != null && label != null) {
+ 			    		label.setText(jobEntry.getLabel());
+ 					}
+         		}
+         	}
+ 		}
+         if(jobEntry.getJobName() != null){
+         	jobName = jobEntry.getJobName();
+         } 
+         
         //shell.pack();
         shell.open();
         while (!shell.isDisposed()) {
@@ -488,6 +586,21 @@ public class ECLFilterDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
         System.out.println("setting filter statement : " + tblMapper.getFilterStatement());
         tblMapper.setOldexpression(tblMapper.getFilterStatement());//update filter statement that its changed and oked
         jobEntry.setPeople(tblMapper.getPeople());
+        if(chkBox.getSelection() && outputName != null){
+        	jobEntry.setOutputName(outputName.getText());
+        }
+        
+        if(chkBox.getSelection() && label != null){
+        	jobEntry.setLabel(label.getText());
+        }
+        
+        if(chkBox != null){
+        	jobEntry.setPersistOutputChecked(chkBox.getSelection()?"true":"false");
+        }
+        if(jobName.trim().equals("")){
+        	jobName = "Spoon-job";
+        }
+        jobEntry.setJobName(jobName);
         dispose();
     }
 

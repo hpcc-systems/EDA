@@ -58,6 +58,43 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
 	private String width = "";
 	private String size = "";
 	
+	private String label ="";
+	private String outputName ="";
+	private String persist = "";
+	private String defJobName = "";
+	
+	public String getDefJobName() {
+		return defJobName;
+	}
+
+	public void setDefJobName(String defJobName) {
+		this.defJobName = defJobName;
+	}
+	
+	public String getPersistOutputChecked() {
+		return persist;
+	}
+
+	public void setPersistOutputChecked(String persist) {
+		this.persist = persist;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getOutputName() {
+		return outputName;
+	}
+
+	public void setOutputName(String outputName) {
+		this.outputName = outputName;
+	}
+	
 	public void setPeople(java.util.List people){
 		this.people = people;
 	}
@@ -155,6 +192,7 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         if(result.isStopped()){
         	return result;
         }
+<<<<<<< HEAD
         else{        	
         		String[] path = null;
         		String[] flag = FilePath.split("-");
@@ -165,6 +203,12 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         		}
         		//String[] path = FilePath.split("\"");
         		logBasic(path[1]);//.replaceAll("manifest.xml", "")); 
+=======
+        else{        		
+        		
+        		String[] path = FilePath.split("\"");
+        		logBasic(path[1].replaceAll("manifest.xml", "")); 
+>>>>>>> 45320053d50cd1f69e42a261625e082f6a2ed5f0
         		Player axis = new Player();
         		String haxis = "";//tooltip: { textStyle: { fontName: 'Arial', fontSize: 18, bold:false }},hAxis: {title: '
         		String Colours = "colors : ["; String fields = ""; String graph = "";String h = ""; String w = "";String name = "";
@@ -248,7 +292,18 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
 	        		graph += "MyTable:=TABLE("+getDatasetNameOriginal()+",MyRec);\n";
 	        	else
 	        		graph += "MyTable:=TABLE("+getDatasetName()+",MyRec);\n";
-	        	graph += "OUTPUT(MyTable,named(\'"+this.getTyp()+"_MyChart\'));\n";
+	        	//graph += "OUTPUT(MyTable,named(\'"+this.getTyp()+"_MyChart\'));\n";
+	        	
+	        	if(persist.equalsIgnoreCase("true")){
+	        		if(outputName != null && !(outputName.trim().equals(""))){
+	        			graph += "OUTPUT(MyTable"+",,'~eda::graph::"+outputName+"', __compressed__, overwrite,NAMED(\'"+this.getTyp()+"_MyChart\'))"+";\n";
+	        		}else{
+	        			graph += "OUTPUT(MyTable"+",,'~eda::graph::"+defJobName+"_"+"', __compressed__, overwrite,NAMED(\'"+this.getTyp()+"_MyChart\'))"+";\n";
+	        		}
+	        	}
+	        	else{
+	        		graph += "OUTPUT(MyTable,NAMED(\'"+this.getTyp()+"_MyChart\'));\n";
+	        	}
 	        	
 		        logBasic("graph Job =" + graph);//{Dataset Job} 
 		        
@@ -332,6 +387,17 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "people")) != null)
                 openPeople(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "people")));
             
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "output_name")) != null)
+                setOutputName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "output_name")));
+            
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "label")) != null)
+                setLabel(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "label")));
+            
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "persist_Output_Checked")) != null)
+                setPersistOutputChecked(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "persist_Output_Checked")));
+            
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "defJobName")) != null)
+                setDefJobName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "defJobName")));
             
         } catch (Exception e) {
             throw new KettleXMLException("ECL Dataset Job Plugin Unable to read step info from XML node", e);
@@ -354,6 +420,10 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         retval += "		<normList><![CDATA[" + this.getnormList() + "]]></normList>" + Const.CR;
         retval += "		<dataset_name><![CDATA[" + DatasetName + "]]></dataset_name>" + Const.CR;
         retval += "		<dataset_name_original><![CDATA[" + DatasetNameOriginal + "]]></dataset_name_original>" + Const.CR;
+        retval += "		<label><![CDATA[" + label + "]]></label>" + Const.CR;
+        retval += "		<output_name><![CDATA[" + outputName + "]]></output_name>" + Const.CR;
+        retval += "		<persist_Output_Checked><![CDATA[" + persist + "]]></persist_Output_Checked>" + Const.CR;
+        retval += "		<defJobName><![CDATA[" + defJobName + "]]></defJobName>" + Const.CR;
         
         return retval;
 
@@ -395,6 +465,17 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
             if(rep.getStepAttributeString(id_jobentry, "people") != null)
                 this.openPeople(rep.getStepAttributeString(id_jobentry, "people")); //$NON-NLS-1$
             
+            if(rep.getStepAttributeString(id_jobentry, "outputName") != null)
+            	outputName = rep.getStepAttributeString(id_jobentry, "outputName"); //$NON-NLS-1$
+            
+            if(rep.getStepAttributeString(id_jobentry, "label") != null)
+            	label = rep.getStepAttributeString(id_jobentry, "label"); //$NON-NLS-1$
+            
+            if(rep.getStepAttributeString(id_jobentry, "persist_Output_Checked") != null)
+            	persist = rep.getStepAttributeString(id_jobentry, "persist_Output_Checked"); //$NON-NLS-1$
+            
+            if(rep.getStepAttributeString(id_jobentry, "defJobName") != null)
+            	defJobName = rep.getStepAttributeString(id_jobentry, "defJobName"); //$NON-NLS-1$
             
         } catch (Exception e) {
             throw new KettleException("Unexpected Exception", e);
@@ -425,6 +506,14 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         	
             rep.saveStepAttribute(id_job, getObjectId(), "people", this.savePeople()); //$NON-NLS-1$
             
+            rep.saveStepAttribute(id_job, getObjectId(), "outputName", outputName);
+            
+        	rep.saveStepAttribute(id_job, getObjectId(), "label", label);
+        	
+        	rep.saveStepAttribute(id_job, getObjectId(), "persist_Output_Checked", persist);
+            
+        	rep.saveStepAttribute(id_job, getObjectId(), "defJobName", defJobName);
+        	
         } catch (Exception e) {
             throw new KettleException("Unable to save info into repository" + id_job, e);
         }
