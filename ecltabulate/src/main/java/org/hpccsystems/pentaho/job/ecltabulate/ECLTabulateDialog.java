@@ -5,13 +5,16 @@
 package org.hpccsystems.pentaho.job.ecltabulate;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -25,24 +28,25 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 import org.hpccsystems.eclguifeatures.AutoPopulate;
 import org.hpccsystems.eclguifeatures.ErrorNotices;
 import org.hpccsystems.ecljobentrybase.ECLJobEntryDialog;
-
-import org.hpccsystems.recordlayout.RecordList;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.job.JobMeta;
 import org.pentaho.di.job.entry.JobEntryInterface;
@@ -55,20 +59,32 @@ import org.pentaho.di.ui.trans.step.BaseStepDialog;
  */
 public class ECLTabulateDialog extends ECLJobEntryDialog{
 	
-	java.util.List fields;
-	java.util.List rows;
-	java.util.List columns;
-	java.util.List layers;
+	public static final String COLUMN = "Column"; 
+	public static final String OP = "Op";
+	public static final String PERCENT = "Percentage";
+	
+	public static final String[] PROP = { COLUMN, OP, PERCENT};
 	
 	private ArrayList<String> Settings;
+	ArrayList<Player> fields;
+	ArrayList<Player> rows;
+	ArrayList<Player> columns;
+	ArrayList<Player> layers;
+	
+	
     private ECLTabulate jobEntry;
     private Text jobEntryName;
     private Combo datasetName;
    
     private Button wOK, wCancel, wSettings;
     private boolean backupChanged;
-    
-    
+    public Button chkBox;
+    public static Text outputName;
+    public static Label label;
+    private String persist;
+    private Composite composite;
+    private String defJobName;
+   
 	private SelectionAdapter lsDef;
 
 	
@@ -93,7 +109,8 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
         final AutoPopulate ap = new AutoPopulate();
         try{
         	
-            datasets = ap.parseDatasets(this.jobMeta.getJobCopies());
+            datasets = ap.parseDatasetsRecordsets(this.jobMeta.getJobCopies());
+            defJobName = ap.getGlobalVariable(this.jobMeta.getJobCopies(), "jobName");
 
         }catch (Exception e){
             System.out.println("Error Parsing existing Datasets");
@@ -103,9 +120,9 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
 
 
         shell = new Shell(parentShell, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MIN | SWT.MAX);
-        rows = new ArrayList();
-        columns = new ArrayList();
-        layers = new ArrayList();
+        rows = new ArrayList<Player>();
+        columns = new ArrayList<Player>();
+        layers = new ArrayList<Player>();
         Settings = new ArrayList<String>();
        
         props.setLook(shell);
@@ -160,8 +177,8 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
         datasetGroup.setLayout(groupLayout);
         FormData datasetGroupFormat = new FormData();
         datasetGroupFormat.top = new FormAttachment(generalGroup, margin);
-        datasetGroupFormat.width = 350;
-        datasetGroupFormat.height = 450;
+        datasetGroupFormat.width = 600;
+        datasetGroupFormat.height = 400;
         datasetGroupFormat.left = new FormAttachment(0, 0);
         datasetGroupFormat.right = new FormAttachment(100, 0);
         datasetGroup.setLayoutData(datasetGroupFormat);
@@ -178,7 +195,11 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
 	    table.setLinesVisible(true);
 	    final TableColumn tc0 = new TableColumn(table, SWT.LEFT);
 	    tc0.setText("Columns");
-	    tc0.setWidth(100);
+	    tc0.setWidth(150);
+	    TableColumn tvR2 = new TableColumn(table, SWT.LEFT);
+	    tvR2.setResizable(false);
+	    tvR2.setWidth(0);
+	    
 	    
 	    Button InRow = new Button(datasetGroup, SWT.PUSH);
 	    InRow.setText("  >>  ");
@@ -206,22 +227,27 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
 	    RowTable.setHeaderVisible(true);
 	    final TableColumn tcR = new TableColumn(RowTable, SWT.LEFT);
 	    tcR.setText("Row(s)");
-	    tcR.setWidth(100);
+	    tcR.setWidth(230);
 	    final TableColumn tcR2 = new TableColumn(RowTable, SWT.LEFT);
 	    tcR2.setResizable(false);
 	    tcR2.setWidth(0);
 	    
-	    final TableViewer Columns = new TableViewer(datasetGroup, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+	    final TableViewer Columns = new TableViewer(datasetGroup, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
 	    Columns.setContentProvider(new PlayerContentProvider());
 	    Columns.setLabelProvider(new PlayerLabelProvider());
 	    final Table ColumnTable = Columns.getTable();
 	    ColumnTable.setHeaderVisible(true);
 	    final TableColumn tcC = new TableColumn(ColumnTable, SWT.LEFT);
 	    tcC.setText("Column(s)");
-	    tcC.setWidth(100);
+	    tcC.setWidth(120);
 	    final TableColumn tcC2 = new TableColumn(ColumnTable, SWT.LEFT);
-	    tcC2.setResizable(false);
-	    tcC2.setWidth(0);
+	    tcC2.setResizable(true);
+	    tcC2.setWidth(100);
+	    tcC2.setText("Operators");
+	    Columns.setInput(columns);
+	    
+	    
+	    
 	    
 	    final TableViewer Layer = new TableViewer(datasetGroup, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 	    Layer.setContentProvider(new PlayerContentProvider());
@@ -230,13 +256,13 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
 	    LayerTable.setHeaderVisible(true);
 	    final TableColumn tcL = new TableColumn(LayerTable, SWT.LEFT);
 	    tcL.setText("Layer(s)");
-	    tcL.setWidth(100); 
+	    tcL.setWidth(230); 
 	    final TableColumn tcL2 = new TableColumn(LayerTable, SWT.LEFT);
 	    tcL2.setResizable(false);
 	    tcL2.setWidth(0);
 	    
 	    
-	    FormData data = new FormData(100,300);
+	    FormData data = new FormData(150,280);
 	    data.top = new FormAttachment(datasetName, 15);
 		data.left = new FormAttachment(0,0);		
 		table.setLayoutData(data);
@@ -250,7 +276,7 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
 		data.left = new FormAttachment(table,40);
 		OutRow.setLayoutData(data);
 		data = new FormData();
-		data.top = new FormAttachment(OutRow,50);
+		data.top = new FormAttachment(OutRow,70);
 		data.left = new FormAttachment(table,40);
 		InColumn.setLayoutData(data);
 		data = new FormData();
@@ -258,7 +284,7 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
 		data.left = new FormAttachment(table,40);
 		OutColumn.setLayoutData(data);
 		data = new FormData();
-		data.top = new FormAttachment(OutColumn,50);
+		data.top = new FormAttachment(OutColumn,70);
 		data.left = new FormAttachment(table,40);
 		InLayer.setLayoutData(data);
 		data = new FormData();
@@ -266,17 +292,21 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
 		data.left = new FormAttachment(table,40);
 		OutLayer.setLayoutData(data);
 	    
-		data = new FormData(100,50);
+		data = new FormData(260,70);
 		data.top = new FormAttachment(datasetName,30);
 		data.left = new FormAttachment(InRow,40);
+		data.right = new FormAttachment(100,0);
 		RowTable.setLayoutData(data);
-		data = new FormData(100,50);
-		data.top = new FormAttachment(RowTable,35);
+		data = new FormData(260,70);
+		data.top = new FormAttachment(RowTable,25);
 		data.left = new FormAttachment(InColumn,40);
+		data.right = new FormAttachment(100,0);
+		//data.bottom = new FormAttachment(LayerTable,15);
 		ColumnTable.setLayoutData(data);
-		data = new FormData(100,50);
-		data.top = new FormAttachment(ColumnTable,35);
+		data = new FormData(260,70);
+		data.top = new FormAttachment(ColumnTable,25);
 		data.left = new FormAttachment(InLayer,40);
+		data.right = new FormAttachment(100,0);
 		LayerTable.setLayoutData(data);
 		
 		Button button = new Button(datasetGroup, SWT.PUSH);
@@ -289,43 +319,30 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
 	    datasetName.addModifyListener(new ModifyListener(){
         	
             public void modifyText(ModifyEvent e){
-            	fields = new ArrayList();
+            	fields = new ArrayList<Player>();
             	tv.refresh();
             	tv.setInput(fields);  
-            	rows = new ArrayList();
+            	rows = new ArrayList<Player>();
             	Row.refresh();
             	Row.setInput(rows);
-            	columns = new ArrayList();
+            	columns = new ArrayList<Player>();
             	Columns.refresh();
             	Columns.setInput(columns);
-            	layers = new ArrayList();
+            	layers = new ArrayList<Player>();
             	Layer.refresh();
             	Layer.setInput(layers);
 
             }
 	    });
 	    
+	    
 	    button.addSelectionListener(new SelectionAdapter() {
 		      public void widgetSelected(SelectionEvent event) {
-		    	  final Shell shellFilter = new Shell(display);
-		    	  final Tree tab = new Tree(shellFilter, SWT.CHECK | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		    	  	String[] items = null;
-		    	  	RecordList rec = null;
-		    	  	AutoPopulate ap = new AutoPopulate();
-		    	  	
+					 
 					if(datasetName.getText() != null || !datasetName.getText().equals("")){
 						try {
 							items = ap.fieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
-							rec = ap.rawFieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
-			                  for(int i = 0; i < items.length; i++){
-			                	  TreeItem item = new TreeItem(tab, SWT.NONE);
-			                	  item.setText(0,items[i].toLowerCase());
-			                	  item.setText(1, rec.getRecords().get(i).getColumnType());
-			                	  if(rec.getRecords().get(i).getColumnType().startsWith("String")){
-			                			item.setBackground(0, new Color(null,211,211,211));
-			                		}
-			                	  
-			                  }
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -334,16 +351,15 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
 						for(int i = 0; i<items.length; i++){
 							Player obj = new Player();
 							obj.setFirstName(items[i]);
+							obj.setOP(0);
+							
 							fields.add(obj);
 						}
 					}
-					
 					tv.refresh();
 					tv.setInput(fields);
-					 
 		      }
 	    });
-	    
 	    
 	    InRow.addListener(SWT.Selection, new Listener(){
 			@Override
@@ -352,6 +368,8 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
 	    			if(table.getItem(i).getChecked()){
 	    				Player P = new Player();
 	    				P.setIndex(i);
+	    				P.setOP(0);
+	    				
 	    				P.setFirstName(table.getItem(i).getText());
 	    				if(rows.isEmpty() && (!columns.contains(P)) &&(!layers.contains(P))){
 	    					rows.add(P);
@@ -394,6 +412,8 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
 	    			if(table.getItem(i).getChecked()){
 	    				Player P = new Player();
 	    				P.setIndex(i);
+	    				P.setOP(Integer.valueOf("0"));
+	    				
 	    				P.setFirstName(table.getItem(i).getText());
 	    				if(columns.isEmpty() && (!rows.contains(P)) &&(!layers.contains(P))){
 	    					columns.add(P);
@@ -436,6 +456,8 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
 	    			if(table.getItem(i).getChecked()){
 	    				Player P = new Player();
 	    				P.setIndex(i);
+	    				P.setOP(0);
+	    				
 	    				P.setFirstName(table.getItem(i).getText());
 	    				if(layers.isEmpty() && (!rows.contains(P)) && (!columns.contains(P))){
 	    					layers.add(P);
@@ -469,18 +491,95 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
 	    		Layer.setInput(layers);	    		
 			}
 	    });
+	    
+	    CellEditor[] editors = new CellEditor[2];
+	    editors[0] = new TextCellEditor(Columns.getTable());
+   	    editors[1] = new ComboBoxCellEditor(Columns.getTable(),  OperatorOption.INSTANCES, SWT.READ_ONLY);
+   	    
+   	    
+   	    Columns.setColumnProperties(PROP);
+   	    Columns.setCellModifier(new PersonCellModifier(Columns));
+   	    Columns.setCellEditors(editors);
+	    
+	    Group perGroup = new Group(shell, SWT.SHADOW_NONE);
+        props.setLook(perGroup);
+        perGroup.setText("Persist");
+        perGroup.setLayout(groupLayout);
+        FormData perGroupFormat = new FormData();
+        perGroupFormat.top = new FormAttachment(datasetGroup, margin);
+        perGroupFormat.width = 400;
+        perGroupFormat.height = 80;
+        perGroupFormat.left = new FormAttachment(0, 0);
+        perGroupFormat.right = new FormAttachment(100, 0);
+        perGroup.setLayoutData(perGroupFormat);
+        
+        composite = new Composite(perGroup, SWT.NONE);
+        composite.setLayout(new FormLayout());
+        composite.setBackground(new Color(null, 255, 255, 255));
 
+        final Composite composite_1 = new Composite(composite, SWT.NONE);
+        composite_1.setLayout(new GridLayout(2, false));
+        final FormData fd_composite_1 = new FormData();
+        fd_composite_1.top = new FormAttachment(0);
+        fd_composite_1.left = new FormAttachment(0, 10);
+        fd_composite_1.bottom = new FormAttachment(0, 34);
+        fd_composite_1.right = new FormAttachment(0, 360);
+        composite_1.setLayoutData(fd_composite_1);
+        composite_1.setBackground(new Color(null, 255, 255, 255));
+        
+        label = new Label(composite_1, SWT.NONE);
+        label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        label.setText("Logical Name:");
+        label.setBackground(new Color(null, 255, 255, 255));
 
+        outputName = new Text(composite_1, SWT.BORDER);
+        outputName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        outputName.setEnabled(false);
+        if(jobEntry.getPersistOutputChecked()!= null && jobEntry.getPersistOutputChecked().equals("true")){
+        	outputName.setEnabled(true);
+        }
+        
+        final Composite composite_2 = new Composite(composite, SWT.NONE);
+        composite_2.setLayout(new GridLayout(1, false));
+        final FormData fd_composite_2 = new FormData();
+        fd_composite_2.top = new FormAttachment(0, 36);
+        fd_composite_2.bottom = new FormAttachment(100, 0);
+        fd_composite_2.right = new FormAttachment(0, 360);
+        fd_composite_2.left = new FormAttachment(0, 10);
+        composite_2.setLayoutData(fd_composite_2);
+        composite_2.setBackground(new Color(null, 255, 255, 255));
+
+        chkBox = new Button(composite_2, SWT.CHECK);
+        chkBox.setText("Persist Ouput");
+        chkBox.setBackground(new Color(null, 255, 255, 255));
+        
+        chkBox.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+            	Button button = (Button) e.widget;
+            	if(button.getSelection()){
+            		persist = "true";
+            		outputName.setEnabled(true);
+            	}
+            	else{
+            		persist = "false";
+            		outputName.setText("");
+            		outputName.setEnabled(false);
+            	}
+
+            }
+        });
+        
 	    wOK = new Button(shell, SWT.PUSH);
         wOK.setText("OK");
         wCancel = new Button(shell, SWT.PUSH);
         wCancel.setText("Cancel");
         wSettings = new Button(shell, SWT.PUSH);
-        wSettings.setText("Settings");
+        wSettings.setText("Percentage");
 
-        BaseStepDialog.positionBottomButtons(shell, new Button[]{wSettings, wOK, wCancel}, margin, datasetGroup);
-        // Add listeners
-        
+        BaseStepDialog.positionBottomButtons(shell, new Button[]{wSettings, wOK, wCancel}, margin, perGroup);
+
+        //BaseStepDialog.positionBottomButtons(shell, new Button[]{ wOK, wCancel}, margin, perGroup);        // Add listeners
         wSettings.addListener(SWT.Selection, new Listener(){
 			@Override
 			public void handleEvent(Event arg0) {
@@ -508,29 +607,20 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
 		        generalGroupFormat.left = new FormAttachment(0, 0);
 		        generalGroupFormat.right = new FormAttachment(100, 0);
 		        generalGroup1.setLayoutData(generalGroupFormat);
-				
-		        final Button B1 = new Button(generalGroup1, SWT.CHECK);
-				B1.setText("Row");
-				B1.setBackground(new Color(null, 255,255,255));
-				if(Settings.contains("rows"))
-					B1.setSelection(true);
+						        
 				final Button B2 = new Button(generalGroup1, SWT.CHECK);
-				B2.setText("Column");
-				if(Settings.contains("cols"))
+				B2.setText("Parent Total");
+				if(Settings.contains("parent"))
 					B2.setSelection(true);
 				B2.setBackground(new Color(null, 255,255,255));
 				final Button B3 = new Button(generalGroup1, SWT.CHECK);
-				B3.setText("Total");
+				B3.setText("Grand Total");
 				if(Settings.contains("total"))
 					B3.setSelection(true);
 				B3.setBackground(new Color(null, 255,255,255));
 				
-				FormData dat = new FormData();
+				FormData dat = new FormData();											 
 				dat.top = new FormAttachment(null,5);
-				dat.left = new FormAttachment(0,0);
-				B1.setLayoutData(dat);				
-				dat = new FormData(); 
-				dat.top = new FormAttachment(B1,10);
 				dat.left = new FormAttachment(0,0);
 				B2.setLayoutData(dat);
 				dat = new FormData();
@@ -538,48 +628,14 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
 				dat.left = new FormAttachment(0,0);
 				B3.setLayoutData(dat);
 				
-		        Group CountGroup = new Group(shellSettings, SWT.SHADOW_NONE);
-		        props.setLook(CountGroup);
-		        CountGroup.setText("Count");
-		        CountGroup.setBackground(new Color(null, 255,255,255));
-		        CountGroup.setLayout(groupLayout1);
-		        FormData CountGroupFormat = new FormData();
-		        CountGroupFormat.top = new FormAttachment(generalGroup1, 5);
-		        CountGroupFormat.width = 100;
-		        CountGroupFormat.height = 65;
-		        CountGroupFormat.left = new FormAttachment(0, 0);
-		        CountGroupFormat.right = new FormAttachment(100, 0);
-		        CountGroup.setLayoutData(CountGroupFormat);
-				
-		        final Button B4 = new Button(CountGroup, SWT.CHECK);
-				B4.setText("Count");
-				B4.setBackground(new Color(null, 255,255,255));
-				if(Settings.contains("count"))
-					B4.setSelection(true);
-				dat = new FormData();
-				dat.top = new FormAttachment(B3,10);
-				dat.left = new FormAttachment(0,0);
-				B4.setLayoutData(dat);
-				
-				B1.addListener(SWT.Selection, new Listener(){
-					@Override
-					public void handleEvent(Event arg0) {
-						if(B1.getSelection())
-							Settings.add("rows");
-						else{
-							int idx = Settings.indexOf("rows");
-							Settings.remove(idx);
-						}
-					}
-					
-				});
+		        
 				B2.addListener(SWT.Selection, new Listener(){
 					@Override
 					public void handleEvent(Event arg0) {
 						if(B2.getSelection())
-							Settings.add("cols");
+							Settings.add("parent");
 						else{
-							int idx = Settings.indexOf("cols");
+							int idx = Settings.indexOf("parent");
 							Settings.remove(idx);
 						}
 					}
@@ -597,22 +653,11 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
 					}
 					
 				});
-				B4.addListener(SWT.Selection, new Listener(){
-					@Override
-					public void handleEvent(Event arg0) {
-						if(B4.getSelection())
-							Settings.add("count");
-						else{
-							int idx = Settings.indexOf("count");
-							Settings.remove(idx);
-						}
-					}
-					
-				});
+				
 				Button wOKS = new Button(shellSettings, SWT.PUSH);
 		        wOKS.setText("OK");
 		        				
-		        BaseStepDialog.positionBottomButtons(shellSettings, new Button[]{wOKS}, 5, CountGroup);
+		        BaseStepDialog.positionBottomButtons(shellSettings, new Button[]{wOKS}, 5, generalGroup1);
 		        
 		        wOKS.addListener(SWT.Selection, new Listener(){
 
@@ -633,6 +678,7 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
 
 			}
         });
+
         
         Listener cancelListener = new Listener() {
 
@@ -701,12 +747,31 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
         	Settings = jobEntry.getSettings();
         }
         
+        if (jobEntry.getPersistOutputChecked() != null && chkBox != null) {
+        	chkBox.setSelection(jobEntry.getPersistOutputChecked().equals("true")?true:false);
+        }
+        if(chkBox != null && chkBox.getSelection()){
+        	for (Control control : composite_1.getChildren()) {
+        		if(!control.isDisposed()){
+					if (jobEntry.getOutputName() != null && outputName != null) {
+			        	outputName.setText(jobEntry.getOutputName());
+					}
+					if (jobEntry.getLabel() != null && label != null) {
+			    		label.setText(jobEntry.getLabel());
+					}
+        		}
+        	}
+		}
+        if(jobEntry.getDefJobName() != null){
+        	defJobName = jobEntry.getDefJobName();
+        }
+        
         shell.pack();
         shell.open();
         while (!shell.isDisposed()) {
             if (!display.readAndDispatch()) {
                 display.sleep();
-            }
+            } 
         }
         return jobEntry;
 	}
@@ -725,10 +790,7 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
    			isValid = false;
        		errors += "\"Dataset Name\" is a required field!\r\n";
    		}
-   		if(this.Settings == null){
-   			isValid = false;
-   			errors += "Need to choose Settings!\r\n";
-   		}
+   		
    		if(this.rows == null || this.columns == null){
    			isValid = false;
    			errors += "Need to Select Row or Column!\r\n";
@@ -756,7 +818,20 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
         jobEntry.setLayers(this.layers);
         jobEntry.setSettings(this.Settings);
         jobEntry.setDatasetName(this.datasetName.getText());
- 
+        if(chkBox.getSelection() && outputName != null){
+        	jobEntry.setOutputName(outputName.getText());
+        }
+        if(chkBox.getSelection() && label != null){
+        	jobEntry.setLabel(label.getText());
+        }
+        if(chkBox != null){
+        	jobEntry.setPersistOutputChecked(chkBox.getSelection()?"true":"false");
+        }
+        if(defJobName.trim().equals("")){
+        	defJobName = "Spoon-job";
+        }
+        jobEntry.setDefJobName(defJobName);
+        
         dispose();
     }
 
@@ -768,11 +843,57 @@ public class ECLTabulateDialog extends ECLJobEntryDialog{
     
 }
 
+class PersonCellModifier implements ICellModifier {
+	  private Viewer viewer;
+
+	  public PersonCellModifier(Viewer viewer) {
+	    this.viewer = viewer;
+	  }
+
+	  public boolean canModify(Object element, String property) {
+	    // Allow editing of all values
+	    return true;
+	  }
+	  public Object getValue(Object element, String property) {
+	    Player p = (Player) element;
+	    if (ECLTabulateDialog.COLUMN.equals(property))
+	      return p.getFirstName();
+	    else if (ECLTabulateDialog.OP.equals(property))
+	      return p.getOP();
+	    
+	    else
+	      return null;
+	  }
+
+	  public void modify(Object element, String property, Object value) {
+	    if (element instanceof Item)
+	      element = ((Item) element).getData();
+
+	    Player p = (Player) element;
+	    if (ECLTabulateDialog.COLUMN.equals(property))
+	      p.setFirstName((String) value);
+	    else if (ECLTabulateDialog.OP.equals(property))
+	      p.setOP((Integer) value);
+	    
+	    // Force the viewer to refresh
+	    viewer.refresh();
+	  }
+}
+
 class Player {
 	
 	  private String firstName;
+	  private Integer OP;
+	  
+	  public Integer getOP() {
+		return OP;
+	  }
 
-	  public String getFirstName() {
+	public void setOP(Integer OP) {
+		this.OP = OP;
+	}
+
+	public String getFirstName() {
 		  return firstName;
 	  }
 
@@ -789,11 +910,12 @@ class Player {
 	  public void setIndex(int index) {
 		  this.index = index;
 	  }
-	  
-	  @Override
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((OP == null) ? 0 : OP.hashCode());
 		result = prime * result
 				+ ((firstName == null) ? 0 : firstName.hashCode());
 		result = prime * result + index;
@@ -809,6 +931,11 @@ class Player {
 		if (getClass() != obj.getClass())
 			return false;
 		Player other = (Player) obj;
+		if (OP == null) {
+			if (other.OP != null)
+				return false;
+		} else if (!OP.equals(other.OP))
+			return false;
 		if (firstName == null) {
 			if (other.firstName != null)
 				return false;
@@ -819,6 +946,7 @@ class Player {
 		return true;
 	}
 
+	
 }
 
 
@@ -845,6 +973,9 @@ class PlayerLabelProvider implements ITableLabelProvider {
 	  switch(arg1){
 	  case 0:
 	  	  return values.getFirstName();//text = values[0];
+	  case 1:
+		  return OperatorOption.INSTANCES[values.getOP().intValue()];
+	  
 	  }
 	  return null;
 	}
@@ -881,5 +1012,24 @@ class PlayerContentProvider implements IStructuredContentProvider {
 	public void inputChanged(Viewer arg0, Object arg1, Object arg2) {
 	  // Nothing to do
 	}
+}
+
+class OperatorOption {	 	  
+	  public static final String COUNT = "Count";
+	
+	  public static final String SUM = "Sum";
+	  
+	  public static final String AVE = "Ave";
+	
+	  public static final String VARIANCE = "Variance";
+	  
+	  public static final String SD = "Std Dev";
+	  
+	  public static final String MAX = "Max";
+	  
+	  public static final String MIN = "Min";	  	
+
+	  public final static String[] INSTANCES = { COUNT, SUM, AVE, VARIANCE, SD, MAX, MIN };
+	
 }
 

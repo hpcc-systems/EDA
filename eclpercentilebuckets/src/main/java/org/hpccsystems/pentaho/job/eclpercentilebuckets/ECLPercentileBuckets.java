@@ -202,13 +202,13 @@ public class ECLPercentileBuckets extends ECLJobEntry{//extends JobEntryBase imp
         		String[] S = norm[i].split(",");
         		if(persist.equalsIgnoreCase("true")){
             		if(outputName != null && !(outputName.trim().equals(""))){
-            			ecl += "OUTPUT(TabRec(field='"+S[0]+"')"+",,'~eda::percentileBuckets::"+outputName+S[0]+"', __compressed__, overwrite,NAMED('PercentileBuckets_"+S[0]+"_"+i+"'))"+";\n";
+            			ecl += "OUTPUT(TabRec(field='"+S[0]+"')"+",,'~eda::"+outputName+S[0]+"::percentileBuckets', __compressed__, overwrite,NAMED('PercentileBuckets_"+S[0]+"'))"+";\n";
             		}else{
-            			ecl += "OUTPUT(TabRec(field='"+S[0]+"')"+",,'~eda::percentileBuckets::"+defJobName+S[0]+"', __compressed__, overwrite,NAMED('PercentileBuckets__"+S[0]+"_"+i+"'))"+";\n";
+            			ecl += "OUTPUT(TabRec(field='"+S[0]+"')"+",,'~eda::"+defJobName+S[0]+"::percentileBuckets', __compressed__, overwrite,NAMED('PercentileBuckets__"+S[0]+"'))"+";\n";
             		}
             	}
             	else{
-            		ecl += "OUTPUT(TabRec(field='"+S[0]+"'),NAMED('PercentileBuckets__"+S[0]+"_"+i+"')"+");\n";
+            		ecl += "OUTPUT(TabRec(field='"+S[0]+"'),NAMED('PercentileBuckets__"+S[0]+"')"+");\n";
             	}
         		//ecl += "OUTPUT(TabRec(field='"+S[0]+"'),THOR);\n";
         	}

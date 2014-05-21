@@ -307,9 +307,9 @@ public class ECLFilter extends ECLJobEntry{//extends JobEntryBase implements Clo
         
         if(persist.equalsIgnoreCase("true")){
     		if(outputName != null && !(outputName.trim().equals(""))){
-    			ecl += "OUTPUT(Filter"+",,'~eda::filter::"+outputName+"', __compressed__, overwrite,NAMED('Filter'))"+";\n";
+    			ecl += "OUTPUT(Filter"+",,'~eda::"+outputName+"::filter', __compressed__, overwrite,NAMED('Filter'))"+";\n";
     		}else{
-    			ecl += "OUTPUT(Filter"+",,'~eda::filter::"+jobName+"_"+"', __compressed__, overwrite,NAMED('Filter'))"+";\n";
+    			ecl += "OUTPUT(Filter"+",,'~eda::"+jobName+"::filter', __compressed__, overwrite,NAMED('Filter'))"+";\n";
     		}
     	}
     	else{
