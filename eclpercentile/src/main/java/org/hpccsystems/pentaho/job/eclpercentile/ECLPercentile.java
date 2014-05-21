@@ -217,13 +217,13 @@ public class ECLPercentile extends ECLJobEntry{//extends JobEntryBase implements
 	        	percentile += S[0]+"_"+getName()+":=TABLE(percentileTab(field='"+S[0]+"'),{field,percentiles,value});\n";
 	        	if(persist.equalsIgnoreCase("true")){
 	        		if(outputName != null && !(outputName.trim().equals(""))){
-	        			percentile += "OUTPUT("+S[0]+"_"+getName()+",,'~eda::percentile::"+outputName+S[0]+"', __compressed__, overwrite,NAMED('Percentile_"+S[0]+"_"+i+"'))"+";\n";
+	        			percentile += "OUTPUT("+S[0]+"_"+getName()+",,'~eda::"+outputName+S[0]+"::percentile', __compressed__, overwrite,NAMED('Percentile_"+S[0]+"'))"+";\n";
 	        		}else{
-	        			percentile += "OUTPUT("+S[0]+"_"+getName()+",,'~eda::percentile::"+defJobName+S[0]+"', __compressed__, overwrite,NAMED('Percentile_"+S[0]+"_"+i+"'))"+";\n";
+	        			percentile += "OUTPUT("+S[0]+"_"+getName()+",,'~eda::"+defJobName+S[0]+"::percentile', __compressed__, overwrite,NAMED('Percentile_"+S[0]+"'))"+";\n";
 	        		}
 	        	}
 	        	else{
-	        		percentile += "OUTPUT("+S[0]+"_"+getName()+",NAMED('Percentile_"+S[0]+"_"+i+"'));\n";
+	        		percentile += "OUTPUT("+S[0]+"_"+getName()+",NAMED('Percentile_"+S[0]+"'));\n";
 	        	}
 	        	//percentile += "OUTPUT("+S[0]+"_"+getName()+",THOR);\n";
 	        }
