@@ -631,34 +631,9 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 		    	String[] types = null;
               try{
           		
-<<<<<<< HEAD
-                 // String[] items = ap.fieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
-                  RecordList rec = ap.rawFieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
-                  //org.hpccsystems.recordlayout.RecordBO[] items = (org.hpccsystems.recordlayout.RecordBO[])rec.getRecords().toArray();
-                  
-                  for(int i = 0; i < rec.getRecords().size(); i++){
-              		TreeItem item = new TreeItem(tab, SWT.NONE);
-              		item.setText(0, rec.getRecords().get(i).getColumnName().toLowerCase());
-              		String type = "String";
-              		String width = "";
-              		try{
-              			type = rec.getRecords().get(i).getColumnType();
-                  		width = rec.getRecords().get(i).getColumnWidth();
-                  		item.setText(1,type+width);
-                  		if(rec.getRecords().get(i).getColumnType().startsWith("String")){
-                  			item.setBackground(0, new Color(null,211,211,211));
-                  		}
-              		}catch (Exception e){
-              			System.out.println("Frequency Cant look up column type");
-              		}
-              		
-              		field.add(new String[]{rec.getRecords().get(i).getColumnName().toLowerCase(),"false",type+width});
-              	}
-=======
                   //items = ap.fieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
                   //mapDataSets = ap.parseDefExpressionBuilder(jobMeta.getJobCopies(), datasetName.getText());
                   rec = ap.rawFieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
->>>>>>> 5321a09bc3fa68322f562f57db1a16fc35a5975e
                   
                   for(int i = 0; i < rec.getRecords().size(); i++){
                       TreeItem item = new TreeItem(tab, SWT.NONE);
@@ -720,11 +695,7 @@ public class ECLFrequencyDialog extends ECLJobEntryDialog{
 		            			if(s[0].startsWith(NameFilter.getText())){
 		            				TreeItem I = new TreeItem(tab, SWT.NONE);
 		            				I.setText(0,s[0]);
-<<<<<<< HEAD
-									I.setText(1,s[2]);
-=======
 		            				I.setText(1,s[2]);
->>>>>>> 45320053d50cd1f69e42a261625e082f6a2ed5f0
 		            				if(s[1].equalsIgnoreCase("true")) 
 		            					I.setChecked(true);
 		            			}
@@ -1231,7 +1202,7 @@ class SortOption {
 	  
 	  public static final String ASC = "ASC";
 
-	  public final static String[] INSTANCES = { DESC, ASC };
+	  public final static String[] INSTANCES = { ASC, DESC };
 	
 }
 
@@ -1242,7 +1213,7 @@ class ColOption {
 	  
 	  public static final String VAL = "FREQUENCY";
 
-	  public final static String[] INSTANCES1 = { VAL, NAME };
+	  public final static String[] INSTANCES1 = { NAME, VAL };
 	
 }
 
