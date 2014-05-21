@@ -187,7 +187,7 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        if(valueNum.length()>0){
 	        	valueNum = valueNum.substring(0, valueNum.length()-1);		        
 		        fieldNum = fieldNum.substring(0, fieldNum.length()-1);
-		        frequency += "NumField:=RECORD\nSTRING field;\nSTRING value;\nEND;\n";
+		        frequency += "NumField:=RECORD\nSTRING field;\nREAL value;\nEND;\n";
 		        frequency += "OutDSNum := NORMALIZE("+this.getDatasetName()+","+notstr+", TRANSFORM(NumField,SELF.field:=CHOOSE(COUNTER,"+fieldNum+");SELF.value:=CHOOSE" +
 	        			"(COUNTER,"+valueNum+")));\n";
 		        frequency += "FreqRecNum:=RECORD\nOutDSNum.field;\nOutDSNum.value;\nINTEGER frequency:=COUNT(GROUP);\n" +
@@ -204,8 +204,6 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        		if(dataT[j].startsWith("string")) {
 	        			frequency += cols[0]+"_Frequency"+getNumber()+":= TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent});\n";
 	        			//frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
-<<<<<<< HEAD
-=======
 	        			if(persist.equalsIgnoreCase("true")){
 	        	    		if(outputName != null && !(outputName.trim().equals(""))){
 	        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::"+outputName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
@@ -216,14 +214,11 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        	    	else{
 	        	    		frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED('Frequency_"+cols[0]+"'));\n";
 	        	    	}
->>>>>>> 45320053d50cd1f69e42a261625e082f6a2ed5f0
 	        			
 	        		}
 	        		else{
 	        			frequency += cols[0]+"_Frequency"+getNumber()+":=TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent});\n";
 	        			//frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
-<<<<<<< HEAD
-=======
 	        			if(persist.equalsIgnoreCase("true")){
 	        	    		if(outputName != null && !(outputName.trim().equals(""))){
 	        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::"+outputName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
@@ -234,7 +229,6 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        	    	else{
 	        	    		frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED('Frequency_"+cols[0]+"'));\n";
 	        	    	}
->>>>>>> 45320053d50cd1f69e42a261625e082f6a2ed5f0
 	        			
 	        		}
 	        	}
@@ -253,10 +247,6 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        					else
 	        						frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),"+cols[0]+");\n";
 	        				}
-<<<<<<< HEAD
-	        				//frequency += "output("+cols[0]+"_Frequency"+getNumber()+",,'~eda::frequency"+cols[0]+"', __compressed__, overwrite, named('Frequency of "+cols[0]+"'));\n";	
-	        				//frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
-=======
 	        					
 	        				//frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
 	        				if(persist.equalsIgnoreCase("true")){
@@ -269,7 +259,6 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 		        	    	else{
 		        	    		frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED('Frequency_"+cols[0]+"'));\n";
 		        	    	}
->>>>>>> 45320053d50cd1f69e42a261625e082f6a2ed5f0
 	        				
 	        			}
 	        			else{
@@ -277,10 +266,6 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        					frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency1(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),frequency);\n";
 	        				else
 	        					frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),frequency);\n";
-<<<<<<< HEAD
-	        			//	frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
-	        				//frequency += "output("+cols[0]+"_Frequency"+getNumber()+",,'~eda::frequency"+cols[0]+"', __compressed__, overwrite, named('Frequency of "+cols[0]+"'));\n";
-=======
 	        				//frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
 	        				if(persist.equalsIgnoreCase("true")){
 		        	    		if(outputName != null && !(outputName.trim().equals(""))){
@@ -292,7 +277,6 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 		        	    	else{
 		        	    		frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED('Frequency_"+cols[0]+"'));\n";
 		        	    	}
->>>>>>> 45320053d50cd1f69e42a261625e082f6a2ed5f0
 
 
 	        			}
@@ -312,9 +296,6 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        						frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),-"+cols[0]+");\n";
 	        				}
 	        				//frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
-<<<<<<< HEAD
-	        				//frequency += "output("+cols[0]+"_Frequency"+getNumber()+",,'~eda::frequency"+cols[0]+"', __compressed__, overwrite, named('Frequency of "+cols[0]+"'));\n";
-=======
 	        				if(persist.equalsIgnoreCase("true")){
 		        	    		if(outputName != null && !(outputName.trim().equals(""))){
 		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::"+outputName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
@@ -325,7 +306,6 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 		        	    	else{
 		        	    		frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED('Frequency_"+cols[0]+"'));\n";
 		        	    	}
->>>>>>> 45320053d50cd1f69e42a261625e082f6a2ed5f0
 	        				
 	        			}
 	        			else{
@@ -334,9 +314,6 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        				else
 	        					frequency += cols[0]+"_Frequency"+getNumber()+":=SORT(TABLE(Frequency2(field = \'"+cols[0]+"\'),{"+dataT[j]+" "+cols[0]+":=value;frequency;Percent}),-frequency);\n";
 	        				//frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
-<<<<<<< HEAD
-	        				//frequency += "output("+cols[0]+"_Frequency"+getNumber()+",,'~eda::frequency"+cols[0]+"', __compressed__, overwrite, named('Frequency of "+cols[0]+"'));\n";
-=======
 	        				if(persist.equalsIgnoreCase("true")){
 		        	    		if(outputName != null && !(outputName.trim().equals(""))){
 		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::"+outputName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
@@ -347,12 +324,11 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 		        	    	else{
 		        	    		frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",NAMED('Frequency_"+cols[0]+"'));\n";
 		        	    	}
->>>>>>> 45320053d50cd1f69e42a261625e082f6a2ed5f0
 	        				
 	        			}
 	        		}
 	        	}
-	        	frequency += "output("+cols[0]+"_Frequency"+getNumber()+",,'~eda::frequency"+cols[0]+"', __compressed__, overwrite, named('Frequency_of_"+cols[0]+"'));\n";
+	        	
 	        }
 	
 	        logBasic("Frequency Job =" + frequency);//{Dataset Job} 
