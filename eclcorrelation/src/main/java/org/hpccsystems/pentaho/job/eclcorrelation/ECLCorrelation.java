@@ -188,9 +188,9 @@ public class ECLCorrelation extends ECLJobEntry{//extends JobEntryBase implement
 	        	ecl += "pears := JOIN(with_x,single,LEFT.right_number=RIGHT.number,Tran(LEFT,RIGHT),LOOKUP);\n";
 	        	if(persist.equalsIgnoreCase("true")){
             		if(outputName != null && !(outputName.trim().equals(""))){
-            			ecl += "OUTPUT(SORT(TABLE(pears,{left_field,right_field,Pearson}),left_field)"+",,'~eda::correlation::"+outputName+"', __compressed__, overwrite,NAMED('Correlation'))"+";\n";
+            			ecl += "OUTPUT(SORT(TABLE(pears,{left_field,right_field,Pearson}),left_field)"+",,'~eda::"+outputName+"::correlation', __compressed__, overwrite,NAMED('Correlation'))"+";\n";
             		}else{
-            			ecl += "OUTPUT(SORT(TABLE(pears,{left_field,right_field,Pearson}),left_field)"+",,'~eda::correlation::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Correlation'))"+";\n";
+            			ecl += "OUTPUT(SORT(TABLE(pears,{left_field,right_field,Pearson}),left_field)"+",,'~eda::"+defJobName+"::correlation', __compressed__, overwrite,NAMED('Correlation'))"+";\n";
             		}
             	}
             	else{
@@ -203,9 +203,9 @@ public class ECLCorrelation extends ECLJobEntry{//extends JobEntryBase implement
 	        	ecl += "Spears := JOIN(with_x,single,LEFT.right_number=RIGHT.number,Tran(LEFT,RIGHT),LOOKUP);\n";
 	        	if(persist.equalsIgnoreCase("true")){
             		if(outputName != null && !(outputName.trim().equals(""))){
-            			ecl += "OUTPUT(SORT(TABLE(Spears,{left_field,right_field,Spearman}),left_field)"+",,'~eda::correlation::"+outputName+"', __compressed__, overwrite,NAMED('Correlation'))"+";\n";
+            			ecl += "OUTPUT(SORT(TABLE(Spears,{left_field,right_field,Spearman}),left_field)"+",,'~eda::"+outputName+"::correlation', __compressed__, overwrite,NAMED('Correlation'))"+";\n";
             		}else{
-            			ecl += "OUTPUT(SORT(TABLE(Spears,{left_field,right_field,Spearman}),left_field)"+",,'~eda::correlation::"+defJobName+"_"+"', __compressed__, overwrite,NAMED('Correlation'))"+";\n";
+            			ecl += "OUTPUT(SORT(TABLE(Spears,{left_field,right_field,Spearman}),left_field)"+",,'~eda::"+defJobName+"::correlation', __compressed__, overwrite,NAMED('Correlation'))"+";\n";
             		}
             	}
             	else{

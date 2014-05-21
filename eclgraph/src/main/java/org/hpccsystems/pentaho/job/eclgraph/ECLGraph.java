@@ -289,9 +289,9 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
 	        	
 	        	if(persist.equalsIgnoreCase("true")){
 	        		if(outputName != null && !(outputName.trim().equals(""))){
-	        			graph += "OUTPUT(MyTable"+",,'~eda::graph::"+outputName+"', __compressed__, overwrite,NAMED(\'"+this.getTyp()+"_MyChart\'))"+";\n";
+	        			graph += "OUTPUT(MyTable"+",,'~eda::"+outputName+"::graph', __compressed__, overwrite,NAMED(\'"+this.getTyp()+"_MyChart\'))"+";\n";
 	        		}else{
-	        			graph += "OUTPUT(MyTable"+",,'~eda::graph::"+defJobName+"_"+"', __compressed__, overwrite,NAMED(\'"+this.getTyp()+"_MyChart\'))"+";\n";
+	        			graph += "OUTPUT(MyTable"+",,'~eda::"+defJobName+"::graph', __compressed__, overwrite,NAMED(\'"+this.getTyp()+"_MyChart\'))"+";\n";
 	        		}
 	        	}
 	        	else{

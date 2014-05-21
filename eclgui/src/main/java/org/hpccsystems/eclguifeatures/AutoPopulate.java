@@ -209,6 +209,10 @@ public class AutoPopulate {
     	return parseDefinitions(jobs,"eclIsGraphable","true");
     }
     
+    public String[] parseGroupDefinitions(List<JobEntryCopy> jobs) throws Exception{
+        return parseDefinitions(jobs,"eclIsGroup","true");
+    }
+    
     public String[] parseUnivariate(List<JobEntryCopy> jobs) throws Exception{
     	return parseDefinitions(jobs,"eclIsUniv","true");
     }
