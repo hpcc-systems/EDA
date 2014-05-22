@@ -235,9 +235,9 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
 	        			//ecl += "OUTPUT("+getSingle()+",NAMED('UnivariateStats'));\n";
 	        			if(persist.equalsIgnoreCase("true")){
 	    	        		if(outputName != null && !(outputName.trim().equals(""))){
-	    	        			ecl += "OUTPUT("+getSingle()+",,'~eda::"+outputName+"::univariate_stats', __compressed__, overwrite,NAMED('UnivariateStats'))"+";\n";
+	    	        			ecl += "OUTPUT("+getSingle()+",,'~"+outputName+"::univariate_stats', __compressed__, overwrite,NAMED('UnivariateStats'))"+";\n";
 	    	        		}else{
-	    	        			ecl += "OUTPUT("+getSingle()+",,'~eda::"+defJobName+"::univariate_stats', __compressed__, overwrite,NAMED('UnivariateStats'))"+";\n";
+	    	        			ecl += "OUTPUT("+getSingle()+",,'~"+defJobName+"::univariate_stats', __compressed__, overwrite,NAMED('UnivariateStats'))"+";\n";
 	    	        		}
 	    	        	}
 	    	        	else{
@@ -249,9 +249,9 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
 	        			//ecl += "OUTPUT("+getSingle()+",NAMED('UniVariate'));\n";
 	        			if(persist.equalsIgnoreCase("true")){
 	    	        		if(outputName != null && !(outputName.trim().equals(""))){
-	    	        			ecl += "OUTPUT("+getSingle()+",,'~eda::"+outputName+"::univariate_stats', __compressed__, overwrite,NAMED('UnivariateStats'))"+";\n";
+	    	        			ecl += "OUTPUT("+getSingle()+",,'~"+outputName+"::univariate_stats', __compressed__, overwrite,NAMED('UnivariateStats'))"+";\n";
 	    	        		}else{
-	    	        			ecl += "OUTPUT("+getSingle()+",,'~eda::"+defJobName+"::univariate_stats', __compressed__, overwrite,NAMED('UnivariateStats'))"+";\n";
+	    	        			ecl += "OUTPUT("+getSingle()+",,'~"+defJobName+"::univariate_stats', __compressed__, overwrite,NAMED('UnivariateStats'))"+";\n";
 	    	        		}
 	    	        	}
 	    	        	else{
@@ -268,11 +268,11 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
 	        		//ecl += "OUTPUT("+getMode()+",NAMED('UniVariate_Mode'));\n";
 	        		if(persist.equalsIgnoreCase("true")){
     	        		if(outputName != null && !(outputName.trim().equals(""))){
-    	        			ecl += "OUTPUT("+getMode()+",,'~eda::"+outputName+"::univariate_mode', __compressed__, overwrite,NAMED('Univariate_Mode'))"+";\n";
+    	        			ecl += "OUTPUT("+getMode()+",,'~"+outputName+"::univariate_mode', __compressed__, overwrite,NAMED('Univariate_Mode'))"+";\n";
     	        		}else{
-    	        			ecl += "OUTPUT("+getMode()+",,'~eda::"+defJobName+"::univariate_mode', __compressed__, overwrite,NAMED('Univariate_Mode'))"+";\n";
+    	        			ecl += "OUTPUT("+getMode()+",,'~"+defJobName+"::univariate_mode', __compressed__, overwrite,NAMED('Univariate_Mode'))"+";\n";
     	        		}
-    	        	}
+    	        	} 
     	        	else{
     	        		ecl += "OUTPUT("+getMode()+",NAMED('Univariate_Mode'));\n";
     	        	}
@@ -284,9 +284,9 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
         		//ecl += "OUTPUT("+getSingle()+",NAMED('Univariate'));\n";
         		if(persist.equalsIgnoreCase("true")){
 	        		if(outputName != null && !(outputName.trim().equals(""))){
-	        			ecl += "OUTPUT("+getSingle()+",,'~eda::"+outputName+"::univariate', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
+	        			ecl += "OUTPUT("+getSingle()+",,'~"+outputName+"::univariate', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
 	        		}else{
-	        			ecl += "OUTPUT("+getSingle()+",,'~eda::"+defJobName+"::univariate', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
+	        			ecl += "OUTPUT("+getSingle()+",,'~"+defJobName+"::univariate', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
 	        		}
 	        	}
 	        	else{

@@ -217,9 +217,9 @@ public class ECLPercentile extends ECLJobEntry{//extends JobEntryBase implements
 	        	percentile += S[0]+"_"+getName()+":=TABLE(percentileTab(field='"+S[0]+"'),{field,percentiles,value});\n";
 	        	if(persist.equalsIgnoreCase("true")){
 	        		if(outputName != null && !(outputName.trim().equals(""))){
-	        			percentile += "OUTPUT("+S[0]+"_"+getName()+",,'~eda::"+outputName+S[0]+"::percentile', __compressed__, overwrite,NAMED('Percentile_"+S[0]+"'))"+";\n";
+	        			percentile += "OUTPUT("+S[0]+"_"+getName()+",,'~"+outputName+S[0]+"::percentile', __compressed__, overwrite,NAMED('Percentile_"+S[0]+"'))"+";\n";
 	        		}else{
-	        			percentile += "OUTPUT("+S[0]+"_"+getName()+",,'~eda::"+defJobName+S[0]+"::percentile', __compressed__, overwrite,NAMED('Percentile_"+S[0]+"'))"+";\n";
+	        			percentile += "OUTPUT("+S[0]+"_"+getName()+",,'~"+defJobName+S[0]+"::percentile', __compressed__, overwrite,NAMED('Percentile_"+S[0]+"'))"+";\n";
 	        		}
 	        	}
 	        	else{
