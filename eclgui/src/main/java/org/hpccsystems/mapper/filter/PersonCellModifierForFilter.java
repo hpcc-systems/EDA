@@ -3,7 +3,7 @@ package org.hpccsystems.mapper.filter;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Item;
-import org.hpccsystems.mapper.MainMapper;
+import org.hpccsystems.mapper.MainMapperSimpleFilter;
 
 public class PersonCellModifierForFilter implements ICellModifier{
 	private Viewer viewer;
@@ -18,13 +18,13 @@ public class PersonCellModifierForFilter implements ICellModifier{
 	  }
 	  public Object getValue(Object element, String property) {
 	    PersonForFilter p = (PersonForFilter) element;
-	    if (MainMapper.COLUMNS.equals(property))
+	    if (MainMapperSimpleFilter.COLUMNS.equals(property))
 	      return p.getColumns();
-	    else if (MainMapper.OPERATORS.equals(property))
+	    else if (MainMapperSimpleFilter.OPERATORS.equals(property))
 	      return p.getOperators();
-	    else if (MainMapper.VALUE.equals(property))
+	    else if (MainMapperSimpleFilter.VALUE.equals(property))
 		      return p.getValue();	
-	    else if (MainMapper.BOOLEAN_OPERATORS.equals(property))
+	    else if (MainMapperSimpleFilter.BOOLEAN_OPERATORS.equals(property))
 	    	return p.getBoolean_operators();
 	    else
 	      return null;
@@ -35,13 +35,13 @@ public class PersonCellModifierForFilter implements ICellModifier{
 	      element = ((Item) element).getData();
 
 	    PersonForFilter p = (PersonForFilter) element;
-	    if (MainMapper.COLUMNS.equals(property))
+	    if (MainMapperSimpleFilter.COLUMNS.equals(property))
 	      p.setColumns((Integer) value);
-	    else if (MainMapper.OPERATORS.equals(property))
+	    else if (MainMapperSimpleFilter.OPERATORS.equals(property))
 	      p.setOperators((Integer) value);
-	    else if (MainMapper.VALUE.equals(property))
+	    else if (MainMapperSimpleFilter.VALUE.equals(property))
 		      p.setValue((String) value);
-	    else if (MainMapper.BOOLEAN_OPERATORS.equals(property))
+	    else if (MainMapperSimpleFilter.BOOLEAN_OPERATORS.equals(property))
 	    	p.setBoolean_operators((Integer) value);
 	    viewer.refresh();
 	  }

@@ -1,33 +1,58 @@
 package org.hpccsystems.mapper;
 
-import java.awt.event.TextEvent;
+import java.awt.Color;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
@@ -39,10 +64,31 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolTip;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.hpccsystems.eclguifeatures.AutoPopulate;
-import org.pentaho.di.job.entry.JobEntryCopy;
+import org.hpccsystems.mapper.filter.PersonCellModifierForFilter;
+import org.hpccsystems.mapper.filter.PersonContentProviderForFilter;
+import org.hpccsystems.mapper.filter.PersonForFilter;
+import org.hpccsystems.mapper.filter.PersonLabelProviderForFilter;
+import org.hpccsystems.recordlayout.IRecordListViewer;
+import org.hpccsystems.recordlayout.RecordBO;
+import org.hpccsystems.recordlayout.RecordLabels;
+import org.hpccsystems.recordlayout.RecordList;
 
-public class MainMapperForOutliers {
+public class MainMapperSimpleFilter {
+	public static final String COLUMNS = "Columns";
+	public static final String OPERATORS = "Operators";
+	public static final String VALUE = "Value";
+	public static final String BOOLEAN_OPERATORS = "Boolean_Operators";
+  
+	public static final String[] PROP = { COLUMNS, OPERATORS, VALUE, BOOLEAN_OPERATORS};
+	
+    List people = new ArrayList();	
+	public List getPeople() {
+		return people;
+	}
+
+	public void setPeople(List people) {
+		this.people = people;
+	}
 	private String layoutStyle = "transform";
 	// The table viewer
 	private TableViewer tableViewer;
@@ -52,20 +98,28 @@ public class MainMapperForOutliers {
 	private Combo cmbVariableName;
 	private Text txtExpression;
 	
+	//Start 
+	
+	public static TableViewer tv;
+	
+	public  static String[] columnList = new String[]{};
+	public static String[] booleanOperatorsList = new String[]{" ","AND","IN","NOT","OR","XOR"};
+	public static String[] operatorsList = new String[]{" ",":=","+", "-", "*", "/", "%", "||", "(", ")", "=", "<>", ">", "<", "<=", ">=","~"};
+	
+	// Set the table column property names
+	
+	private RecordList recordList = new RecordList();
+	
+	//End
+	
 	private Button btnSaveExpression;
 	private Button btnAddExpression;
 	
 	private String[] functionList = null;
 	private String[] operatorList = null;
-	private String[] booleanList = null;
 	private String[] cmbListValues = null;
 	private Tree treeInputDataSet = null;
 	
-	private Text txtValue;
-	private Text rule;
-	private List rulesList = new ArrayList();
-	private List rulesListNoDup = null;
-	private String[] rList = null;
 	
 	//Fields to check for EDIT status
 	private String oldexpression = "";
@@ -75,8 +129,6 @@ public class MainMapperForOutliers {
 	private String filterStatement = "";
 	private String oldFilterStatement = "";
 	
-	private Button save;
-	private Button clearAll;
 	//private boolean hasChanged = false;
 	MapperBO objRecord;
 	
@@ -141,7 +193,11 @@ public class MainMapperForOutliers {
 	public void setOldFilterStatement(String oldFilterStatement) {
 		this.oldFilterStatement = oldFilterStatement;
 	}
-
+	
+	public void setRecordList(RecordList rl) {
+		this.recordList = rl;
+	}
+	
 	/**
 	 * This method redraws the table.
 	 */
@@ -167,17 +223,19 @@ public class MainMapperForOutliers {
 	
 	//The Constructor has input as 
 	
-	public MainMapperForOutliers(Composite parentComp, Map<String, String[]> mapDataSets, String[] arrCmbValues,String layoutStyle,List<JobEntryCopy> jobs){
-		setupVars(parentComp, mapDataSets, arrCmbValues, layoutStyle,jobs);
+	public MainMapperSimpleFilter(Composite parentComp, Map<String, String[]> mapDataSets, String[] arrCmbValues){
+		setupVars(parentComp, mapDataSets, arrCmbValues, "transform", null);
+	}
+	public MainMapperSimpleFilter(Composite parentComp, Map<String, String[]> mapDataSets, String[] arrCmbValues,String layoutStyle, List peopleLs){
+		setupVars(parentComp, mapDataSets, arrCmbValues, layoutStyle, peopleLs);
 	}
 	
-	private void setupVars(Composite parentComp, Map<String, String[]> mapDataSets, String[] arrCmbValues,String layoutStyle,List<JobEntryCopy> jobs){
+	private void setupVars(Composite parentComp, Map<String, String[]> mapDataSets, String[] arrCmbValues,String layoutStyle, List peopleLs){
 		this.layoutStyle = layoutStyle;
 		setCmbListValues(arrCmbValues);
 		populateFunctionList();
 		populateOperatorList();
-		populateBooleanList();
-		this.addChildControls(parentComp, mapDataSets, jobs);
+		this.addChildControls(parentComp, mapDataSets, peopleLs);
 		if(this.layoutStyle.equalsIgnoreCase("transform")){
 			int numExpressions = tableViewer.getTable().getItemCount();
 			if(numExpressions>1 && !layoutStyle.equalsIgnoreCase("transform")){
@@ -191,13 +249,13 @@ public class MainMapperForOutliers {
 	 * Create a new shell, add the widgets, open the shell
 	 * @return the shell that was created	 
 	 */
-	private void addChildControls(Composite parentComp, Map<String, String[]> mapDataSets, List<JobEntryCopy> jobs) {
+	private void addChildControls(Composite parentComp, Map<String, String[]> mapDataSets, List peopleLs) {
 		if(this.layoutStyle.equalsIgnoreCase("transform")){
 			Composite tblComposite = new Composite(parentComp, SWT.NONE);
 			createTable(tblComposite);		// Create the table
 			createButtons(tblComposite);
 		}
-		buildExpressionPanel(parentComp, mapDataSets, jobs);	// Add the widgets needed to build a Expression Panel
+		buildExpressionPanel(parentComp, mapDataSets, peopleLs);	// Add the widgets needed to build a Expression Panel
 		
 	}
 	
@@ -207,13 +265,9 @@ public class MainMapperForOutliers {
 	}
 	
 	private void populateOperatorList() {
-		String operatorList[] = {":=","+", "-", "*", "/", "%", "(", ")", "=", "<>", ">", "<", "<=", ">=","~"};
+		//String[] operatorList = {"+", "-", "*", "/", "%", "||", "(", ")", "=", "<>", ">", "<", "<=", ">="};
+		String operatorList[] = {":=","+", "-", "*", "/", "%", "||", "(", ")", "=", "<>", ">", "<", "<=", ">=","~","AND","IN","NOT","OR","XOR"};
 		setOperatorList(operatorList);
-	}
-	
-	private void populateBooleanList() {
-		String booleanList[] = {"AND","IN","NOT","OR","XOR"};
-		setBooleanList(booleanList);
 	}
 	
 	public String[] getFunctionList() {
@@ -232,22 +286,6 @@ public class MainMapperForOutliers {
 		this.operatorList = operatorList;
 	}
 	
-	public String[] getBooleanList() {
-		return booleanList;
-	}
-
-	public void setBooleanList(String[] booleanList) {
-		this.booleanList = booleanList;
-	}
-	
-	public List getRulesList() {
-		return rulesList;
-	}
-
-	public void setRulesList(List rulesList) {
-		this.rulesList = rulesList;
-	}
-
 	public MapperRecordList getMapperRecList() {
 		return mapperRecList;
 	}
@@ -424,6 +462,33 @@ public class MainMapperForOutliers {
 	 * @param parent
 	 */
 	private void createButtons(Composite tblComposite) {
+		 // Create and configure the "Edit" button
+		/*Button edit = new Button(tblComposite, SWT.PUSH | SWT.CENTER);
+		edit.setText("Edit");
+		GridData gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gridData.widthHint = 80;
+		edit.setLayoutData(gridData);
+		edit.addSelectionListener(new SelectionAdapter() {
+       		// Add a record and refresh the view
+			public void widgetSelected(SelectionEvent e) {
+				int selectionIndex = 0;
+				if(tableViewer.getTable().getItemCount() >0 ){
+					for (int i = 0; i < tableViewer.getTable().getItemCount(); i++) {
+						if (tableViewer.getTable().getItems()[i].getChecked()) {
+							selectionIndex = i;
+						}
+					}
+					if(tableViewer.getTable().getItem(selectionIndex).getChecked()){
+						MapperBO objRecord = mapperRecList.getRecord(selectionIndex);
+						//txtVariableName.setText(objRecord.getOpVariable());
+						cmbVariableName.setText(objRecord.getOpVariable());
+						txtExpression.setText(objRecord.getExpression());
+						txtExpression.setFocus();
+						btnSaveExpression.setEnabled(true);
+					}
+				}
+			}
+		});*/
 		
 		Button delete = new Button(tblComposite, SWT.PUSH | SWT.CENTER);
 		delete.setText("Delete");
@@ -474,21 +539,21 @@ public class MainMapperForOutliers {
 	
 	
 	
-	public void buildExpressionPanel(Composite parentComp, Map<String, String[]> mapDataSets, List<JobEntryCopy> jobs){
+	public void buildExpressionPanel(Composite parentComp, final Map<String, String[]> mapDataSets, List peopleLs){
 		
-		Composite comp2 = new Composite(parentComp, SWT.NONE);
+		final Composite comp2 = new Composite(parentComp, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		GridData data = new GridData(GridData.FILL_BOTH);
-		data.heightHint = 400;
+		data.heightHint = 350;
 		comp2.setLayout(layout);
 		comp2.setLayoutData(data);
 		
 		Group group1 = new Group(comp2, SWT.SHADOW_IN);
 	    
 	    layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth = false;
+		layout.numColumns = 2;  
+		layout.makeColumnsEqualWidth = true;
 		data = new GridData(GridData.FILL_BOTH);
 		group1.setLayout(layout);
 		group1.setLayoutData(data);
@@ -522,7 +587,7 @@ public class MainMapperForOutliers {
 			}
 		}else{
 			//lblVariableName.setText("Column To Filter On:");
-			group1.setText("Rule Builder");
+			group1.setText("Filter Builder");
 			//lblVariableName.setVisible(false);
 		}
 		
@@ -536,9 +601,10 @@ public class MainMapperForOutliers {
 		
 		Composite compTreePanel = new Composite(group1, SWT.NONE);
 		layout = new GridLayout();
-		layout.numColumns = 4;
+		layout.numColumns = 3;
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
+		data.heightHint = 128;
 		compTreePanel.setLayout(layout);
 		compTreePanel.setLayoutData(data);
 		
@@ -552,26 +618,20 @@ public class MainMapperForOutliers {
 		gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
 		lblInput.setLayoutData(gridData);
 		
+		Label lblFunctions = new Label(compTreePanel, SWT.NONE);
+		lblFunctions.setText("Functions:");
+		gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
+		lblFunctions.setLayoutData(gridData);
+		
 		Label lblOperators = new Label(compTreePanel, SWT.NONE);
 		lblOperators.setText("Operators:");
 		gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
 		lblOperators.setLayoutData(gridData);
 		
-		Label lblText = new Label(compTreePanel, SWT.NONE);
-		lblText.setText("Text:");
-		gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
-		lblText.setLayoutData(gridData);
-		
-		Label lblBoolean = new Label(compTreePanel, SWT.NONE);
-		lblBoolean.setText("Boolean:");
-		gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
-		lblBoolean.setLayoutData(gridData);
-
 		treeInputDataSet = new Tree(compTreePanel, SWT.SINGLE | SWT.BORDER);
 		
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 	    gridData.heightHint = 80;
-	    gridData.widthHint = 120;
 	    treeInputDataSet.setLayoutData(gridData);
 	    boolean includeInput = false;
 	    if(this.layoutStyle.equalsIgnoreCase("transform")){
@@ -594,8 +654,7 @@ public class MainMapperForOutliers {
 			public void mouseDoubleClick(MouseEvent e) {
 				Tree selectedTree = (Tree)e.widget;
 				if(selectedTree.getSelection()[0].getParentItem() != null){
-					StringBuffer dataField = new StringBuffer(" ( ");
-					dataField.append(((Tree)e.widget).getSelection()[0].getText());
+					String dataField = ((Tree)e.widget).getSelection()[0].getText();
 					if(txtExpression.getCaretPosition() > 0) {
 						StringBuffer buf = new StringBuffer(txtExpression.getText());
 						buf.insert(txtExpression.getCaretPosition(), dataField);
@@ -608,7 +667,153 @@ public class MainMapperForOutliers {
 				}
 			}
 		});
+		
+	    final Tree treeFunctions = new Tree(compTreePanel, SWT.SINGLE | SWT.BORDER);
+	    gridData = new GridData(GridData.FILL_HORIZONTAL);
+	    gridData.heightHint = 80;
+	    treeFunctions.setLayoutData(gridData);
+	    Map<String, List<String>> mapFunctionValues = Utils.getFunctionValueMap();
+	    Utils.fillTreeForFunctions(treeFunctions, mapFunctionValues);
+	    treeFunctions.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseUp(MouseEvent arg0) {
+				//Do Nothing
+			}
+			
+			@Override
+			public void mouseDown(MouseEvent arg0) {
+				//Do Nothing
+			}
+			
+			@Override
+			public void mouseDoubleClick(MouseEvent e) {
+				Tree selectedTree = (Tree)e.widget;
+				if(selectedTree.getSelection()[0].getParentItem() != null){
+					String dataField = ((Tree)e.widget).getSelection()[0].getText();
+					//System.out.println("Text Position:: "+txtExpression.getCaretPosition());
+					if(txtExpression.getSelectionText() != null && txtExpression.getSelectionText().length() > 0) {
+						String txtToBeReplaced = dataField+"( "+txtExpression.getSelectionText()+" )";
+						StringBuffer buf = new StringBuffer(txtExpression.getText());
+						buf.replace(txtExpression.getSelection().x, txtExpression.getSelection().y, txtToBeReplaced);
+						txtExpression.setText(buf.toString());
+					} else if(txtExpression.getCaretPosition() > 0) {
+						StringBuffer buf = new StringBuffer(txtExpression.getText());
+						buf.insert(txtExpression.getCaretPosition(), dataField+"()");
+						txtExpression.setText(buf.toString());
+					} else {
+						StringBuffer buf = new StringBuffer(txtExpression.getText());
+						buf.append(dataField+"()");
+						txtExpression.setText(buf.toString());
+					}
+				}
+			}
+		});
 	    
+	    final ToolTip functionsTip = new ToolTip(compTreePanel.getShell(), SWT.BALLOON | SWT.ICON_INFORMATION);
+	    BuildHelpIndex bhi = new BuildHelpIndex();
+	    
+	    String indexFile = "plugins/hpcc-common/helpfiles/index.xml";
+	    
+	    URL url = null;
+	 	try{
+		 	URL baseURL = this.getClass().getResource("../../../");
+		 	
+		 	System.out.println("BaseURL: " + baseURL.getPath());
+		 	if(baseURL != null){
+		 		url = new URL(baseURL, indexFile);
+		 	}else {
+		 		url = this.getClass().getResource(indexFile);
+		 	}
+	 	}catch (MalformedURLException e){
+	 		System.out.println("can't find helf files" + e.toString());
+	 	}
+	 	System.out.println("URL: " + url.toString());
+	    
+	    bhi.setUrl(url.toString().replace("%20", " ").replace("file:", ""));
+	    final HashMap<String,String> helpIndex = bhi.getMap();
+	   
+	    Listener functionsList = new Listener(){
+
+			@Override
+			public void handleEvent(Event event) {
+				// TODO Auto-generated method stub
+				
+				switch (event.type) {
+				case SWT.MouseExit:
+				case SWT.MouseMove: {
+					functionsTip.setAutoHide(true);
+					//functionsTip.setVisible(false);
+					break;
+				}
+				
+					case SWT.MouseHover: {
+						
+						break;
+					}
+					case SWT.KeyDown: {
+						
+						if(event.keyCode == SWT.F1){
+							Point coords = new Point(event.x, event.y);
+							//TreeItem item = treeFunctions.getItem(coords);
+							TreeItem item = treeFunctions.getSelection()[0];
+							Shell tip = new Shell(treeFunctions.getDisplay());
+							System.out.println(event.keyCode);
+							String help = "";
+							String htmlFile = "plugins/hpcc-common/helpfiles/";
+							System.out.println("Item: " + item.getText().replace("STD.", ""));
+							if(helpIndex.containsKey(item.getText().replace("STD.", ""))){
+								htmlFile += helpIndex.get(item.getText().replace("STD.", ""));
+								//if(Utils.getHelpMap().containsKey(item.getText())){
+								//	help += Utils.getHelpMap().get(item.getText());
+								//}
+							}else{
+								htmlFile += "html/index.html";
+							}
+							Browser browser;
+							try {
+								 	browser = new Browser(tip, SWT.BALLOON);
+								 	browser.setBounds(0, 0, 800, 800);
+								 	//browser.setText(help);
+								 	//ClassLoader classLoader = getClass().getClassLoader();
+								 	//System.out.println("PATHbase: " + classLoader.getResource(".").getFile());
+								 	
+								 	
+								 	URL url = null;
+								 	try{
+									 	URL baseURL = this.getClass().getResource("../../../");
+									 	
+									 	System.out.println("BaseURL: " + baseURL.getPath());
+									 	if(baseURL != null){
+									 		url = new URL(baseURL, htmlFile);
+									 	}else {
+									 		url = this.getClass().getResource(htmlFile);
+									 	}
+								 	}catch (MalformedURLException e){
+								 		System.out.println("can't find helf files" + e.toString());
+								 	}
+								 	System.out.println("URL: " + url.toString());
+								 	browser.setUrl(url.toString());
+								 	
+								 	//file:/C:/Program Files/data-integration/plugins/jobentries/eclproject/../../hpcc-common/eclgui.jar!/org/hpccsystems/mapper/html/bk01apa.html
+							} catch (SWTError e) {
+							 	System.out.println("Could not instantiate Browser: " + e.getMessage());
+							 	
+						 	}
+							
+							
+							tip.pack ();
+							tip.open();
+							
+						}
+						break;
+					}
+				}
+			}};
+			treeFunctions.addListener(SWT.KeyDown, functionsList);
+			//treeFunctions.addListener(SWT.MouseHover, functionsList);
+			//treeFunctions.addListener(SWT.MouseMove, functionsList);
+			//treeFunctions.addListener(SWT.MouseExit, functionsList);
 	    
 	    int style = SWT.FULL_SELECTION | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL;
 	    final Table tblOperators = new Table(compTreePanel, style);
@@ -649,196 +854,257 @@ public class MainMapperForOutliers {
 			}
 		});
 		
-		txtValue = new Text(compTreePanel, SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		gridData = new GridData (GridData.FILL_BOTH);
-		gridData.widthHint = 80;
-		gridData.heightHint = 100;
-		txtValue.setLayoutData(gridData);
-		txtValue.addMouseListener(new MouseListener() {
-			
-			@Override
-			public void mouseUp(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseDown(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseDoubleClick(MouseEvent e) {
-				String dataField = txtValue.getText();
-				if(txtExpression.getCaretPosition() > 0) {
-					StringBuffer buf = new StringBuffer(txtExpression.getText());
-					buf.insert(txtExpression.getCaretPosition(), dataField);
-					txtExpression.setText(buf.toString());
-				} else {
-					StringBuffer buf = new StringBuffer(txtExpression.getText());
-					buf.append(dataField);
-					buf.append(" ) ");
-					txtExpression.setText(buf.toString());
-				}
-			}
-		});
 		
-		 int booleanStyle = SWT.FULL_SELECTION | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL;
-		    final Table tblBoolean = new Table(compTreePanel, booleanStyle);
-			gridData = new GridData();
-			gridData.heightHint = 80;
-			gridData.widthHint = 100;
-			tblBoolean.setLayoutData(gridData);
+		if(group1.getText().equals("Filter Builder")){
 			
-			for (int i = getBooleanList().length -1 ; i >= 0 ; i--) {
-				TableItem item = new TableItem(tblBoolean, SWT.NONE, 0);
-				item.setText(getBooleanList()[i]);
-			}
+			ScrolledComposite sc = new ScrolledComposite(comp2, SWT.H_SCROLL | SWT.V_SCROLL );
+			Composite compVar = new Composite(sc, SWT.NONE); 
+			compVar.setLayout(new GridLayout(4, false));
+			sc.setContent(compVar);
 			
-			tblBoolean.addMouseListener(new MouseListener() {
-				
+			sc.setMinSize(620, 80);
+			sc.setExpandHorizontal(true);
+		    sc.setExpandVertical(true);
+		    
+		   
+	        tv = new TableViewer(compVar, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION | SWT.CHECK);
+	        tv.setContentProvider(new PersonContentProviderForFilter());
+	        tv.setLabelProvider(new PersonLabelProviderForFilter());
+	        tv.setInput(people);
+	        
+	        GridData gd = new GridData(GridData.FILL_BOTH);
+	        gd.horizontalSpan = 2;
+	        final Table table = tv.getTable();
+	        table.setLayoutData(gd);
+	        table.setLinesVisible(true);
+	        table.setHeaderVisible(true);
+	        
+	        final TableColumn tc0 = new TableColumn(table, SWT.LEFT);
+		    tc0.setText("Columns");
+		    tc0.setWidth(160);
+		    tc0.setImage(RecordLabels.getImage("unchecked"));
+		    tc0.addListener(SWT.Selection, new Listener() {
 				@Override
-				public void mouseUp(MouseEvent arg0) {
-					//Do Nothing
+				public void handleEvent(Event event) {
+			        boolean checkBoxFlag = false;
+			        for (int i = 0; i < table.getItemCount(); i++) {
+			            if (table.getItems()[i].getChecked()) { 
+			                checkBoxFlag = true;
+			                
+			            }
+			        }
+			        if (checkBoxFlag) {
+			            for (int m = 0; m < table.getItemCount(); m++) {
+			                table.getItems()[m].setChecked(false);
+			                tc0.setImage(RecordLabels.getImage("unchecked"));				                
+			                table.deselectAll();
+			            }
+			        } else {
+			            for (int m = 0; m < table.getItemCount(); m++) {
+			                table.getItems()[m].setChecked(true);
+			                tc0.setImage(RecordLabels.getImage("checked"));
+			                table.selectAll();
+			            }
+			        } 	
+			        tv.refresh();
+			        table.redraw();
+			    } 
+			});
+	        
+		    TableColumn tc1 = new TableColumn(table, SWT.CENTER);
+		    tc1.setText("Operator");
+		    tc1.setWidth(150);
+		    
+		    TableColumn tc2 = new TableColumn(table, SWT.CENTER);
+		    tc2.setText("Value");
+		    tc2.setWidth(160);
+		    
+		    TableColumn tc3 = new TableColumn(table, SWT.CENTER);
+		    tc3.setText("Boolean Operator");
+		    tc3.setWidth(150);
+		    
+		    List<String> ls = new ArrayList<String>();
+ 			
+ 			Set setOfKeys = mapDataSets.keySet();
+ 			Iterator it = setOfKeys.iterator();
+ 			while(it.hasNext()){
+ 				String key = (String)it.next();
+ 				for(int i=0; i<mapDataSets.get(key).length; i++){
+ 					ls.add(mapDataSets.get(key)[i]);
+ 				}
+ 			}
+ 			
+ 			Set<String> lsToSet = new LinkedHashSet<String>(ls);
+ 			List<String> lsNoDup = new ArrayList<String>(lsToSet);
+ 			columnList = new String[lsNoDup.size()];
+ 			
+ 			for(int i=lsNoDup.size()-1; i>=0; i--){
+ 				columnList[i] = lsNoDup.get(i); 
+ 			} 
+		    
+		    
+		    CellEditor[] editors = new CellEditor[4];
+		    editors[0] = new ComboBoxCellEditor(table,columnList); 
+		    editors[1] = new ComboBoxCellEditor(table,operatorsList);
+		    editors[2] = new TextCellEditor(table);
+		    editors[3] = new ComboBoxCellEditor(table,booleanOperatorsList);
+		    
+		    // Set the editors, cell modifier, and column properties
+		    tv.setColumnProperties(PROP);
+		    tv.setCellModifier(new PersonCellModifierForFilter(tv));
+		    tv.setCellEditors(editors); 
+		    
+		    people = new ArrayList(peopleLs);
+		    
+		    Composite compVar0 = new Composite(comp2, SWT.NONE);
+	    	layout = new GridLayout();
+			layout.numColumns = 3;
+			data = new GridData(GridData.FILL_HORIZONTAL);
+			data.horizontalSpan = 1;
+			compVar0.setLayout(layout);
+			compVar0.setLayoutData(data); 
+		    
+		    Button add = new Button(compVar0, SWT.PUSH);
+		    add.setText("Add Filter");
+	        gd = new GridData(GridData.FILL);
+	        gd.horizontalSpan = 1;
+	        add.setLayoutData(gd);
+	        
+	        add.addSelectionListener(new SelectionListener (){ 
+	        	@Override
+				public void widgetDefaultSelected(SelectionEvent arg0) {
+					// TODO Auto-generated method stub
 				}
-				
 				@Override
-				public void mouseDown(MouseEvent arg0) {
-					//Do Nothing
+				public void widgetSelected(SelectionEvent arg0) {
+					
+					tv.setInput(people);
+					int cnt = table.getItemCount();
+					PersonForFilter p = new PersonForFilter();
+			        p.setColumns(Integer.valueOf("0"));		        
+			        p.setOperators(Integer.valueOf("0"));
+			        p.setValue("");
+			        p.setBoolean_operators(Integer.valueOf("0"));
+			        people.add(p);
+			        tv.refresh();		        
 				}
-				
+	        	
+	        });
+	         
+	        Button del = new Button(compVar0, SWT.PUSH);
+		    del.setText("Delete");
+		    gd = new GridData(GridData.FILL);
+	        gd.horizontalSpan = 1;
+	        del.setLayoutData(gd);
+		    del.addSelectionListener(new SelectionAdapter(){
+		    	public void widgetSelected(SelectionEvent event){
+		    		int cnt = 0;
+		    		people = getPeople();
+		    		if(people.size()>0){
+			    		for(int i = 0; i<table.getItemCount(); i++){
+			    			if(table.getItem(i).getChecked()){
+			    				people.remove(Math.abs(cnt - i));
+								cnt++;
+							}
+			    		}
+		    		}
+		    		if(tc0.getImage().equals(RecordLabels.getImage("checked"))){
+		    			tc0.setImage(RecordLabels.getImage("unchecked")); 
+		    		}
+		    		tv.refresh();
+		    		tv.setInput(people);
+		    		
+		    	}
+		    });
+	        
+	        Button select = new Button(compVar0, SWT.PUSH);
+	        select.setText("Select"); 
+	        gd = new GridData(GridData.FILL);
+	        gd.horizontalSpan = 1;
+	        select.setLayoutData(gd);
+	        
+	        select.addSelectionListener(new SelectionListener () {
 				@Override
-				public void mouseDoubleClick(MouseEvent e) {
-					String dataField = ((Table)e.widget).getSelection()[0].getText();
-					if(txtExpression.getCaretPosition() > 0) {
-						StringBuffer buf = new StringBuffer(txtExpression.getText());
-						buf.insert(txtExpression.getCaretPosition(), dataField);
-						txtExpression.setText(buf.toString());
-					} else {
-						StringBuffer buf = new StringBuffer(txtExpression.getText());
-						buf.append(dataField);
-						txtExpression.setText(buf.toString());
-					}
+				public void widgetSelected(SelectionEvent arg0) {
+					for(int i = 0; i<table.getItemCount(); i++){
+		    			if(table.getItem(i).getChecked()){
+		    				StringBuffer dataField = new StringBuffer("");
+		    				dataField.append("(");
+		    				dataField.append(table.getItem(i).getText(0));
+		    				dataField.append(table.getItem(i).getText(1));
+		    				dataField.append(table.getItem(i).getText(2));
+		    				dataField.append(")");
+		    				dataField.append(table.getItem(i).getText(3));
+		    				
+		    				if(txtExpression.getCaretPosition() > 0) {
+								StringBuffer buf = new StringBuffer(txtExpression.getText());
+								buf.insert(txtExpression.getCaretPosition(), dataField);
+								txtExpression.setText(buf.toString());
+							} else {
+								StringBuffer buf = new StringBuffer(txtExpression.getText());
+								buf.append(dataField);
+								txtExpression.setText(buf.toString());
+							} 
+		    			}
+		    		}
+				}
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
 				}
 			});
+		}
+		
+		if(group1.getText().equals("Filter Builder")){
+			Group group3 = new Group(comp2, SWT.SHADOW_IN);
+		    
+		    GridLayout layout2 = new GridLayout();
+			layout2.numColumns = 2;
+			layout2.makeColumnsEqualWidth = true;
+			GridData data2 = new GridData(GridData.FILL_BOTH);
+			group3.setLayout(layout2);
+			group3.setLayoutData(data2);
 			
-		
-		Composite compRuleSt = new Composite(group1, SWT.NONE);	
-		layout = new GridLayout();
-		layout.numColumns = 1;
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-		compRuleSt.setLayout(layout);
-		compRuleSt.setLayoutData(data);
-		
-		Label lblEclText = new Label(compRuleSt, SWT.NONE);
-		if(this.layoutStyle.equalsIgnoreCase("transform")){
-			lblEclText.setText("ECL Text:");
-		}else{
-			lblEclText.setText("Rule Statement:");
-		}
-		
-		gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
-		lblEclText.setLayoutData(gridData);
-		
-		txtExpression = new Text(compRuleSt, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		gridData = new GridData (GridData.FILL_BOTH);
-		gridData.widthHint = 200;
-		gridData.heightHint = 50;
-		txtExpression.setLayoutData(gridData);
-		txtExpression.setText(filterStatement);
-		
-		Composite compRule = new Composite(group1, SWT.NONE);
-		layout = new GridLayout();
-		layout.numColumns = 1;
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-		compRule.setLayout(layout);
-		compRule.setLayoutData(data);
-		
-		Label lblRules = new Label(compRule, SWT.NONE);
-		lblRules.setText("Rules:");
-		
-		final AutoPopulate ap = new AutoPopulate();
-		
-		int ruleStyle = SWT.FULL_SELECTION | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL;
-	    final Table ruleTable = new Table(compRule, ruleStyle);
-	    
-		GridData gridData1 = new GridData();
-		gridData1.heightHint = 100;
-		gridData1.widthHint = 370;
-		ruleTable.setLayoutData(gridData1);
-		
-		String outlRules[] = null;
-		String outlierRules[] = null;
-		
-		try{
-	        	outlRules = ap.parseOutlierRules(jobs);
-	        }catch (Exception e){
-	            System.out.println("Error Parsing existing outlier rules");
-	            System.out.println(e.toString());
-	            outlRules = new String[]{""};
-	    }
-		
-		String rul = "";
-		for(int i=0; i<outlRules.length; i++){
-			rul = outlRules[i];
-		}
-		outlierRules = rul.split("\\|");
-		if(outlierRules != null && outlierRules.length > 0){
-			for (int i = (outlierRules.length-1) ; i >= 0 ; i--) {
-				TableItem item = new TableItem(ruleTable, SWT.NONE, 0);
-				if(!outlierRules[i].isEmpty()){
-					item.setText(outlierRules[i]);
-				}
-			}
-		}
-		
-		save = new Button(group1, SWT.PUSH);
-		save.setText("Save");
-		save.addSelectionListener(new SelectionAdapter() {  
+			Label lblEclText = new Label(group3, SWT.NONE);
+			lblEclText.setText("Filter Statement:");
 			
-       	 @Override
-       	  public void widgetSelected(SelectionEvent e) {
-       		rulesList.add(txtExpression.getText());
-      		setRulesList(rulesList);
-      		
-      		TableItem item = new TableItem(ruleTable, SWT.NONE, 0);
-      		item.setText(txtExpression.getText());
-      		
-    		/* if(rulesList != null && rulesList.size() > 0){
-    			for (int i = rulesList.size()-1 ; i >= 0 ; i--) {
-    				TableItem item = new TableItem(ruleTable, SWT.NONE, 0);
-    				if(!(rulesList.get(i).toString().isEmpty()) && (!((rulesList.get(i)).equals(item.getText())))){
-    					item.setText("Rule"+(i+1)+": "+rulesList.get(i));
-    				}
-    			}
-    		}*/
-    	   txtExpression.setText(" ");
-       	 }
-       });
-		
-		clearAll = new Button(group1, SWT.PUSH);
-		clearAll.setText("ClearAll");
-		clearAll.addSelectionListener(new SelectionAdapter() {
-       	 @Override
-       	  public void widgetSelected(SelectionEvent e) {
-       		rulesList = getRulesList();
-       		 if (rulesList != null){
-       			 rulesList.clear();
-       			 setRulesList(rulesList);
-       		 }
-       		ruleTable.clearAll();
-       	 }    
-       });
-		
+			gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
+			lblEclText.setLayoutData(gridData);
+			
+			txtExpression = new Text(group3, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+			gridData = new GridData (GridData.FILL_BOTH);
+			gridData.horizontalSpan = 6;
+			gridData.widthHint = 620;
+			txtExpression.setLayoutData(gridData);
+			txtExpression.setText(filterStatement);
+		}
+		else
+		{
+			GridLayout layout2 = new GridLayout();
+			layout2.numColumns = 2;
+			layout2.makeColumnsEqualWidth = true;
+			GridData data2 = new GridData(GridData.FILL_BOTH);
+			group1.setLayout(layout2);
+			group1.setLayoutData(data2);
+			
+			Label lblEclText = new Label(group1, SWT.NONE);
+			lblEclText.setText("Filter Statement:");
+			
+			gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
+			lblEclText.setLayoutData(gridData);
+			
+			txtExpression = new Text(group1, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+			gridData = new GridData (GridData.FILL_BOTH);
+			gridData.horizontalSpan = 6;
+			gridData.widthHint = 680;
+			txtExpression.setLayoutData(gridData);
+			txtExpression.setText(filterStatement);
+		}
 		
 		Composite compButton = new Composite(group1, SWT.NONE);
 		layout = new GridLayout();
 		layout.numColumns = 3;
 		data = new GridData();
-		compButton.setLayout(layout);  
+		compButton.setLayout(layout);
 		compButton.setLayoutData(data);
 		
 		
@@ -857,6 +1123,22 @@ public class MainMapperForOutliers {
 							selectionIndex = i;
 						}
 					}
+					
+					/*if(tableViewer.getTable().getItem(selectionIndex).getChecked()){
+						MapperBO objRecord = mapperRecList.getRecord(selectionIndex);
+						//objRecord.setOpVariable(txtVariableName.getText());
+						objRecord.setOpVariable(cmbVariableName.getText());
+						objRecord.setExpression(txtExpression.getText());
+						mapperRecList.removeRecord(selectionIndex);
+						mapperRecList.addRecordAtIndex(selectionIndex, objRecord);
+						//txtVariableName.setText("");
+						
+						cmbVariableName.setText("");
+						txtExpression.setText("");
+						uncheckAll();
+						tableViewer.refresh();
+						tableViewer.getTable().redraw();
+					}*/
 					
 					selectionIndex = tableViewer.getTable().getSelectionIndex();
 					objRecord = mapperRecList.getRecord(selectionIndex);
@@ -973,5 +1255,35 @@ public class MainMapperForOutliers {
 			btnAddExpression.setVisible(false);
 			btnSaveExpression.setVisible(false);
 		}
+		/*Composite comp3 = new Composite(parentComp, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 3;
+		layout.makeColumnsEqualWidth = true;
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.heightHint = 40;
+		comp3.setLayout(layout);
+		comp3.setLayoutData(data);
+
+		Button btnOk = new Button(comp3, SWT.PUSH | SWT.CENTER);
+		btnOk.setText("Ok");
+		gridData = new GridData (GridData.HORIZONTAL_ALIGN_END);
+		gridData.widthHint = 80;
+		btnOk.setLayoutData(gridData);
+		btnOk.addSelectionListener(new SelectionAdapter() {
+	   		// Add a record and refresh the view
+			public void widgetSelected(SelectionEvent e) {
+				//mapperRecList.addRecord(table.getSelectionIndex());
+			}
+		});
+		
+		Button btnClose = new Button(comp3, SWT.PUSH | SWT.CENTER);
+		btnClose.setText("Cancel");
+		gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gridData.widthHint = 80;
+		btnClose.setLayoutData(gridData);*/
+		
 	}
+	
 }
+
+
