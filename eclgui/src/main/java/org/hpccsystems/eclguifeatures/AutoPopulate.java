@@ -23,9 +23,9 @@ import org.hpccsystems.recordlayout.*;
 
 /**
  *
- * @author ChambeJX
+ * @author ChambeJX    
  */
-public class AutoPopulate {
+public class AutoPopulate {  
     
     private String[] dataSets;
     private int nodeIndex;

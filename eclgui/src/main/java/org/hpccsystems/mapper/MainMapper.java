@@ -1,6 +1,5 @@
 package org.hpccsystems.mapper;
 
-import java.awt.Color;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -8,42 +7,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ComboBoxCellEditor;
-import org.eclipse.jface.viewers.ICellModifier;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TextCellEditor;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -52,7 +31,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
@@ -64,31 +42,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolTip;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.hpccsystems.mapper.filter.PersonCellModifierForFilter;
-import org.hpccsystems.mapper.filter.PersonContentProviderForFilter;
-import org.hpccsystems.mapper.filter.PersonForFilter;
-import org.hpccsystems.mapper.filter.PersonLabelProviderForFilter;
-import org.hpccsystems.recordlayout.IRecordListViewer;
-import org.hpccsystems.recordlayout.RecordBO;
-import org.hpccsystems.recordlayout.RecordLabels;
-import org.hpccsystems.recordlayout.RecordList;
 
 public class MainMapper {
-	public static final String COLUMNS = "Columns";
-	public static final String OPERATORS = "Operators";
-	public static final String VALUE = "Value";
-	public static final String BOOLEAN_OPERATORS = "Boolean_Operators";
-  
-	public static final String[] PROP = { COLUMNS, OPERATORS, VALUE, BOOLEAN_OPERATORS};
-	
-    List people = new ArrayList();	
-	public List getPeople() {
-		return people;
-	}
-
-	public void setPeople(List people) {
-		this.people = people;
-	}
 	private String layoutStyle = "transform";
 	// The table viewer
 	private TableViewer tableViewer;
@@ -98,20 +53,6 @@ public class MainMapper {
 	private Combo cmbVariableName;
 	private Text txtExpression;
 	
-	//Start 
-	
-	public static TableViewer tv;
-	
-	public  static String[] columnList = new String[]{};
-	public static String[] booleanOperatorsList = new String[]{" ","AND","IN","NOT","OR","XOR"};
-	public static String[] operatorsList = new String[]{" ",":=","+", "-", "*", "/", "%", "||", "(", ")", "=", "<>", ">", "<", "<=", ">=","~"};
-	
-	// Set the table column property names
-	
-	private RecordList recordList = new RecordList();
-	
-	//End
-	
 	private Button btnSaveExpression;
 	private Button btnAddExpression;
 	
@@ -119,7 +60,6 @@ public class MainMapper {
 	private String[] operatorList = null;
 	private String[] cmbListValues = null;
 	private Tree treeInputDataSet = null;
-	
 	
 	//Fields to check for EDIT status
 	private String oldexpression = "";
@@ -193,11 +133,7 @@ public class MainMapper {
 	public void setOldFilterStatement(String oldFilterStatement) {
 		this.oldFilterStatement = oldFilterStatement;
 	}
-	
-	public void setRecordList(RecordList rl) {
-		this.recordList = rl;
-	}
-	
+
 	/**
 	 * This method redraws the table.
 	 */
@@ -224,18 +160,18 @@ public class MainMapper {
 	//The Constructor has input as 
 	
 	public MainMapper(Composite parentComp, Map<String, String[]> mapDataSets, String[] arrCmbValues){
-		setupVars(parentComp, mapDataSets, arrCmbValues, "transform", null);
+		setupVars(parentComp, mapDataSets, arrCmbValues, "transform");
 	}
-	public MainMapper(Composite parentComp, Map<String, String[]> mapDataSets, String[] arrCmbValues,String layoutStyle, List peopleLs){
-		setupVars(parentComp, mapDataSets, arrCmbValues, layoutStyle, peopleLs);
+	public MainMapper(Composite parentComp, Map<String, String[]> mapDataSets, String[] arrCmbValues,String layoutStyle){
+		setupVars(parentComp, mapDataSets, arrCmbValues, layoutStyle);
 	}
 	
-	private void setupVars(Composite parentComp, Map<String, String[]> mapDataSets, String[] arrCmbValues,String layoutStyle, List peopleLs){
+	private void setupVars(Composite parentComp, Map<String, String[]> mapDataSets, String[] arrCmbValues,String layoutStyle){
 		this.layoutStyle = layoutStyle;
 		setCmbListValues(arrCmbValues);
 		populateFunctionList();
 		populateOperatorList();
-		this.addChildControls(parentComp, mapDataSets, peopleLs);
+		this.addChildControls(parentComp, mapDataSets);
 		if(this.layoutStyle.equalsIgnoreCase("transform")){
 			int numExpressions = tableViewer.getTable().getItemCount();
 			if(numExpressions>1 && !layoutStyle.equalsIgnoreCase("transform")){
@@ -249,13 +185,13 @@ public class MainMapper {
 	 * Create a new shell, add the widgets, open the shell
 	 * @return the shell that was created	 
 	 */
-	private void addChildControls(Composite parentComp, Map<String, String[]> mapDataSets, List peopleLs) {
+	private void addChildControls(Composite parentComp, Map<String, String[]> mapDataSets) {
 		if(this.layoutStyle.equalsIgnoreCase("transform")){
 			Composite tblComposite = new Composite(parentComp, SWT.NONE);
 			createTable(tblComposite);		// Create the table
 			createButtons(tblComposite);
 		}
-		buildExpressionPanel(parentComp, mapDataSets, peopleLs);	// Add the widgets needed to build a Expression Panel
+		buildExpressionPanel(parentComp, mapDataSets);	// Add the widgets needed to build a Expression Panel
 		
 	}
 	
@@ -539,20 +475,20 @@ public class MainMapper {
 	
 	
 	
-	public void buildExpressionPanel(Composite parentComp, final Map<String, String[]> mapDataSets, List peopleLs){
+	public void buildExpressionPanel(Composite parentComp, Map<String, String[]> mapDataSets){
 		
-		final Composite comp2 = new Composite(parentComp, SWT.NONE);
+		Composite comp2 = new Composite(parentComp, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		GridData data = new GridData(GridData.FILL_BOTH);
-		data.heightHint = 350;
+		data.heightHint = 400;
 		comp2.setLayout(layout);
 		comp2.setLayoutData(data);
 		
 		Group group1 = new Group(comp2, SWT.SHADOW_IN);
 	    
 	    layout = new GridLayout();
-		layout.numColumns = 2;  
+		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth = true;
 		data = new GridData(GridData.FILL_BOTH);
 		group1.setLayout(layout);
@@ -604,7 +540,6 @@ public class MainMapper {
 		layout.numColumns = 3;
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
-		data.heightHint = 128;
 		compTreePanel.setLayout(layout);
 		compTreePanel.setLayoutData(data);
 		
@@ -627,11 +562,11 @@ public class MainMapper {
 		lblOperators.setText("Operators:");
 		gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
 		lblOperators.setLayoutData(gridData);
-		
+
 		treeInputDataSet = new Tree(compTreePanel, SWT.SINGLE | SWT.BORDER);
 		
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
-	    gridData.heightHint = 80;
+	    gridData.heightHint = 100;
 	    treeInputDataSet.setLayoutData(gridData);
 	    boolean includeInput = false;
 	    if(this.layoutStyle.equalsIgnoreCase("transform")){
@@ -670,7 +605,7 @@ public class MainMapper {
 		
 	    final Tree treeFunctions = new Tree(compTreePanel, SWT.SINGLE | SWT.BORDER);
 	    gridData = new GridData(GridData.FILL_HORIZONTAL);
-	    gridData.heightHint = 80;
+	    gridData.heightHint = 100;
 	    treeFunctions.setLayoutData(gridData);
 	    Map<String, List<String>> mapFunctionValues = Utils.getFunctionValueMap();
 	    Utils.fillTreeForFunctions(treeFunctions, mapFunctionValues);
@@ -818,7 +753,7 @@ public class MainMapper {
 	    int style = SWT.FULL_SELECTION | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL;
 	    final Table tblOperators = new Table(compTreePanel, style);
 		gridData = new GridData();
-		gridData.heightHint = 80;
+		gridData.heightHint = 100;
 		gridData.widthHint = 100;
 		tblOperators.setLayoutData(gridData);
 		
@@ -854,251 +789,21 @@ public class MainMapper {
 			}
 		});
 		
-		
-		if(group1.getText().equals("Filter Builder")){
-			
-			ScrolledComposite sc = new ScrolledComposite(comp2, SWT.H_SCROLL | SWT.V_SCROLL );
-			Composite compVar = new Composite(sc, SWT.NONE); 
-			compVar.setLayout(new GridLayout(4, false));
-			sc.setContent(compVar);
-			
-			sc.setMinSize(620, 80);
-			sc.setExpandHorizontal(true);
-		    sc.setExpandVertical(true);
-		    
-		   
-	        tv = new TableViewer(compVar, SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION | SWT.CHECK);
-	        tv.setContentProvider(new PersonContentProviderForFilter());
-	        tv.setLabelProvider(new PersonLabelProviderForFilter());
-	        tv.setInput(people);
-	        
-	        GridData gd = new GridData(GridData.FILL_BOTH);
-	        gd.horizontalSpan = 2;
-	        final Table table = tv.getTable();
-	        table.setLayoutData(gd);
-	        table.setLinesVisible(true);
-	        table.setHeaderVisible(true);
-	        
-	        final TableColumn tc0 = new TableColumn(table, SWT.LEFT);
-		    tc0.setText("Columns");
-		    tc0.setWidth(160);
-		    tc0.setImage(RecordLabels.getImage("unchecked"));
-		    tc0.addListener(SWT.Selection, new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-			        boolean checkBoxFlag = false;
-			        for (int i = 0; i < table.getItemCount(); i++) {
-			            if (table.getItems()[i].getChecked()) { 
-			                checkBoxFlag = true;
-			                
-			            }
-			        }
-			        if (checkBoxFlag) {
-			            for (int m = 0; m < table.getItemCount(); m++) {
-			                table.getItems()[m].setChecked(false);
-			                tc0.setImage(RecordLabels.getImage("unchecked"));				                
-			                table.deselectAll();
-			            }
-			        } else {
-			            for (int m = 0; m < table.getItemCount(); m++) {
-			                table.getItems()[m].setChecked(true);
-			                tc0.setImage(RecordLabels.getImage("checked"));
-			                table.selectAll();
-			            }
-			        } 	
-			        tv.refresh();
-			        table.redraw();
-			    } 
-			});
-	        
-		    TableColumn tc1 = new TableColumn(table, SWT.CENTER);
-		    tc1.setText("Operator");
-		    tc1.setWidth(150);
-		    
-		    TableColumn tc2 = new TableColumn(table, SWT.CENTER);
-		    tc2.setText("Value");
-		    tc2.setWidth(160);
-		    
-		    TableColumn tc3 = new TableColumn(table, SWT.CENTER);
-		    tc3.setText("Boolean Operator");
-		    tc3.setWidth(150);
-		    
-		    List<String> ls = new ArrayList<String>();
- 			
- 			Set setOfKeys = mapDataSets.keySet();
- 			Iterator it = setOfKeys.iterator();
- 			while(it.hasNext()){
- 				String key = (String)it.next();
- 				for(int i=0; i<mapDataSets.get(key).length; i++){
- 					ls.add(mapDataSets.get(key)[i]);
- 				}
- 			}
- 			
- 			Set<String> lsToSet = new LinkedHashSet<String>(ls);
- 			List<String> lsNoDup = new ArrayList<String>(lsToSet);
- 			columnList = new String[lsNoDup.size()];
- 			
- 			for(int i=lsNoDup.size()-1; i>=0; i--){
- 				columnList[i] = lsNoDup.get(i); 
- 			} 
-		    
-		    
-		    CellEditor[] editors = new CellEditor[4];
-		    editors[0] = new ComboBoxCellEditor(table,columnList); 
-		    editors[1] = new ComboBoxCellEditor(table,operatorsList);
-		    editors[2] = new TextCellEditor(table);
-		    editors[3] = new ComboBoxCellEditor(table,booleanOperatorsList);
-		    
-		    // Set the editors, cell modifier, and column properties
-		    tv.setColumnProperties(PROP);
-		    tv.setCellModifier(new PersonCellModifierForFilter(tv));
-		    tv.setCellEditors(editors); 
-		    
-		    people = new ArrayList(peopleLs);
-		    
-		    Composite compVar0 = new Composite(comp2, SWT.NONE);
-	    	layout = new GridLayout();
-			layout.numColumns = 3;
-			data = new GridData(GridData.FILL_HORIZONTAL);
-			data.horizontalSpan = 1;
-			compVar0.setLayout(layout);
-			compVar0.setLayoutData(data); 
-		    
-		    Button add = new Button(compVar0, SWT.PUSH);
-		    add.setText("Add Filter");
-	        gd = new GridData(GridData.FILL);
-	        gd.horizontalSpan = 1;
-	        add.setLayoutData(gd);
-	        
-	        add.addSelectionListener(new SelectionListener (){ 
-	        	@Override
-				public void widgetDefaultSelected(SelectionEvent arg0) {
-					// TODO Auto-generated method stub
-				}
-				@Override
-				public void widgetSelected(SelectionEvent arg0) {
-					
-					tv.setInput(people);
-					int cnt = table.getItemCount();
-					PersonForFilter p = new PersonForFilter();
-			        p.setColumns(Integer.valueOf("0"));		        
-			        p.setOperators(Integer.valueOf("0"));
-			        p.setValue("");
-			        p.setBoolean_operators(Integer.valueOf("0"));
-			        people.add(p);
-			        tv.refresh();		        
-				}
-	        	
-	        });
-	         
-	        Button del = new Button(compVar0, SWT.PUSH);
-		    del.setText("Delete");
-		    gd = new GridData(GridData.FILL);
-	        gd.horizontalSpan = 1;
-	        del.setLayoutData(gd);
-		    del.addSelectionListener(new SelectionAdapter(){
-		    	public void widgetSelected(SelectionEvent event){
-		    		int cnt = 0;
-		    		people = getPeople();
-		    		if(people.size()>0){
-			    		for(int i = 0; i<table.getItemCount(); i++){
-			    			if(table.getItem(i).getChecked()){
-			    				people.remove(Math.abs(cnt - i));
-								cnt++;
-							}
-			    		}
-		    		}
-		    		if(tc0.getImage().equals(RecordLabels.getImage("checked"))){
-		    			tc0.setImage(RecordLabels.getImage("unchecked")); 
-		    		}
-		    		tv.refresh();
-		    		tv.setInput(people);
-		    		
-		    	}
-		    });
-	        
-	        Button select = new Button(compVar0, SWT.PUSH);
-	        select.setText("Select"); 
-	        gd = new GridData(GridData.FILL);
-	        gd.horizontalSpan = 1;
-	        select.setLayoutData(gd);
-	        
-	        select.addSelectionListener(new SelectionListener () {
-				@Override
-				public void widgetSelected(SelectionEvent arg0) {
-					for(int i = 0; i<table.getItemCount(); i++){
-		    			if(table.getItem(i).getChecked()){
-		    				StringBuffer dataField = new StringBuffer("");
-		    				dataField.append("(");
-		    				dataField.append(table.getItem(i).getText(0));
-		    				dataField.append(table.getItem(i).getText(1));
-		    				dataField.append(table.getItem(i).getText(2));
-		    				dataField.append(")");
-		    				dataField.append(table.getItem(i).getText(3));
-		    				
-		    				if(txtExpression.getCaretPosition() > 0) {
-								StringBuffer buf = new StringBuffer(txtExpression.getText());
-								buf.insert(txtExpression.getCaretPosition(), dataField);
-								txtExpression.setText(buf.toString());
-							} else {
-								StringBuffer buf = new StringBuffer(txtExpression.getText());
-								buf.append(dataField);
-								txtExpression.setText(buf.toString());
-							} 
-		    			}
-		    		}
-				}
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e) {
-				}
-			});
+		Label lblEclText = new Label(group1, SWT.NONE);
+		if(this.layoutStyle.equalsIgnoreCase("transform")){
+			lblEclText.setText("ECL Text:");
+		}else{
+			lblEclText.setText("Filter Statement:");
 		}
 		
-		if(group1.getText().equals("Filter Builder")){
-			Group group3 = new Group(comp2, SWT.SHADOW_IN);
-		    
-		    GridLayout layout2 = new GridLayout();
-			layout2.numColumns = 2;
-			layout2.makeColumnsEqualWidth = true;
-			GridData data2 = new GridData(GridData.FILL_BOTH);
-			group3.setLayout(layout2);
-			group3.setLayoutData(data2);
-			
-			Label lblEclText = new Label(group3, SWT.NONE);
-			lblEclText.setText("Filter Statement:");
-			
-			gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
-			lblEclText.setLayoutData(gridData);
-			
-			txtExpression = new Text(group3, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-			gridData = new GridData (GridData.FILL_BOTH);
-			gridData.horizontalSpan = 6;
-			gridData.widthHint = 620;
-			txtExpression.setLayoutData(gridData);
-			txtExpression.setText(filterStatement);
-		}
-		else
-		{
-			GridLayout layout2 = new GridLayout();
-			layout2.numColumns = 2;
-			layout2.makeColumnsEqualWidth = true;
-			GridData data2 = new GridData(GridData.FILL_BOTH);
-			group1.setLayout(layout2);
-			group1.setLayoutData(data2);
-			
-			Label lblEclText = new Label(group1, SWT.NONE);
-			lblEclText.setText("Filter Statement:");
-			
-			gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
-			lblEclText.setLayoutData(gridData);
-			
-			txtExpression = new Text(group1, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-			gridData = new GridData (GridData.FILL_BOTH);
-			gridData.horizontalSpan = 6;
-			gridData.widthHint = 680;
-			txtExpression.setLayoutData(gridData);
-			txtExpression.setText(filterStatement);
-		}
+		gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
+		lblEclText.setLayoutData(gridData);
+		
+		txtExpression = new Text(group1, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		gridData = new GridData (GridData.FILL_BOTH);
+		gridData.horizontalSpan = 2;
+		txtExpression.setLayoutData(gridData);
+		txtExpression.setText(filterStatement);
 		
 		Composite compButton = new Composite(group1, SWT.NONE);
 		layout = new GridLayout();
@@ -1283,7 +988,8 @@ public class MainMapper {
 		btnClose.setLayoutData(gridData);*/
 		
 	}
-	
 }
+
+
 
 

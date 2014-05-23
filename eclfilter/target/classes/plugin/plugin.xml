@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin id="ECLFilter"
-	iconfile="icon.png"
+	iconfile="filter.png"
 	description="Filter"
 	tooltip="ECLFilter" 
 	category="HPCC Systems"

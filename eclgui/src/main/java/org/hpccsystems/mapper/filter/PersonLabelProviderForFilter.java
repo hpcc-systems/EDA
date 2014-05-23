@@ -3,7 +3,7 @@ package org.hpccsystems.mapper.filter;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.hpccsystems.mapper.MainMapper;
+import org.hpccsystems.mapper.MainMapperForFilter;
 
 public class PersonLabelProviderForFilter implements ITableLabelProvider{
 	public PersonLabelProviderForFilter() {
@@ -19,14 +19,14 @@ public class PersonLabelProviderForFilter implements ITableLabelProvider{
 	//  String text = "";
 	  switch(arg1){
 	  case 0:
-	  	  return MainMapper.columnList[values.getColumns().intValue()];//text = values[0];
+	  	  return MainMapperForFilter.columnList[values.getColumns().intValue()];//text = values[0];
 	  	//break;
 	  case 1:
-		  return MainMapper.operatorsList[values.getOperators().intValue()];	 //text = values[1];
+		  return MainMapperForFilter.operatorsList[values.getOperators().intValue()];	 //text = values[1];
 	  case 2:
 		  return values.getValue();	   
 	  case 3:
-		  return MainMapper.booleanOperatorsList[values.getBoolean_operators().intValue()];
+		  return MainMapperForFilter.booleanOperatorsList[values.getBoolean_operators().intValue()];
 	}
 	  return null;
 	}
