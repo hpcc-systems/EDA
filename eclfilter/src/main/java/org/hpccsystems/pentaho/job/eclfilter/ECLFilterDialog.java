@@ -301,9 +301,15 @@ public class ECLFilterDialog extends ECLJobEntryDialog{//extends JobEntryDialog 
 			mapDataSets = ap.parseDefExpressionBuilder(this.jobMeta.getJobCopies());
 		} catch(Exception e) {
 			e.printStackTrace();
+<<<<<<< HEAD
 		}
 		 
 		//Create a Mapper
+=======
+		}  
+		   
+		//Create a Mapper  
+>>>>>>> d067636a2c3b23ca222c3b3ca8764d88788b4070
 		String[] cmbValues = {""};
 		tblMapper = new MainMapper(compForGrp3, mapDataSets, cmbValues, "filter");
 		if (jobEntry.getFilterStatement() != null) {
