@@ -1,0 +1,21 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Scope Resolution Operator</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch02s08.html" title="Field and Attribute Qualification"><link rel="prev" href="bk01ch02s08s02.html" title="Fields in Datasets"><link rel="next" href="bk01ch02s09.html" title="Actions and Attributes"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Scope Resolution Operator</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch02s08s02.html">Prev</a>&nbsp;</td><th width="60%" align="center">Field and Attribute Qualification</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch02s09.html">Next</a></td></tr></table><hr></div><div class="sect2" title="Scope Resolution Operator"><div class="titlepage"><div><div><h3 class="title"><a name="Scope_Resolution_Operator"></a>Scope Resolution Operator</h3></div></div></div><p>Identifiers are looked up in the following order:</p><p>1. The currently active dataset, if any</p><p>2. The current attribute being defined, and any parameters it is based on</p><p>3. Any attributes or parameters of any MODULE or FUNCTION structure that contains the current attribute</p><p>This might mean that the attribute or parameter you want to access isn't picked because it is hidden as in a parameter or private attribute name clashing with the name of a dataset field.</p><p>It would be better to rename the parameter or private attribute so the name clash cannot occur, but sometimes this is not possible.</p><p>You may direct access to a different match by qualifying the field name with the scope resolution operator (the carat (^) character), using it once for each step in the order listed above that you need to skip.</p><p>This example shows the qualification order necessary to reach a specific attribute/parameter:</p><pre class="programlisting">ds := DATASET([1], { INTEGER SomeValue });
+
+INTEGER SomeValue := 10; //local definition
+
+myModule(INTEGER SomeValue) := MODULE
+
+  EXPORT anotherFunction(INTEGER SomeValue) := FUNCTION
+    tbl := TABLE(ds,{SUM(GROUP, someValue), // 1 - DATASET field
+                     SUM(GROUP, ^.someValue), // 84 - FUNCTION parameter
+                     SUM(GROUP, ^^.someValue), // 42 - MODULE parameter
+                     SUM(GROUP, ^^^.someValue), // 10 - local attribute
+                 0});
+     RETURN<a class="indexterm" name="d4e663"></a> tbl;
+   END;
+
+   EXPORT result := anotherFunction(84);
+   END;
+
+OUTPUT(myModule(42).result);</pre><p>In this example there are four instances of the name "SomeValue":</p><p>a field in a DATASET.</p><p>a local attribute</p><p>a parameter to a MODULE structure</p><p>a parameter to a FUNCTION structure</p><p>The code in the TABLE function<a class="indexterm" name="d4e671"></a> shows how to reference each separate instance.</p><p>While this syntax allows exceptions where you need it, creating another attribute with a different name is the preferred solution.</p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch02s08s02.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch02s08.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch02s09.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Fields in Datasets&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Actions and Attributes</td></tr></table></div></body></html>

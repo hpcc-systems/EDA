@@ -1,0 +1,31 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Recordset Filtering</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch02.html" title="ECL Basics"><link rel="prev" href="bk01ch02s04s07.html" title="TypeDef Attributes"><link rel="next" href="bk01ch02s06.html" title="Function Definitions (Parameter Passing)"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Recordset Filtering</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch02s04s07.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>ECL Basics</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch02s06.html">Next</a></td></tr></table><hr></div><div class="sect1" title="Recordset Filtering"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="Recordset_Filtering"></a>Recordset Filtering</h2></div></div></div><p>Filters<a class="indexterm" name="d4e396"></a> are conditional expressions contained within the parentheses following the Dataset or Record Set<a class="indexterm" name="d4e398"></a> name. Multiple filter conditions may be specified by separating each filter expression with a comma (,). All filter conditions separated by commas must be TRUE for a record to be included, which makes the comma an implicit AND operator (see <span class="bold"><strong>Logical Operators</strong></span>).</p><pre class="programlisting">MyRecordSet := Person(per_last_name &gt;= 'T', per_last_name &lt; 'U');
+     // MyRecordSet contains people whose last name begins with &#8220;T&#8221;
+     // the comma is an implicit AND while also functioning as
+     // an expression separator (implicit parentheses)
+
+
+MyRecordSet := Person(per_last_name &gt;= 'T' AND per_last_name &lt; 'U');
+// exactly the same logical expression as above
+
+RateGE7trds := Trades(trd_rate &gt;= '7');
+
+ValidTrades := Trades(NOT rmsTrade.Mortgage AND
+                      NOT rmsTrade.HasNarrative(rmsTrade.snClosed));</pre><p>Boolean Attribute<a class="indexterm" name="d4e403"></a> definitions should be used as recordset filters for maximum flexibility, readability and re-usability instead of hard-coding in a Record Set definition. For example, use:</p><pre class="programlisting">IsRevolv := trades.trd_type = 'R'
+                OR (~ValidType(trades.trd_type)
+                   AND trades.trd_acct[1] IN ['4','5','6']);
+       
+isBank := trades.trd_ind_code IN SetBankIndCodes;
+
+IsBankCard := IsBank AND IsRevolv;
+
+WithinDate(INTEGER1 months) := ValidDate(trades.trd_drpt) AND
+                               trades.trd_drpt_mos &lt;= months;
+
+BankCardTrades := trades(isBankCard AND WithinDate(6));</pre><p>instead of:</p><pre class="programlisting">BankCardTrades := trades(trades.trd_ind_code IN SetBankIndCodes,
+                                         (trades.trd_type = 'R' OR
+                                         (~ValidType(trades.trd_type) AND
+                                         trades.trd_acct[1] IN ['4', '5', '6'])),
+                                         ValidDate(trades.trd_drpt),
+                                         trades.trd_drpt_mos &lt;= 6);</pre><p>Commas used to separate filter conditions in a recordset filter definition act as both an implicit AND operation <span class="underline">and</span> a set of parentheses around the individual filters being separated. This results in a tighter binding than if AND is used instead of a comma without parentheses. For example, the filter expression in this Attribute definition::</p><pre class="programlisting">BankMortTrades := trades(isBankCard OR isMortgage, isOpen);</pre><p>is evaluated as if it were written:</p><pre class="programlisting">(isBankCard OR isMortgage) AND isOpen</pre><p>and not as:</p><pre class="programlisting">isBankCard OR isMortgage AND isOpen</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch02s04s07.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch02.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch02s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">TypeDef Attributes&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Function Definitions (Parameter Passing)</td></tr></table></div></body></html>

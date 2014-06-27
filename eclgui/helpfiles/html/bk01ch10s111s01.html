@@ -1,0 +1,64 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>SOAPCALL Function</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10s111.html" title="SOAPCALL"><link rel="prev" href="bk01ch10s111.html" title="SOAPCALL"><link rel="next" href="bk01ch10s111s02.html" title="SOAPCALL Action"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">SOAPCALL Function</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s111.html">Prev</a>&nbsp;</td><th width="60%" align="center">SOAPCALL</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s111s02.html">Next</a></td></tr></table><hr></div><div class="sect2" title="SOAPCALL Function"><div class="titlepage"><div><div><h3 class="title"><a name="SOAPCALL_Function"></a>SOAPCALL<a class="indexterm" name="d4e12425"></a> Function</h3></div></div></div><p>This form of SOAPCALL<a class="indexterm" name="d4e12428"></a>, the function, may take as input either a single record or a recordset, and both types of input can result in either a single record or a recordset.</p><p>The <span class="emphasis"><em>outstructure </em></span>output record definition may contain an integer field with an XPATH of "_call_latency" to receive the time, in seconds, for the call which generated the row (from creating the socket to receiving the response). The latency is placed in every row the call returned, so if a call took 90 seconds and returned 11 rows then you will see 11 rows with 90 in the _call_latency field.</p><p>Example:</p><pre class="programlisting">OutRec1 := RECORD
+  STRING500 OutData{XPATH('OutData')};
+  UNSIGNED4 Latency{XPATH('_call_latency')};
+END;
+ip := 'http://127.0.0.1:8022/';
+ips := 'https://127.0.0.1:8022/';
+ipspw := 'https://username:password@127.0.0.1:8022/';
+svc := 'MyModule.SomeService';
+
+//1 rec in, 1 rec out
+OneRec1 := SOAPCALL(ips,svc,{STRING500 InData := 'Some Input Data'},OutRec1);
+
+//1 rec in, recordset out
+ManyRec1 := SOAPCALL(ip,svc,{STRING500 InData := 'Some Input Data'},DATASET(OutRec1));
+
+//recordset in, 1 rec out
+OneRec2 := SOAPCALL(InputDataset,ip,svc,{STRING500 InData},OutRec1);
+
+//recordset in, recordset out
+ManyRec2 := SOAPCALL(InputDataset,ipspw,svc,{STRING500 InData := 'Some Input Data'},DATASET(OutRec1));
+
+//TRANSFORM function usage example
+namesRecord := RECORD
+  STRING20 surname;
+  STRING10 forename;
+  INTEGER2 age := 25;
+END;
+ds := DATASET('x',namesRecord,FLAT);
+
+inRecord := RECORD
+  STRING name{xpath('Name')};
+  UNSIGNED6 id{XPATH('ADL')};
+END;
+outRecord := RECORD
+  STRING name{xpath('Name')};
+  UNSIGNED6 id{XPATH('ADL')};
+  REAL8 score;
+END;
+inRecord t(namesRecord l) := TRANSFORM
+  SELF.name := l.surname;
+  SELF.id := l.age;
+END;
+outRecord genDefault1() := TRANSFORM
+  SELF.name := FAILMESSAGE;
+  SELF.id := FAILCODE;
+  SELF.score := (REAL8)FAILMESSAGE('ip');
+END;
+outRecord genDefault2(namesRecord l) := TRANSFORM
+  SELF.name := l.surname;
+  SELF.id := l.age;
+  SELF.score := 0;
+END;
+
+ip := 'http://127.0.0.1:8022/';
+svc:= 'MyModule.SomeService';
+OUTPUT(SOAPCALL(ip, svc,{ STRING20 surname := 'Halligan',STRING20 forename := 'Kevin';},
+DATASET(outRecord), ONFAIL(genDefault1())));
+
+OUTPUT(SOAPCALL(ds, ip, svc, inRecord, t(LEFT),DATASET(outRecord), ONFAIL(genDefault2(LEFT))));
+
+OUTPUT(SOAPCALL(ds, ip, svc, inRecord, t(LEFT),DATASET(outRecord), ONFAIL(SKIP)));
+</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s111.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10s111.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s111s02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">SOAPCALL&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;SOAPCALL Action</td></tr></table></div></body></html>

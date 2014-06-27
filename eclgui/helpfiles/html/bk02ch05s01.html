@@ -1,0 +1,29 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>SetColumnMapping</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk02ch05.html" title="File Browsing"><link rel="prev" href="bk02ch05.html" title="File Browsing"><link rel="next" href="bk02ch05s02.html" title="GetColumnMapping"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center"><span class="bold"><strong>SetColumnMapping</strong></span></th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk02ch05.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="emphasis"><em>File Browsing </em></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk02ch05s02.html">Next</a></td></tr></table><hr></div><div class="sect1" title="SetColumnMapping"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="SetColumnMapping"></a><span class="bold"><strong>SetColumnMapping</strong></span></h2></div></div></div><p><span class="bold"><strong>STD.File.SetColumnMapping<a class="indexterm" name="d4e17435"></a><a class="indexterm" name="d4e17437"></a><a class="indexterm" name="d4e17439"></a>(</strong></span> <span class="emphasis"><em> file, mapping </em></span> <span class="bold"><strong>);</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="13%"><col width="87%"></colgroup><tbody><tr><td><span class="emphasis"><em>file</em></span></td><td>A null-terminated string containing the logical filename.</td></tr><tr><td><span class="emphasis"><em>mapping</em></span></td><td>A null-terminated string containing a comma-delimited list of field mappings.</td></tr></tbody></table></div><p>The <span class="bold"><strong>SetColumnMapping </strong></span>function defines how the data in the fields of the <span class="emphasis"><em>file</em></span> mist be transformed between the actual data storage format and the input format used to query that data.</p><p>The format for each field in the <span class="emphasis"><em>mapping</em></span> list is:</p><p><span class="bold"><strong>&lt;field&gt;{set(&lt;transform&gt;( args),...),get(&lt;transform&gt;,...),displayname(&lt;name&gt;)}</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="13%"><col width="87%"></colgroup><tbody><tr><td><span class="emphasis"><em>&lt;field&gt;</em></span></td><td>The name of the field in the file.</td></tr><tr><td><span class="bold"><strong>set</strong></span></td><td>Optional. Specifies the transforms applied to the values supplied by the user to convert them to values in the file.</td></tr><tr><td><span class="emphasis"><em>&lt;transform&gt;</em></span></td><td>Optional. The name of a function to apply to the value. This is typically the name of a plugin function. The value being converted is always provided as the first parameter to the function, but extra parameters can be specified in brackets after the transform name (similar to SALT hygiene).</td></tr><tr><td><span class="bold"><strong>get</strong></span></td><td>Optional. Specifies the transforms applied to the values in the file to convert them to the formatted values as they are understood by the user.</td></tr><tr><td><span class="bold"><strong>displayname</strong></span></td><td>Optional. Allows a different <span class="emphasis"><em>name</em></span> to be associated with the field than the user would naturally understand.</td></tr></tbody></table></div><p>Note that you may mix unicode and string functions, as the system automatically converts the parameters to the appropriate types expected for the functions.</p><p>Example:</p><pre class="programlisting">// A file where the firstname(string) and lastname(unicode) are
+//always upper-cased:
+// There is no need for a displayname since it isn't really a
+// different field as far as the user is concerned, and there is
+// obviously no get transformations.
+ firstname{set(stringlib.StringToUpperCase)},
+                surname{set(unicodelib.UnicodeToUpperCase)}
+// A name translated using a phonetic key
+// it is worth specifying a display name here, because it will make
+// more sense to the user, and the user may want to enter either the
+// translated or untranslated names.
+ dph_lname{set(metaphonelib.DMetaPhone1),
+      displayname(lname)}
+// A file where a name is converted to a token using the namelib
+// functions.  (I don't think we have an example of this)
+// (one of the few situations where a get() attribute is useful)
+ fnametoken{set(namelib.nameToToken),
+       get(namelib.tokenToName),
+       displayname(fname)}
+// upper case, and only include digits and alphabetic.
+ searchname{set(stringlib.StringToUpperCase,
+      stringlib.StringFilter(
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'))}
+// A file with a field that that needs to remove accents and then
+// uppercase:
+ lastname{set(unicodeLIb.CleanAccents,stringLib.StringToUpperCase)}
+</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk02ch05.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk02ch05.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk02ch05s02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"><span class="emphasis"><em>File Browsing </em></span>&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;<span class="bold"><strong>GetColumnMapping</strong></span></td></tr></table></div></body></html>

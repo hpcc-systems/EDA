@@ -1,0 +1,30 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>ROLLUP Form 2</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10s100.html" title="ROLLUP"><link rel="prev" href="bk01ch10s100s02.html" title="ROLLUP Form 1"><link rel="next" href="bk01ch10s100s04.html" title="ROLLUP Form 3"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">ROLLUP Form 2</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s100s02.html">Prev</a>&nbsp;</td><th width="60%" align="center">ROLLUP</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s100s04.html">Next</a></td></tr></table><hr></div><div class="sect2" title="ROLLUP Form 2"><div class="titlepage"><div><div><h3 class="title"><a name="ROLLUP_Form_2"></a>ROLLUP Form 2</h3></div></div></div><p>Form 2 processes through all records in the <span class="emphasis"><em>recordset </em></span>performing the <span class="emphasis"><em>transform</em></span> function only on those pairs of adjacent records where all the expressions in the <span class="emphasis"><em>fieldlist</em></span> match (indicating duplicate records) and passing through all other records to the output. This form allows you to use the same kind of EXCEPT field exclusion logic available to DEDUP.</p><p>Example:</p><pre class="programlisting">rec := {STRING1 str1,STRING1 str2,STRING1 str3};
+ds := DATASET([{'a', 'b', 'c'},{'a', 'b', 'c'},
+               {'a', 'c', 'c'},{'a', 'c', 'd'}], rec);
+rec tr(rec L, rec R) := TRANSFORM
+  SELF := L;
+END;
+Cat(STRING1 L, STRING1 R) := L + R;
+r1 := ROLLUP(ds, tr(LEFT, RIGHT), str1, str2);
+  //equivalent to LEFT.str1 = RIGHT.str1 AND
+  // LEFT.str2 = RIGHT.str2
+r2 := ROLLUP(ds, tr(LEFT, RIGHT), WHOLE RECORD, EXCEPT str3);
+  //equivalent to LEFT.str1 = RIGHT.str1 AND
+  // LEFT.str2 = RIGHT.str2
+r3 := ROLLUP(ds, tr(LEFT, RIGHT), RECORD, EXCEPT str3); 
+  //equivalent to LEFT.str1 = RIGHT.str1 AND
+  // LEFT.str2 = RIGHT.str2
+r4 := ROLLUP(ds, tr(LEFT, RIGHT), RECORD, EXCEPT str2,str3);
+  //equivalent to LEFT.str1 = RIGHT.str1
+r5 := ROLLUP(ds, tr(LEFT, RIGHT), RECORD);
+  //equivalent to LEFT.str1 = RIGHT.str1 AND
+  // LEFT.str2 = RIGHT.str2 AND
+  // LEFT.str3 = RIGHT.str3
+r6 := ROLLUP(ds, tr(LEFT, RIGHT), str1 + str2);
+  //equivalent to LEFT.str1+LEFT.str2 = RIGHT.str1+RIGHT.str2
+r7 := ROLLUP(ds, tr(LEFT, RIGHT), Cat(str1,str2));
+  //equivalent to Cat(LEFT.str1,LEFT.str2) =
+  // Cat(RIGHT.str1,RIGHT.str2 )
+</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s100s02.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10s100.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s100s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">ROLLUP Form 1&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;ROLLUP Form 3</td></tr></table></div></body></html>

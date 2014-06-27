@@ -1,0 +1,53 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Passing Function Parameters</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch02s06.html" title="Function Definitions (Parameter Passing)"><link rel="prev" href="bk01ch02s06s04.html" title="Passing Typeless Parameters"><link rel="next" href="bk01ch02s06s06.html" title="Passing NAMED Parameters"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Passing Function Parameters</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch02s06s04.html">Prev</a>&nbsp;</td><th width="60%" align="center">Function Definitions (Parameter Passing)</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch02s06s06.html">Next</a></td></tr></table><hr></div><div class="sect2" title="Passing Function Parameters"><div class="titlepage"><div><div><h3 class="title"><a name="Passing_Function_Parameters"></a>Passing Function Parameters</h3></div></div></div><p>Passing a Function as a parameter may be accomplished using either of the following syntax options as the <span class="emphasis"><em>ValueType</em></span> for the parameter:</p><p><span class="emphasis"><em>FunctionName</em></span>(<span class="bold"><strong></strong></span><span class="emphasis"><em>parameters</em></span><span class="bold"><strong></strong></span>)<span class="emphasis"><em></em></span></p><p><span class="emphasis"><em>PrototypeName</em></span></p><div class="informaltable"><table border="0"><colgroup><col width="21%" align="left"><col width="79%"></colgroup><tbody><tr><td align="left"><span class="emphasis"><em>FunctionName</em></span></td><td>The name of a function, the type of which may be passed as a parameter.</td></tr><tr><td align="left"><span class="emphasis"><em>parameters</em></span></td><td>The parameter definitions for the <span class="emphasis"><em>FunctionName</em></span> parameter.</td></tr><tr><td align="left"><span class="emphasis"><em>PrototypeName</em></span></td><td>The name of a previously defined function to use as the type of function that may be passed as a parameter.</td></tr></tbody></table></div><p>The following code provides examples of both methods:</p><pre class="programlisting">//a Function prototype:
+INTEGER actionPrototype(INTEGER v1, INTEGER v2) := 0;
+
+INTEGER aveValues(INTEGER v1, INTEGER v2) := (v1 + v2) DIV 2;
+INTEGER addValues(INTEGER v1, INTEGER v2) := v1 + v2;
+INTEGER multiValues(INTEGER v1, INTEGER v2) := v1 * v2;
+
+//a Function prototype using a function prototype:
+INTEGER applyPrototype(INTEGER v1, actionPrototype actionFunc) := 0;
+
+//using the Function prototype and a default value:
+INTEGER applyValue2(INTEGER v1,
+                    actionPrototype actionFunc = aveValues) :=
+                    actionFunc(v1, v1+1)*2;
+                       
+//Defining the Function parameter inline, witha default value:
+INTEGER applyValue4(INTEGER v1,
+                    INTEGER actionFunc(INTEGER v1,INTEGER v2) = aveValues)
+               := actionFunc(v1, v1+1)*4; 
+INTEGER doApplyValue(INTEGER v1,
+                     INTEGER actionFunc(INTEGER v1, INTEGER v2))
+        := applyValue2(v1+1, actionFunc);
+       
+//producing simple results:
+OUTPUT(applyValue2(1));                           // 2
+OUTPUT(applyValue2(2));                           // 4
+OUTPUT(applyValue2(1, addValues));                // 6
+OUTPUT(applyValue2(2, addValues));                // 10
+OUTPUT(applyValue2(1, multiValues));              // 4
+OUTPUT(applyValue2(2, multiValues));              // 12
+OUTPUT(doApplyValue(1, multiValues));             // 12
+OUTPUT(doApplyValue(2, multiValues));             // 24
+
+
+          
+//An attribute taking function parameters which themselves
+//have parameters that are functions...
+
+STRING doMany(INTEGER v1,
+              INTEGER firstAction(INTEGER v1,
+                                  INTEGER actionFunc(INTEGER v1,INTEGER v2)),
+              INTEGER secondAction(INTEGER v1,
+                                   INTEGER actionFunc(INTEGER v1,INTEGER v2)),
+              INTEGER actionFunc(INTEGER v1,INTEGER v2)) 
+       := (STRING)firstAction(v1, actionFunc) + ':' + (STRING)secondaction(v1, actionFunc);
+
+OUTPUT(doMany(1, applyValue2, applyValue4, addValues));
+     // produces "6:12"
+     
+OUTPUT(doMany(2, applyValue4, applyValue2,multiValues));
+     // produces "24:12" </pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch02s06s04.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch02s06.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch02s06s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Passing Typeless Parameters&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Passing NAMED Parameters</td></tr></table></div></body></html>

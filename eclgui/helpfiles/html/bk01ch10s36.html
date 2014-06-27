@@ -1,0 +1,33 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>EVENT</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10.html" title="Built-in Functions and Actions"><link rel="prev" href="bk01ch10s35s03.html" title="Accessing Field-level Data in a Specific Record"><link rel="next" href="bk01ch10s37.html" title="EVENTNAME"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">EVENT</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s35s03.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Built-in Functions and Actions</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s37.html">Next</a></td></tr></table><hr></div><div class="sect1" title="EVENT"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="EVENT"></a>EVENT<a class="indexterm" name="d4e6993"></a></h2></div></div></div><p><span class="bold"><strong>EVENT<a class="indexterm" name="d4e6997"></a>(</strong></span><span class="emphasis"><em> event , subtype </em></span><span class="bold"><strong> )</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="13%"><col width="87%"></colgroup><tbody><tr><td><span class="emphasis"><em>event</em></span></td><td>A case-insensitive string constant naming the event to trap.</td></tr><tr><td><span class="emphasis"><em>subtype</em></span></td><td>A case-insensitive string constant naming the specific type of event to trap. This may contain * and ? to wildcard-match the event's sub-type.</td></tr><tr><td>Return:</td><td>EVENT returns a single event.</td></tr></tbody></table></div><p>The <span class="bold"><strong>EVENT</strong></span> function returns a trigger event, which may be used within the WHEN workflow service<a class="indexterm" name="d4e7020"></a> or the WAIT and NOTIFY actions.</p><p>Example:</p><pre class="programlisting">EventName := 'MyFileEvent';
+FileName  := 'test::myfile';
+
+IF (FileServices.FileExists(FileName),
+ FileServices.DeleteLogicalFile(FileName));
+ //deletes the file if it already exists
+
+FileServices.MonitorLogicalFileName(EventName,FileName);
+ //sets up monitoring and the event name
+ //to fire when the file is found
+
+OUTPUT('File Created') : WHEN(EVENT(EventName,'*'),COUNT(1));
+ //this OUTPUT occurs only after the event has fired
+
+afile := DATASET([{ 'A', '0'}], {STRING10 key,STRING10 val});
+OUTPUT(afile,,FileName);
+ //this creates a file that the DFU file monitor will find
+ //when it periodically polls
+
+//**********************************
+EXPORT events := MODULE
+  EXPORT dailyAtMidnight := CRON('0 0 * * *');
+  EXPORT dailyAt( INTEGER hour,
+   INTEGER minute=0) :=
+  EVENT('CRON',
+   (STRING)minute + ' ' + (STRING)hour + ' * * *');
+  EXPORT dailyAtMidday := dailyAt(12, 0);
+END;
+BUILD(teenagers): WHEN(events.dailyAtMidnight);
+BUILD(oldies)  : WHEN(events.dailyAt(6));
+</pre><p>See Also: <a class="link" href="bk01ch10s37.html" title="EVENTNAME">EVENTNAME</a>, <a class="link" href="bk01ch10s38.html" title="EVENTEXTRA">EVENTEXTRA</a>, <a class="link" href="bk01ch10s25.html" title="CRON">CRON</a>, <a class="link" href="bk01ch11s13.html" title="WHEN">WHEN</a>, <a class="link" href="bk01ch10s130.html" title="WAIT">WAIT</a>, <a class="link" href="bk01ch10s81.html" title="NOTIFY">NOTIFY</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s35s03.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s37.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Accessing Field-level Data in a Specific Record&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;EVENTNAME</td></tr></table></div></body></html>

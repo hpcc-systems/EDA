@@ -1,0 +1,24 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>ROW Form 2</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10s103.html" title="ROW"><link rel="prev" href="bk01ch10s103s01.html" title="ROW Form 1"><link rel="next" href="bk01ch10s103s03.html" title="ROW Form 3"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">ROW Form 2</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s103s01.html">Prev</a>&nbsp;</td><th width="60%" align="center">ROW</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s103s03.html">Next</a></td></tr></table><hr></div><div class="sect2" title="ROW Form 2"><div class="titlepage"><div><div><h3 class="title"><a name="ROW_Form_2"></a>ROW Form 2</h3></div></div></div><p>The second form constructs a record from the <span class="emphasis"><em>row </em></span>passed to it using the <span class="emphasis"><em>resultrec<a class="indexterm" name="d4e11963"></a> </em></span>the same way the TABLE function operates. This is typically used within a TRANSFORM structure as the expression defining the output for a child dataset field.</p><p>Example:</p><pre class="programlisting">AkaRec := {STRING20 forename,STRING20 surname};
+outputRec := RECORD
+UNSIGNED id;
+DATASET(AkaRec) children;
+END;
+inputRec := {UNSIGNED id,STRING20 forename,STRING20 surname};
+inPeople := DATASET([{1,'Kevin','Halligan'},{1,'Kevin','Hall'},
+                     {1,'Gawain',''},{2,'Liz','Hall'},
+                     {2,'Eliza','Hall'},{2,'Beth','Took'}],inputRec);
+outputRec makeFatRecord(inputRec L) := TRANSFORM
+  SELF.id := l.id;
+  SELF.children := ROW(L, AkaRec); //using Form 2 here
+END;
+fatIn := PROJECT(inPeople, makeFatRecord(LEFT));
+outputRec makeChildren(outputRec L, outputRec R) := TRANSFORM
+  SELF.id := L.id;
+  SELF.children := L.children + 
+                   ROW({R.children[1].forename,R.children[1].surname},AkaRec);
+
+END;
+r := ROLLUP(fatIn, id, makeChildren(LEFT, RIGHT));
+</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s103s01.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10s103.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s103s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">ROW Form 1&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;ROW Form 3</td></tr></table></div></body></html>

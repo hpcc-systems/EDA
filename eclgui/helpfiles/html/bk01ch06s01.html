@@ -1,0 +1,31 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>TYPE Structure</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch06.html" title="Alien Data Types"><link rel="prev" href="bk01ch06.html" title="Alien Data Types"><link rel="next" href="bk01ch06s02.html" title="TYPE Structure Special Functions"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">TYPE Structure</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch06.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Alien Data Types</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch06s02.html">Next</a></td></tr></table><hr></div><div class="sect1" title="TYPE Structure"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="TYPE_Structure"></a>TYPE Structure</h2></div></div></div><p><span class="emphasis"><em>TypeName</em></span><span class="bold"><strong> := TYPE<a class="indexterm" name="d4e3043"></a></strong></span><span class="bold"><strong> </strong></span><span class="emphasis"><em></em></span></p><p><span class="emphasis"><em>functions;</em></span></p><p><span class="emphasis"><em></em></span><span class="bold"><strong>END;</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="21%" align="left"><col width="79%"></colgroup><tbody><tr><td align="left"><span class="emphasis"><em>TypeName</em></span></td><td>The name of the TYPE structure<a class="indexterm" name="d4e3062"></a>.</td></tr><tr><td align="left"><span class="emphasis"><em>functions</em></span></td><td>Function Attribute definitions. There are usually multiple <span class="emphasis"><em>functions</em></span>.</td></tr></tbody></table></div><p>The <span class="bold"><strong>TYPE </strong></span>structure defines a series of <span class="emphasis"><em>functions</em></span> that are implicitly invoked when the <span class="emphasis"><em>TypeName</em></span> is subsequently used in a RECORD structure<a class="indexterm" name="d4e3073"></a> as a value type. Parameters may be passed to the TYPE structure Attribute which may then be used in any of the <span class="emphasis"><em>function</em></span> definitions. To pass the parameters, simply append them to the <span class="emphasis"><em>TypeName</em></span> used in the RECORD structure to define the value type for the field.</p><p>A TYPE structure may only contain function definitions from the the list of available Special Functions (see <span class="bold"><strong>TYPE Structure Special Functions</strong></span>).</p><p>Example:</p><pre class="programlisting">STRING4 Rev(STRING4 S) := S[4] + S[3] + S[2] + S[1];
+EXPORT ReverseString4 := TYPE
+        EXPORT STRING4 LOAD(STRING4 S) := Rev(S);
+        EXPORT STRING4 STORE(STRING4 S) := Rev(S);
+END;
+NeedC(INTEGER len) := TYPE
+        EXPORT STRING LOAD(STRING S) := 'C' + S[1..len];
+        EXPORT STRING STORE(STRING S) := S[2..len+1];
+        EXPORT INTEGER PHYSICALLENGTH(STRING S) := len;
+END;
+ScaleInt := TYPE
+        EXPORT REAL LOAD(INTEGER4 I ) := I / 100;
+        EXPORT INTEGER4 STORE(REAL R) := ROUND(R * 100);
+END;
+R := RECORD
+     ReverseString4 F1;
+        // Defines a field size of 4 bytes. When R.F1 is used, 
+        // the ReverseString4.Load function is called passing 
+        // in those four bytes and returning a string result.
+     NeedC(5) F2;
+
+        // Defines a field size of 5 bytes. When R.F2 is used, 
+        // those 5 bytes are passed in to NeedC.Load (along with 
+        // the length 5) and a 6 byte string is returned.
+     ScaleInt F3;
+
+        // Defines a field size of 4. When R.F3 is used, the 
+        //  ScaleInt.Load function returns the number / 100.
+END;</pre><p>See Also: <a class="link" href="bk01ch05s01.html" title="RECORD Structure">RECORD Structure</a>, <a class="link" href="bk01ch06s02.html" title="TYPE Structure Special Functions">TYPE Structure Special Functions</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch06.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch06.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch06s02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"><span class="bold"><strong>Alien Data Types</strong></span>&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;TYPE Structure Special Functions</td></tr></table></div></body></html>

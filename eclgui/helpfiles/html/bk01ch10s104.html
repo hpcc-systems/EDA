@@ -1,0 +1,38 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>ROWDIFF</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10.html" title="Built-in Functions and Actions"><link rel="prev" href="bk01ch10s103s03.html" title="ROW Form 3"><link rel="next" href="bk01ch10s105.html" title="SAMPLE"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">ROWDIFF</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s103s03.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Built-in Functions and Actions</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s105.html">Next</a></td></tr></table><hr></div><div class="sect1" title="ROWDIFF"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="ROWDIER"></a>ROWDIFF</h2></div></div></div><p><span class="bold"><strong>ROWDIFF<a class="indexterm" name="d4e11982"></a><a class="indexterm" name="d4e11984"></a>(</strong></span><span class="emphasis"><em>left, right </em></span><span class="bold"><strong>[, COUNT<a class="indexterm" name="d4e11988"></a>] )</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="13%"><col width="87%"></colgroup><tbody><tr><td><span class="emphasis"><em>left</em></span></td><td>The left record, or a nested record structure.</td></tr><tr><td><span class="emphasis"><em>right</em></span></td><td>The right record, or a nested record structure.</td></tr><tr><td><span class="bold"><strong>COUNT</strong></span></td><td>Optional. Specifies returning a comma delimited set of zeros and ones (0,1) indicating which fields matched (0) and which did not (1). If omitted, a comma delimited set of the non-matching field names.</td></tr><tr><td>Return:</td><td>ROWDIFF returns a single value.</td></tr></tbody></table></div><p>The <span class="bold"><strong>ROWDIFF </strong></span>function is valid for use only within a TRANSFORM structure for a JOIN operation and is used as the expression defining the output for a string field. Fields are matched by name and only like-named fields are included in the output.</p><p>Example:</p><pre class="programlisting">FullName := RECORD
+  STRING30 forename;
+  STRING20 surname;
+  IFBLOCK(SELF.surname &lt;&gt; 'Windsor')
+    STRING20 middle;
+  END;
+END;
+in1rec := {UNSIGNED1 id,FullName name,UNSIGNED1 age,STRING5 title};
+in2rec := {UNSIGNED1 id,FullName name,REAL4 age,BOOLEAN dead};
+in1 := DATASET([{1,'Kevin','Halligan','',33,'Mr'},
+                {2,'Liz','Halligan','',33,'Dr'},
+                {3,'Elizabeth','Windsor',99,'Queen'}], in1rec);
+in2 := DATASET([{1,'Kevin','Halligan','',33,false},
+                {2,'Liz','','Jean',33,false},
+                {3,'Elizabeth','Windsor',99.1,false}], in2rec);
+outrec := RECORD
+  UNSIGNED1 id;
+  STRING35 diff1;
+  STRING35 diff2;
+  STRING35 diff3;
+  STRING35 diff4;
+END;
+outrec t1(in1 L, in2 R) := TRANSFORM
+  SELF.id := L.id;
+  SELF.diff1 := ROWDIFF(L,R);
+  SELF.diff2 := ROWDIFF(L.name, R.name);
+  SELF.diff3 := ROWDIFF(L, R, COUNT);
+  SELF.diff4 := ROWDIFF(L.name, R.name, COUNT);
+END;
+OUTPUT(JOIN(in1, in2, LEFT.id = RIGHT.id, t1(LEFT,RIGHT)));
+// The result set from this code is:
+//id diff1                    diff2          diff3      diff4
+//1                                          0,0,0,0,0  0,0,0
+//2  name.surname,name.middle surname,middle 0,0,1,1,0  0,1,1
+//3  age                                     0,0,0,0,1  0,0,0
+</pre><p>See Also: <a class="link" href="bk01ch09s07.html" title="TRANSFORM Structure">TRANSFORM Structure</a>, <a class="link" href="bk01ch10s60.html" title="JOIN">JOIN</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s103s03.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s105.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">ROW Form 3&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;SAMPLE</td></tr></table></div></body></html>

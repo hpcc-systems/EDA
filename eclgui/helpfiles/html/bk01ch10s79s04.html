@@ -1,0 +1,67 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>TRANSFORM Function Requirements for Form 2</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10s79.html" title="NORMALIZE"><link rel="prev" href="bk01ch10s79s03.html" title="NORMALIZE Form 2"><link rel="next" href="bk01ch10s80.html" title="NOTHOR"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">TRANSFORM Function Requirements for Form 2</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s79s03.html">Prev</a>&nbsp;</td><th width="60%" align="center">NORMALIZE</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s80.html">Next</a></td></tr></table><hr></div><div class="sect2" title="TRANSFORM Function Requirements for Form 2"><div class="titlepage"><div><div><h3 class="title"><a name="TRANSFORM_Function_Requirements_for_Form_2"></a>TRANSFORM Function Requirements for Form 2</h3></div></div></div><p>The <span class="emphasis"><em>transform</em></span> function must take at least one parameter: a RIGHT record of the same format as the <span class="emphasis"><em>childdataset</em></span>. The resulting record set format does not need to be the same as the input.</p><p>Example:</p><pre class="programlisting">//Form 1 example
+NamesRec := RECORD
+  
+UNSIGNED1 numRows;
+STRING20 thename;
+STRING20 addr1 := '';
+STRING20 addr2 := '';
+STRING20 addr3 := '';
+STRING20 addr4 := '';
+END;
+NamesTable := DATASET([ {1,'Kevin','10 Malt Lane'},
+{2,'Liz','10 Malt Lane','3 The cottages'},
+{0,'Mr Nobody'},
+{4,'Anywhere','Here','There','Near','Far'}],
+NamesRec);
+
+OutRec := RECORD
+UNSIGNED1 numRows;
+STRING20 thename;
+STRING20 addr;
+END;
+
+OutRec NormIt(NamesRec L, INTEGER C) := TRANSFORM
+SELF := L;
+SELF.addr := CHOOSE(C, L.addr1, L.addr2, L.addr3,
+             L.addr4);
+END;
+  
+NormAddrs :=
+            NORMALIZE(namesTable,LEFT.numRows,NormIt(LEFT,COUNTER<a class="indexterm" name="d4e9731"></a>));
+/* the result is: numRows thename
+            addr
+1 Kevin 10 Malt Lane
+2 Liz 10 Malt Lane
+2 Liz 3 The cottages
+4 Anywhere Here
+4 Anywhere There
+4 Anywhere Near
+4 Anywhere Far */
+//************************
+//Form 2 example
+ChildRec := RECORD
+INTEGER1 NameID;
+STRING20 Addr;
+END;
+DenormedRec := RECORD
+INTEGER1 NameID;
+STRING20 Name;
+DATASET(ChildRec) Children;
+END;
+
+ds := DATASET([ {1,'Kevin',[ {1,'10 Malt Lane'}]},
+{2,'Liz', [ {2,'10 Malt Lane'},
+{2,'3 The cottages'}]},
+{3,'Mr Nobody', []},
+{4,'Anywhere',[ {4,'Far'},
+{4,'Here'},
+{4,'There'},
+{4,'Near'}]} ],
+DenormedRec);
+ChildRec NewChildren(ChildRec R) := TRANSFORM
+SELF := R;
+END;
+NewChilds := NORMALIZE(ds,LEFT.Children,NewChildren(RIGHT));
+</pre><p>See Also: <a class="link" href="bk01ch09s07.html" title="TRANSFORM Structure">TRANSFORM Structure</a>, <a class="link" href="bk01ch05s01.html" title="RECORD Structure">RECORD Structure</a>, <a class="link" href="bk01ch10s28.html" title="DENORMALIZE">DENORMALIZE</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s79s03.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10s79.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s80.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">NORMALIZE Form 2&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;NOTHOR</td></tr></table></div></body></html>

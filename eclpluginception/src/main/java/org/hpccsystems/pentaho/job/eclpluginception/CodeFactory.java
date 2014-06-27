@@ -517,7 +517,7 @@ public class CodeFactory {
             		S = S.replaceAll("<<<","\"+");
             		S = S.replaceAll(">>>","+\"");
             	}
-            	JB.directStatement("ecl += \""+S.trim()+";\\n\";");
+            	JB.directStatement("ecl += \""+S.trim()+"\\n\";");
             }
             JB.directStatement("result.setResult(true);");
             jE = JExpr.direct("new RowMetaAndData()");

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin id="ECLNewReportBuilder"
+	iconfile="newreportbuilder.png"
+	description="NewReportBuilder"
+	tooltip="NewReportBuilder" 
+	category="HPCC EDA"
+	classname="org.hpccsystems.pentaho.job.eclnewreportbuilder.ECLNewReportBuilder">
+            
+    <libraries>
+	  <library name="../../hpcc-common/javaecl-0.1.0.jar"/>
+        <library name="../../hpcc-common/eclgui.jar"/>
+        <library name="eclnewreportbuilder.jar"/>
+    </libraries>            
+</plugin>

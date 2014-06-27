@@ -28,8 +28,12 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
@@ -76,7 +80,13 @@ public class ECLTabulateBucketsDialog extends ECLJobEntryDialog{
     
     
 	private SelectionAdapter lsDef;
-
+	
+	public Button chkBox;
+    public static Text outputName;
+    public static Label label;
+    private String persist;
+    private Composite composite;
+    private String defJobName;
 	
     public ECLTabulateBucketsDialog(Shell parent, JobEntryInterface jobEntryInt,
 			Repository rep, JobMeta jobMeta) {
@@ -99,7 +109,8 @@ public class ECLTabulateBucketsDialog extends ECLJobEntryDialog{
         final AutoPopulate ap = new AutoPopulate();
         try{
         	
-            datasets = ap.parseDatasets(this.jobMeta.getJobCopies());
+            datasets = ap.parseDatasetsRecordsets(this.jobMeta.getJobCopies());
+            defJobName = ap.getGlobalVariable(this.jobMeta.getJobCopies(), "jobName");
 
         }catch (Exception e){
             System.out.println("Error Parsing existing Datasets");
@@ -154,7 +165,7 @@ public class ECLTabulateBucketsDialog extends ECLJobEntryDialog{
         generalGroupFormat.right = new FormAttachment(100, 0);
         generalGroup.setLayoutData(generalGroupFormat);
 		
-		jobEntryName = buildText("Job Name :", null, lsMod, middle-15, margin, generalGroup);
+		jobEntryName = buildText("Job Entry Name :", null, lsMod, middle-10, margin, generalGroup);
 		
 		//All other contols
         //Dataset Declaration
@@ -164,14 +175,14 @@ public class ECLTabulateBucketsDialog extends ECLJobEntryDialog{
         datasetGroup.setLayout(groupLayout);
         FormData datasetGroupFormat = new FormData();
         datasetGroupFormat.top = new FormAttachment(generalGroup, margin);
-        datasetGroupFormat.width = 450;
+        datasetGroupFormat.width = 420;
         datasetGroupFormat.height = 450;
         datasetGroupFormat.left = new FormAttachment(0, 0);
         datasetGroupFormat.right = new FormAttachment(100, 0);
         datasetGroup.setLayoutData(datasetGroupFormat);
 		
 		
-        datasetName = buildCombo("Dataset :", jobEntryName, lsMod, middle-20, margin, datasetGroup, datasets);
+        datasetName = buildCombo("Dataset Name :", jobEntryName, lsMod, middle-10, margin, datasetGroup, datasets);
 
         final TableViewer tv = new TableViewer(datasetGroup,  SWT.CHECK | SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 
@@ -329,10 +340,15 @@ public class ECLTabulateBucketsDialog extends ECLJobEntryDialog{
 	    			if(table.getItem(i).getChecked()){
 	    				Player P = new Player();
 	    				P.setFirstName(table.getItem(i).getText());
+	    				P.setIndex(i);
 	    				P.setBuckets("0");
-	    				rows.add(P);
-	    				fields.remove(Math.abs(cnt - i));
-						cnt++;
+	    				if(rows.isEmpty() && (!columns.contains(P)) &&(!layers.contains(P))){
+	    					rows.add(P);
+	    				}
+	    				else if((!rows.contains(P)) && (!columns.contains(P)) &&(!layers.contains(P))){
+	    					rows.add(P);
+	    				}
+	    				table.getItem(i).setChecked(false);
 					}
 	    		}
 	    		tv.refresh();
@@ -357,10 +373,6 @@ public class ECLTabulateBucketsDialog extends ECLJobEntryDialog{
 				int cnt = 0;
 				for(int i = 0; i<RowTable.getItemCount(); i++){
 					if(RowTable.getItem(i).getChecked()){
-	    				Player P = new Player();
-	    				P.setFirstName(RowTable.getItem(i).getText());
-	    				P.setBuckets(" ");
-	    				fields.add(P);
 	    				rows.remove(Math.abs(cnt - i));
 						cnt++;
 					}
@@ -376,15 +388,19 @@ public class ECLTabulateBucketsDialog extends ECLJobEntryDialog{
 	    InLayer.addListener(SWT.Selection, new Listener(){
 			@Override
 			public void handleEvent(Event arg0) {
-				int cnt = 0;
 	    		for(int i = 0; i<table.getItemCount(); i++){
 	    			if(table.getItem(i).getChecked()){
 	    				Player P = new Player();
 	    				P.setFirstName(table.getItem(i).getText());
 	    				P.setBuckets("");
-	    				layers.add(P);
-	    				fields.remove(Math.abs(cnt - i));
-						cnt++;
+	    				P.setIndex(i);
+	    				if(layers.isEmpty() && (!rows.contains(P)) && (!columns.contains(P))){
+	    					layers.add(P);
+	    				}
+	    				else if((!rows.contains(P)) && (!columns.contains(P)) &&(!layers.contains(P))){
+	    					layers.add(P);
+	    				}
+	    				table.getItem(i).setChecked(false);
 					}
 	    		}
 	    		tv.refresh();
@@ -400,10 +416,6 @@ public class ECLTabulateBucketsDialog extends ECLJobEntryDialog{
 				int cnt = 0;
 				for(int i = 0; i<LayerTable.getItemCount(); i++){
 					if(LayerTable.getItem(i).getChecked()){
-	    				Player P = new Player();
-	    				P.setFirstName(LayerTable.getItem(i).getText());
-	    				P.setBuckets(" ");
-	    				fields.add(P);
 	    				layers.remove(Math.abs(cnt - i));
 						cnt++;
 					}
@@ -415,7 +427,74 @@ public class ECLTabulateBucketsDialog extends ECLJobEntryDialog{
 			}
 	    });
 	    
+	    Group perGroup = new Group(shell, SWT.SHADOW_NONE);
+        props.setLook(perGroup);
+        perGroup.setText("Persist");
+        perGroup.setLayout(groupLayout);
+        FormData perGroupFormat = new FormData();
+        perGroupFormat.top = new FormAttachment(datasetGroup, margin);
+        perGroupFormat.width = 400;
+        perGroupFormat.height = 80;
+        perGroupFormat.left = new FormAttachment(0, 0);
+        perGroupFormat.right = new FormAttachment(100, 0);
+        perGroup.setLayoutData(perGroupFormat);
+        
+        composite = new Composite(perGroup, SWT.NONE);
+        composite.setLayout(new FormLayout());
+        composite.setBackground(new Color(null, 255, 255, 255));
 
+        final Composite composite_1 = new Composite(composite, SWT.NONE);
+        composite_1.setLayout(new GridLayout(2, false));
+        final FormData fd_composite_1 = new FormData();
+        fd_composite_1.top = new FormAttachment(0);
+        fd_composite_1.left = new FormAttachment(0, 10);
+        fd_composite_1.bottom = new FormAttachment(0, 34);
+        fd_composite_1.right = new FormAttachment(0, 360);
+        composite_1.setLayoutData(fd_composite_1);
+        composite_1.setBackground(new Color(null, 255, 255, 255));
+        
+        label = new Label(composite_1, SWT.NONE);
+        label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        label.setText("Logical Name:");
+        label.setBackground(new Color(null, 255, 255, 255));
+
+        outputName = new Text(composite_1, SWT.BORDER);
+        outputName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        outputName.setEnabled(false);
+        if(jobEntry.getPersistOutputChecked()!= null && jobEntry.getPersistOutputChecked().equals("true")){
+        	outputName.setEnabled(true);
+        }
+        
+        final Composite composite_2 = new Composite(composite, SWT.NONE);
+        composite_2.setLayout(new GridLayout(1, false));
+        final FormData fd_composite_2 = new FormData();
+        fd_composite_2.top = new FormAttachment(0, 36);
+        fd_composite_2.bottom = new FormAttachment(100, 0);
+        fd_composite_2.right = new FormAttachment(0, 360);
+        fd_composite_2.left = new FormAttachment(0, 10);
+        composite_2.setLayoutData(fd_composite_2);
+        composite_2.setBackground(new Color(null, 255, 255, 255));
+
+        chkBox = new Button(composite_2, SWT.CHECK);
+        chkBox.setText("Persist Ouput");
+        chkBox.setBackground(new Color(null, 255, 255, 255));
+        
+        chkBox.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+            	Button button = (Button) e.widget;
+            	if(button.getSelection()){
+            		persist = "true";
+            		outputName.setEnabled(true);
+            	}
+            	else{
+            		persist = "false";
+            		outputName.setText("");
+            		outputName.setEnabled(false);
+            	}
+
+            }
+        });
 
 	    wOK = new Button(shell, SWT.PUSH);
         wOK.setText("OK");
@@ -423,7 +502,7 @@ public class ECLTabulateBucketsDialog extends ECLJobEntryDialog{
         wCancel.setText("Cancel");
         
 
-        BaseStepDialog.positionBottomButtons(shell, new Button[]{wOK, wCancel}, margin, datasetGroup);
+        BaseStepDialog.positionBottomButtons(shell, new Button[]{wOK, wCancel}, margin, perGroup);
         // Add listeners
         
         
@@ -485,7 +564,25 @@ public class ECLTabulateBucketsDialog extends ECLJobEntryDialog{
         	Layer.refresh();
         	Layer.setInput(layers);
         }
-
+        if (jobEntry.getPersistOutputChecked() != null && chkBox != null) {
+        	chkBox.setSelection(jobEntry.getPersistOutputChecked().equals("true")?true:false);
+        }
+        if(chkBox != null && chkBox.getSelection()){
+        	for (Control control : composite_1.getChildren()) {
+        		if(!control.isDisposed()){
+					if (jobEntry.getOutputName() != null && outputName != null) {
+			        	outputName.setText(jobEntry.getOutputName());
+					}
+					if (jobEntry.getLabel() != null && label != null) {
+			    		label.setText(jobEntry.getLabel());
+					}
+        		}
+        	}
+		}
+        if(jobEntry.getDefJobName() != null){
+        	defJobName = jobEntry.getDefJobName();
+        }
+        
         shell.pack();
         shell.open();
         while (!shell.isDisposed()) {
@@ -512,7 +609,7 @@ public class ECLTabulateBucketsDialog extends ECLJobEntryDialog{
    		}
    		if(this.rows.size() <= 1){
    			isValid = false;
-   			errors += "Need to Select at least 2 fields!\r\n";
+   			errors += "You need to select at least 2 fields!\r\n";
    		}
     	if(!isValid){
     		ErrorNotices en = new ErrorNotices();
@@ -535,7 +632,20 @@ public class ECLTabulateBucketsDialog extends ECLJobEntryDialog{
         jobEntry.setRows(this.rows);
         jobEntry.setLayers(this.layers);
         jobEntry.setDatasetName(this.datasetName.getText());
- 
+        if(chkBox.getSelection() && outputName != null){
+        	jobEntry.setOutputName(outputName.getText());
+        }
+        if(chkBox.getSelection() && label != null){
+        	jobEntry.setLabel(label.getText());
+        }
+        if(chkBox != null){
+        	jobEntry.setPersistOutputChecked(chkBox.getSelection()?"true":"false");
+        }
+        if(defJobName.trim().equals("")){
+        	defJobName = "Spoon-job";
+        }
+        jobEntry.setDefJobName(defJobName);
+        
         dispose();
     }
 
@@ -584,10 +694,12 @@ class PersonCellModifier implements ICellModifier {
 
 
 class Player {
-	  private String firstName;
-	  private String buckets;
 
-	  public String getFirstName() {
+	private String firstName;
+	  private String buckets;
+	  private int index;
+
+      public String getFirstName() {
 		  return firstName;
 	  }
 
@@ -602,8 +714,43 @@ class Player {
 	  public void setBuckets(String buckets) {
 		  this.buckets = buckets;
 	  }
+	  
+	  public int getIndex() {
+			return index;
+	  }
 
+	  public void setIndex(int index) {
+			this.index = index;
+	  }
+	  
+	  @Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result
+					+ ((firstName == null) ? 0 : firstName.hashCode());
+			result = prime * result + index;
+			return result;
+		}
 
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Player other = (Player) obj;
+			if (firstName == null) {
+				if (other.firstName != null)
+					return false;
+			} else if (!firstName.equals(other.firstName))
+				return false;
+			if (index != other.index)
+				return false;
+			return true;
+		}
 }
 
 

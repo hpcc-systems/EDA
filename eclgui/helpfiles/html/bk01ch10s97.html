@@ -1,0 +1,33 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>REGEXREPLACE</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10.html" title="Built-in Functions and Actions"><link rel="prev" href="bk01ch10s96.html" title="REGEXFIND"><link rel="next" href="bk01ch10s98.html" title="REGROUP"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">REGEXREPLACE</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s96.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Built-in Functions and Actions</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s98.html">Next</a></td></tr></table><hr></div><div class="sect1" title="REGEXREPLACE"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="REGEXREPLACE"></a>REGEXREPLACE</h2></div></div></div><p><span class="bold"><strong>REGEXREPLACE<a class="indexterm" name="d4e11595"></a><a class="indexterm" name="d4e11597"></a>(</strong></span><span class="emphasis"><em>regex, text, replacement </em></span><span class="bold"><strong>[, NOCASE<a class="indexterm" name="d4e11601"></a>])</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="13%"><col width="87%"></colgroup><tbody><tr><td><span class="emphasis"><em>regex</em></span></td><td>A standard Perl regular expression.</td></tr><tr><td><span class="emphasis"><em>text</em></span></td><td>The text to parse.</td></tr><tr><td><span class="emphasis"><em>replacement</em></span></td><td>The replacement text. In this string, $0 refers to the substring that matched the <span class="emphasis"><em>regex</em></span> pattern, and $1, $2, $3... match the first, second, third... groups in the pattern.</td></tr><tr><td><span class="bold"><strong>NOCASE</strong></span></td><td>Optional. Specifies a case insensitive search.</td></tr><tr><td>Return:</td><td>REGEXREPLACE returns a single value.</td></tr></tbody></table></div><p>The <span class="bold"><strong>REGEXREPLACE </strong></span>function uses the <span class="emphasis"><em>regex<a class="indexterm" name="d4e11632"></a></em></span> to parse through the <span class="emphasis"><em>text</em></span> and find matches, then replace them with the <span class="emphasis"><em>replacement</em></span> string. The <span class="emphasis"><em>regex</em></span> must be a standard Perl regular expression<a class="indexterm" name="d4e11637"></a>. We use third-party libraries to support this, so for non-unicode <span class="emphasis"><em>text</em></span>, see boost docs at <span class="underline">http://www.boost.org/doc/libs/1_39_0/libs/regex/doc/html/index.html</span>. For unicode <span class="emphasis"><em>text</em></span>, see the ICU docs, the sections &#8216;Regular Expression Metacharacters' and &#8216;Regular Expression Operators' at <span class="underline">http://userguide.icu-project.org/strings/regexp</span> and the links from there, in particular the section &#8216;UnicodeSet patterns' at <span class="underline">http://userguide.icu-project.org/strings/unicodeset</span>. We use version 2.6 which should support all listed features.</p><p>Example:</p><pre class="programlisting">REGEXREPLACE('(.a)t', 'the cat sat on the mat', '$1p');
+        //ASCII
+REGEXREPLACE(u'(.a)t', u'the cat sat on the mat', u'$1p');
+        //UNICODE
+// both of these examples return 'the cap sap on the map'
+
+inrec := {STRING10 str, UNICODE10 ustr};
+inset := DATASET([{'She', u'Eins'}, {'Sells', u'Zwei'},
+{'Sea', u'Drei'}, {'Shells', u'Vier'}], inrec);
+outrec := {STRING10 orig, STRING10 withcase, STRING10
+        wocase,
+UNICODE10 uorig,UNICODE10 uwithcase,UNICODE10 uwocase};
+
+outrec trans(inrec l) := TRANSFORM
+SELF.orig := l.str;
+SELF.withcase := REGEXREPLACE('s', l.str, 'f');
+SELF.wocase := REGEXREPLACE('s', l.str, 'f', NOCASE);
+SELF.uorig := l.ustr;
+SELF.uwithcase := REGEXREPLACE(u'e', l.ustr, u'\u00EB');
+SELF.uwocase := REGEXREPLACE(u'e', l.ustr, u'\u00EB',
+        NOCASE);
+END;
+OUTPUT(PROJECT(inset, trans(LEFT)));
+
+/* the result set is:
+orig withcase wocase uorig uwithcase uwocase
+She She fhe Eins Eins \xc3\xabins
+Sells Sellf fellf Zwei Zw\xc3\xabi Zw\xc3\xabi
+Sea Sea fea Drei Dr\xc3\xabi Dr\xc3\xabi
+Shells Shellf fhellf Vier Vi\xc3\xabr Vi\xc3\xabr */
+</pre><p>See Also: <a class="link" href="bk01ch10s84.html" title="PARSE">PARSE</a>, <a class="link" href="bk01ch10s96.html" title="REGEXFIND">REGEXFIND</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s96.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s98.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">REGEXFIND&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;REGROUP</td></tr></table></div></body></html>

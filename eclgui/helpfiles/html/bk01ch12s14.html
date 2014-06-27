@@ -1,0 +1,26 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>#LOOP / #BREAK</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch12.html" title="Template Language"><link rel="prev" href="bk01ch12s13.html" title="#INMODULE"><link rel="next" href="bk01ch12s15.html" title="#MANGLE"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">#LOOP / #BREAK</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch12s13.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Template Language</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch12s15.html">Next</a></td></tr></table><hr></div><div class="sect1" title="#LOOP / #BREAK"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_LOOP-_BREAK"></a>#LOOP / #BREAK</h2></div></div></div><p><span class="bold"><strong>#LOOP<a class="indexterm" name="d4e14642"></a></strong></span><span class="bold"><strong> </strong></span></p><p><span class="bold"><strong>[ </strong></span><span class="emphasis"><em>statements </em></span><span class="bold"><strong>]</strong></span><span class="bold"><strong> </strong></span></p><p><span class="bold"><strong>#BREAK<a class="indexterm" name="d4e14652"></a></strong></span><span class="bold"><strong> </strong></span></p><p><span class="bold"><strong>[ </strong></span><span class="emphasis"><em>statements </em></span><span class="bold"><strong>]</strong></span><span class="bold"><strong></strong></span></p><p><span class="bold"><strong>#END<a class="indexterm" name="d4e14662"></a></strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="14%"><col width="86%"></colgroup><tbody><tr><td><span class="emphasis"><em>statements</em></span></td><td>The Template statements to execute each time.</td></tr><tr><td><span class="emphasis"><em>#BREAK</em></span></td><td>Terminates the loop.</td></tr><tr><td><span class="emphasis"><em>#END</em></span></td><td>The #LOOP structure terminator.</td></tr></tbody></table></div><p>The <span class="bold"><strong>#LOOP </strong></span>structure iterates, executing the <span class="emphasis"><em>statements</em></span> each time through the loop until a #BREAK statement executes. If there is no #BREAK then #LOOP iterates infinitely.</p><p>Example:</p><pre class="programlisting">  // This script creates a set attribute definition of the 1st 10
+  // natural numbers and defines an attribute named "Set10"
+  
+  #DECLARE (SetString)
+  #DECLARE (Ndx)
+  #SET (SetString, '[');    //initialize SetString to [
+  #SET (Ndx, 1);            //initialize Ndx to 1
+  #LOOP
+    #IF (%Ndx% &gt; 9)   //if we've iterated 9 times
+       #BREAK         // break out of the loop
+    #ELSE             //otherwise
+       #APPEND (SetString, %'Ndx'% + ',');
+                     //append Ndx and comma to SetString
+  #SET (Ndx, %Ndx% + 1)
+                     //and increment the value of Ndx
+     #END
+  #END
+  
+  #APPEND (SetString, %'Ndx'% + ']'); //add 10th element and closing ]
+  
+  EXPORT Set10 := %'SetString'%; //generate the ECL code
+                     // This generates:
+                     // EXPORT Set10 := [1,2,3,4,5,6,7,8,9,10];
+</pre><p>See Also: <a class="link" href="bk01ch12s10.html" title="#FOR">#FOR</a>, <a class="link" href="bk01ch12s04.html" title="#DECLARE">#DECLARE</a>, <a class="link" href="bk01ch12s12.html" title="#IF">#IF</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch12s13.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch12.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch12s15.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">#INMODULE&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;#MANGLE</td></tr></table></div></body></html>

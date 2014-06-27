@@ -1,0 +1,45 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>KEYED and WILD</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch08.html" title="Reserved Keywords"><link rel="prev" href="bk01ch08s05.html" title="IMPORT"><link rel="next" href="bk01ch08s07.html" title="LEFT and RIGHT"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">KEYED and WILD</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch08s05.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Reserved Keywords</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch08s07.html">Next</a></td></tr></table><hr></div><div class="sect1" title="KEYED and WILD"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="KEYED-WILD"></a>KEYED<a class="indexterm" name="d4e3867"></a> and WILD<a class="indexterm" name="d4e3869"></a></h2></div></div></div><p><span class="bold"><strong>KEYED( </strong></span><span class="emphasis"><em>expression </em></span><span class="bold"><strong>[, OPT<a class="indexterm" name="d4e3875"></a> ] )</strong></span><span class="bold"><strong> </strong></span></p><p><span class="bold"><strong>WILD<a class="indexterm" name="d4e3880"></a>( </strong></span><span class="emphasis"><em>field </em></span><span class="bold"><strong>)</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="21%" align="left"><col width="79%"></colgroup><tbody><tr><td align="left"><span class="emphasis"><em>expression</em></span></td><td>An INDEX filter condition.</td></tr><tr><td align="left"><span class="bold"><strong>OPT</strong></span></td><td>Only generate An INDEX filter condition.</td></tr><tr><td align="left"><span class="emphasis"><em>field</em></span></td><td>A single field in an INDEX.</td></tr></tbody></table></div><p>The <span class="bold"><strong>KEYED</strong></span><a class="indexterm" name="d4e3903"></a> and <span class="bold"><strong>WILD<a class="indexterm" name="d4e3906"></a></strong></span> keywords are valid only for filters on INDEX attributes (which also qualifies as part of the <span class="emphasis"><em>joincondition</em></span><a class="indexterm" name="d4e3909"></a> for a &#8220;half-keyed&#8221; JOIN). They indicate to the compiler which of the leading index fields are used as filters (KEYED) or wildcarded (WILD) so that the compiler can warn you if you've gotten it wrong. Trailing fields not used in the filter are ignored (always treated as wildcards).</p><p>The rules for their use are as follows (the term &#8220;segmonitor&#8221; refers to an internal object created to represent the possible match conditions for a single keyable field):</p><p>1. KEYED generates a segmonitor. The segmonitor may be a wild one if the <span class="emphasis"><em>expression</em></span> can never be false, such as:</p><pre class="programlisting">   KEYED(inputval = '' OR field = inputval)</pre><p>2. WILD generates a wild segmonitor, unless there is also a KEYED() filter on the same field.</p><p>3. KEYED, OPT generates a non-wild segmonitor only if the preceding field did.</p><p>4. Any field that is both KEYED and KEYED OPT creates a compile time error.</p><p>5. If WILD or KEYED are not specified for any fields, segmonitors are generated for all keyable conditions.</p><p>6. An INDEX filter condition with no KEYED specified generates a wild segmonitor (except as specified by 5).</p><p>7. KEYED limits are based upon all non-wild segmonitors.</p><p>8. Conditions that do not generate segmonitors are post-filtered.</p><p>Example:</p><pre class="programlisting">ds := DATASET('~local::rkc::person',
+        { STRING15 f1, STRING15 f2, STRING15 f3, STRING15 f4,
+        UNSIGNED8 filepos{virtual(fileposition)} }, FLAT);
+ix := INDEX(ds, { ds },'\\lexis\\person.name_first.key');
+
+/*** Valid examples ****/
+
+COUNT(ix(KEYED(f1='Kevin1')));
+        // legal because only f1 is used.
+
+COUNT(ix(KEYED(f1='Kevin2' and f2='Halliday')));
+        // legal because both f1 and f2 are used
+
+COUNT(ix(KEYED(f2='Kevin3') and WILD(f1)));
+        // keyed f2, but ok because f1 is marked as wild.
+
+COUNT(ix(f2='Halliday'));
+        // ok - if keyed isn't used then it doesn't have to have
+        // a wild on f1
+
+COUNT(ix(KEYED(f1='Kevin3') and KEYED(f2='Kevin4') and WILD(f1)));
+        // it is ok to mark as wild and keyed otherwise you can get
+        // in a mess with compound queries.
+
+COUNT(ix(f1='Kevin3' and KEYED(f2='Kevin4') and WILD(f1)));
+        // can also be wild and a general expression.
+
+/***Error examples ***/
+
+COUNT(ix(KEYED(f3='Kevin3' and f2='Halliday')));
+        // missing WILD(f1) before keyed
+
+COUNT(ix(KEYED(f3='Kevin3') and f2='Halliday'));
+        // missing WILD(f1) before keyed after valid field
+
+COUNT(ix(KEYED(f3='Kevin3') and WILD(f2)));
+        // missing WILD(f1) before a wild
+
+COUNT(ix(WILD(f3) and f2='Halliday'));
+        // missing WILD(f1) before wild after valid field
+
+COUNT(ds(KEYED(f1='Kevin')));
+        //KEYED not valid in DATASET filters</pre><p>See Also: <a class="link" href="bk01ch05s03.html" title="INDEX">INDEX</a>, <a class="link" href="bk01ch10s60.html" title="JOIN">JOIN</a>, <a class="link" href="bk01ch10s44.html" title="FETCH">FETCH</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch08s05.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch08.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch08s07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">IMPORT&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;LEFT and RIGHT</td></tr></table></div></body></html>

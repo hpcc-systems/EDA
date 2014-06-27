@@ -1,0 +1,93 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>DATASET as a Parameter Type</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch05s02.html" title="DATASET"><link rel="prev" href="bk01ch05s02s08.html" title="Child DATASETs"><link rel="next" href="bk01ch05s03.html" title="INDEX"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">DATASET as a Parameter Type</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch05s02s08.html">Prev</a>&nbsp;</td><th width="60%" align="center">DATASET</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch05s03.html">Next</a></td></tr></table><hr></div><div class="sect2" title="DATASET as a Parameter Type"><div class="titlepage"><div><div><h3 class="title"><a name="DATASET_as_a_Parameter_Type"></a>DATASET as a Parameter Type</h3></div></div></div><p><span class="bold"><strong> [GROUPED<a class="indexterm" name="d4e2742"></a>] DATASET(</strong></span><span class="emphasis"><em> struct </em></span><span class="bold"><strong>)</strong></span></p><p>This form is only used as a Value Type for passing parameters<a class="indexterm" name="d4e2747"></a>, specifying function return types, or defining a SET OF datasets. If GROUPED is present, the passed parameter must have been grouped using the GROUP function<a class="indexterm" name="d4e2749"></a>.</p><p>Example:</p><pre class="programlisting">MyRec := {STRING1 Letter};
+SomeFile := DATASET([{'A'},{'B'},{'C'},{'D'},{'E'}],MyRec);
+         
+//Passing a DATASET parameter
+FilteredDS(DATASET(MyRec) ds) := ds(Letter NOT IN ['A','C','E']);
+                  //passed dataset referenced as &#8220;ds&#8221; in expression
+          
+OUTPUT(FilteredDS(SomeFile));
+
+//*****************************************************************
+// The following example demonstrates using DATASET as both a
+// parameter type and a return type
+rec_Person := RECORD
+  STRING20 FirstName;
+  STRING20 LastName;
+END;
+
+rec_Person_exp := RECORD(rec_Person)
+  STRING20 NameOption;
+END;
+
+rec_Person_exp xfm_DisplayNames(rec_Person l, INTEGER w) :=
+    TRANSFORM
+  SELF.NameOption :=
+           CHOOSE(w,
+                  TRIM(l.FirstName) + ' ' + l.LastName,
+                  TRIM(l.LastName) + ', ' + l.FirstName,
+                  l.FirstName[1] + l.LastName[1],
+                  l.LastName);
+  SELF := l;
+END;
+
+DATASET(rec_Person_exp) prototype(DATASET(rec_Person) ds) :=
+     DATASET( [], rec_Person_exp );
+
+DATASET(rec_Person_exp) DisplayFullName(DATASET(rec_Person) ds) :=
+     PROJECT(ds, xfm_DisplayNames(LEFT,1));
+
+DATASET(rec_Person_exp) DisplayRevName(DATASET(rec_Person) ds) :=
+     PROJECT(ds, xfm_DisplayNames(LEFT,2));
+
+DATASET(rec_Person_exp) DisplayFirstName(DATASET(rec_Person) ds) :=
+     PROJECT(ds, xfm_DisplayNames(LEFT,3));
+
+DATASET(rec_Person_exp) DisplayLastName(DATASET(rec_Person) ds) :=
+     PROJECT(ds, xfm_DisplayNames(LEFT,4));
+
+DATASET(rec_Person_exp) PlayWithName(DATASET(rec_Person) ds_in,
+                                     prototype PassedFunc,
+                                     STRING1 SortOrder='A',
+                                     UNSIGNED1 FieldToSort=1,
+                                     UNSIGNED1 PrePostFlag=1) := FUNCTION
+  FieldPre := CHOOSE(FieldToSort,ds_in.FirstName,ds_in.LastName);
+  SortedDSPre(DATASET(rec_Person) ds) :=
+      IF(SortOrder='A',
+         SORT(ds,FieldPre),
+         SORT(ds,-FieldPre));
+  InDS := IF(PrePostFlag=1,SortedDSPre(ds_in),ds_in);
+  
+  PDS := PassedFunc(InDS); //call the passed function parameter
+         
+  FieldPost := CHOOSE(FieldToSort,
+                      PDS.FirstName, 
+                      PDS.LastName,
+                      PDS.NameOption);
+  SortedDSPost(DATASET(rec_Person_exp) ds) :=
+        IF(SortOrder = 'A',
+          SORT(ds,FieldPost),
+          SORT(ds,-FieldPost));
+      
+  OutDS := IF(PrePostFlag=1,PDS,SortedDSPost(PDS));
+  RETURN OutDS;
+END;
+
+    //define inline datasets to use.
+ds_names1 := DATASET( [{'John','Smith'},{'Henry','Jackson'},
+                       {'Harry','Potter'}], rec_Person );
+ds_names2 := DATASET( [ {'George','Foreman'},
+                        {'Sugar Ray','Robinson'},
+                        {'Joe','Louis'}], rec_Person );
+          
+
+//get name you want by passing the appropriate function parameter:
+s_Name1 := PlayWithName(ds_names1, DisplayFullName, 'A',1,1);
+s_Name2 := PlayWithName(ds_names2, DisplayRevName, 'D',3,2);
+a_Name := PlayWithName(ds_names1, DisplayFirstName,'A',1,1);
+b_Name := PlayWithName(ds_names2, DisplayLastName, 'D',1,1);
+OUTPUT(s_Name1);
+OUTPUT(s_Name2);
+OUTPUT(a_Name);
+OUTPUT(b_Name);</pre><p>See Also: <a class="link" href="bk01ch10s82.html" title="OUTPUT">OUTPUT</a>, <a class="link" href="bk01ch05s01.html" title="RECORD Structure">RECORD Structure</a>, <a class="link" href="bk01ch10s118.html" title="TABLE">TABLE</a>, <a class="link" href="bk01ch10s103.html" title="ROW">ROW</a>, <a class="link" href="bk01ch04s13.html" title="RECORDOF">RECORDOF</a>, <a class="link" href="bk01ch09s07.html" title="TRANSFORM Structure">TRANSFORM Structure</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch05s02s08.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch05s02.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch05s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Child DATASETs&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;INDEX</td></tr></table></div></body></html>

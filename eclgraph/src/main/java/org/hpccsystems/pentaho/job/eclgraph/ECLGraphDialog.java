@@ -35,10 +35,12 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
@@ -82,7 +84,11 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
     private Text jobEntryName;
     private Combo datasetName;
     private Combo datasetNameOriginal;
+
     private Combo GraphType;
+
+    private String[] group = null;
+
     private Text GHeight;
     private Text GWidth;
     private Combo Size;
@@ -96,6 +102,12 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
     
     
 	private SelectionAdapter lsDef;
+	public Button chkBox;
+	public static Text outputName;
+	public static Label label;
+	private String persist;
+	private Composite composite;
+	private String defJobName;
 
 	
     public ECLGraphDialog(Shell parent, JobEntryInterface jobEntryInt,
@@ -116,7 +128,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         
         String datasets[] = null;
         String datasets1[] = null;
-        
+         
         AutoPopulate ap = new AutoPopulate();
         try{
             //Object[] jec = this.jobMeta.getJobCopies().toArray();
@@ -125,6 +137,8 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
             datasets = ap.parseGraphableDefinitions(this.jobMeta.getJobCopies());
             checkList = ap.parseUnivariate(this.jobMeta.getJobCopies());
             filePath = ap.getGlobalVariable(this.jobMeta.getJobCopies(), "compileFlags"); 
+            defJobName = ap.getGlobalVariable(this.jobMeta.getJobCopies(), "jobName");
+            group = ap.parseGroupDefinitions(this.jobMeta.getJobCopies());
         }catch (Exception e){
             System.out.println("Error Parsing existing Datasets");
             System.out.println(e.toString());
@@ -142,7 +156,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         FormData datatab = new FormData();
         
         datatab.height = 500;
-        datatab.width = 650;
+        datatab.width = 680;
         tab.setLayoutData(datatab);
         
         //Composite compForGrp = new Composite(tab, SWT.NONE | SWT.V_SCROLL | SWT.SHADOW_OUT);
@@ -216,10 +230,9 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         datasetGroup.setLayoutData(datasetGroupFormat);
 		
 		
-        datasetNameOriginal = buildCombo("Original Dataset Name :", jobEntryName, lsMod, middle, margin, datasetGroup, datasets1);
+        datasetNameOriginal = buildCombo("Original Dataset Name : ", jobEntryName, lsMod, middle, margin, datasetGroup, datasets1);
         
-        datasetName = buildCombo("Derived Dataset :", datasetNameOriginal, lsMod, middle, margin*2, datasetGroup, datasets);
-		
+        datasetName = buildCombo("Dataset Name :    ", datasetNameOriginal, lsMod, middle, margin, datasetGroup, datasets);
         GraphType = buildCombo("Graph Type :", datasetName, lsMod, middle, margin*2, datasetGroup, new String[]{"PieChart", "LineChart","ScatterChart","BarChart"});
         
         Size = buildCombo("Set Size :", GraphType, lsMod, middle, margin*2, datasetGroup, new String[]{"YES","NO"});
@@ -237,6 +250,120 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 				     sizeGroup.setLayout(groupLayout);
 				     FormData GroupFormat = new FormData();
 				     GroupFormat.top = new FormAttachment(datasetGroup, margin); 
+				     GroupFormat.width = 400;
+				     GroupFormat.height = 100;
+				     GroupFormat.left = new FormAttachment(middle, 0);
+				     sizeGroup.setLayoutData(GroupFormat);
+				     sizeGroup.setSize(sizeGroup.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+				     sizeGroup.layout();
+				     
+				     GHeight = buildText("Height :", Size, lsMod, middle, margin*2, sizeGroup);
+				        
+				     GWidth = buildText("Width :", GHeight, lsMod, middle, margin*2, sizeGroup);
+				     
+				     if(jobEntry.getHeight() != null){
+				       	GHeight.setText(jobEntry.getHeight());
+				     }
+				        
+				     if(jobEntry.getWidth() != null){
+				     	GWidth.setText(jobEntry.getWidth());
+				     }
+				     
+				     compForGrp1.setSize(compForGrp1.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+	                 compForGrp1.layout();
+				}
+				
+				
+			}
+        	
+        });
+        
+        
+        
+        //item1.setControl(sc1);
+        final Group perGroup = new Group(compForGrp1, SWT.SHADOW_NONE);
+        props.setLook(perGroup);
+        perGroup.setText("Persist");
+        perGroup.setLayout(groupLayout);
+        FormData perGroupFormat = new FormData();
+        perGroupFormat.top = new FormAttachment(datasetGroup, margin);
+        perGroupFormat.width = 400;
+        perGroupFormat.height = 80;
+        perGroupFormat.left = new FormAttachment(middle, 0);
+        //perGroupFormat.right = new FormAttachment(100, 0);
+        perGroup.setLayoutData(perGroupFormat);
+        
+        composite = new Composite(perGroup, SWT.NONE);
+        composite.setLayout(new FormLayout());
+        composite.setBackground(new Color(null, 255, 255, 255));
+
+        final Composite composite_1 = new Composite(composite, SWT.NONE);
+        composite_1.setLayout(new GridLayout(2, false));
+        final FormData fd_composite_1 = new FormData();
+        fd_composite_1.top = new FormAttachment(0);
+        fd_composite_1.left = new FormAttachment(0, 10);
+        fd_composite_1.bottom = new FormAttachment(0, 34);
+        fd_composite_1.right = new FormAttachment(0, 390);
+        composite_1.setLayoutData(fd_composite_1);
+        composite_1.setBackground(new Color(null, 255, 255, 255));
+        
+        label = new Label(composite_1, SWT.NONE);
+        label.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        label.setText("Logical Name:");
+        label.setBackground(new Color(null, 255, 255, 255));
+
+        outputName = new Text(composite_1, SWT.BORDER);
+        outputName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        outputName.setEnabled(false);
+        
+        if(jobEntry.getPersistOutputChecked()!= null && jobEntry.getPersistOutputChecked().equals("true")){
+        	outputName.setEnabled(true);
+        }
+        
+        final Composite composite_2 = new Composite(composite, SWT.NONE);
+        composite_2.setLayout(new GridLayout(1, false));
+        final FormData fd_composite_2 = new FormData();
+        fd_composite_2.top = new FormAttachment(0, 36);
+        fd_composite_2.bottom = new FormAttachment(100, 0);
+        fd_composite_2.right = new FormAttachment(0, 390);
+        fd_composite_2.left = new FormAttachment(0, 10);
+        composite_2.setLayoutData(fd_composite_2);
+        composite_2.setBackground(new Color(null, 255, 255, 255));
+
+        chkBox = new Button(composite_2, SWT.CHECK);
+        chkBox.setText("Persist Ouput");
+        chkBox.setBackground(new Color(null, 255, 255, 255));
+        
+        chkBox.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+            	Button button = (Button) e.widget;
+            	if(button.getSelection()){
+            		persist = "true";
+            		outputName.setEnabled(true);
+            	}
+            	else{
+            		persist = "false";
+            		outputName.setText("");
+            		outputName.setEnabled(false);
+            	}
+
+            }
+        });
+        
+        Size.addSelectionListener(new SelectionAdapter(){
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if(sizeGroup != null)
+					sizeGroup.dispose();
+				if(Size.getText().equalsIgnoreCase("YES")){
+					 sizeGroup = new Group(compForGrp1, SWT.SHADOW_NONE);
+				     props.setLook(sizeGroup);
+				     sizeGroup.setText("Size of Graph");
+				     sizeGroup.setLayout(groupLayout);
+				     FormData GroupFormat = new FormData();
+				     GroupFormat.top = new FormAttachment(perGroup, margin); 
 				     GroupFormat.width = 400;
 				     GroupFormat.height = 100;
 				     GroupFormat.left = new FormAttachment(middle, 0);
@@ -393,7 +520,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 	    	  AddColumnsDialog obj = new AddColumnsDialog(display);
 	    	  RecordList rec = null;
 	    	  String[] items = null;
-	    	  String[] types = null;
+	    	  String[] types = null;  
 	    	 
               try{          		
                   //String[] items = ap.fieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
@@ -413,12 +540,13 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 					e.printStackTrace();
 				}
             	  int i = 0;types = new String[items.length];
+            	  if(rec!=null){
             	  for(Iterator<RecordBO> I = rec.getRecords().iterator();I.hasNext();){
 						RecordBO ob = (RecordBO) I.next();						
 						types[i] = ob.getColumnType();
 						i++;
-						
-					}
+            	  }	
+				}
               }
               else{//(datasetName.getText() != null){
 		    	  if(datasetName.getText().split("_")[1].equalsIgnoreCase("Percentile")){
@@ -445,9 +573,13 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 		    			 
 		    			 
 		    			 String[] check = checkList[num-1].split(",");
-		    			 String[] items1 = new String[check.length];
-		    			 String[] types1 = new String[check.length];
-		    			 items1[0] = "field"; types1[0] = "STRING";int j = 1;
+		    			 String[] items1 = new String[group.length+check.length];
+		    			 String[] types1 = new String[group.length+check.length];
+		    			 for(int i = 0; i<group.length; i++){
+		    				 items1[i] = group[i].split(",")[0];
+		    				 types1[i] = group[i].split(",")[1];
+		    			 }
+		    			 items1[group.length] = "field"; types1[group.length] = "STRING";int j = group.length+1;
 		    			 for(int i = 0; i<check.length; i++){
 		    				 if(check[i].equalsIgnoreCase("true") && i != 2)
 		    					 {
@@ -484,11 +616,13 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 						int i = 0;
 						types[i] = "UNSIGNED DECIMAL8_8";
 						i++;
+						if(rec!=null){
 						for(Iterator<RecordBO> I = rec.getRecords().iterator();I.hasNext();){
 							RecordBO ob = (RecordBO) I.next();
 							types[i] = ob.getColumnType();
 							i++;
 						}
+					  }	
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -726,6 +860,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 			     sizeGroup.setLayout(groupLayout);
 			     FormData GroupFormat = new FormData();
 			     GroupFormat.top = new FormAttachment(datasetGroup, margin); 
+			     GroupFormat.top = new FormAttachment(perGroup, margin); 
 			     GroupFormat.width = 400;
 			     GroupFormat.height = 100;
 			     GroupFormat.left = new FormAttachment(middle, 0);
@@ -748,6 +883,26 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 			     compForGrp1.setSize(compForGrp1.computeSize(SWT.DEFAULT, SWT.DEFAULT));
                  compForGrp1.layout();
         	}
+        }
+        
+        if (jobEntry.getPersistOutputChecked() != null && chkBox != null) {
+        	chkBox.setSelection(jobEntry.getPersistOutputChecked().equals("true")?true:false);
+        }
+        
+        if(chkBox != null && chkBox.getSelection()){
+        	for (Control control : composite_1.getChildren()) {
+        		if(!control.isDisposed()){
+					if (jobEntry.getOutputName() != null && outputName != null) {
+			        	outputName.setText(jobEntry.getOutputName());
+					}
+					if (jobEntry.getLabel() != null && label != null) {
+			    		label.setText(jobEntry.getLabel());
+					}
+        		}
+        	}
+		}
+        if(jobEntry.getDefJobName() != null){
+        	defJobName = jobEntry.getDefJobName();
         }
         
         shell.pack();
@@ -845,6 +1000,23 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         jobEntry.setSize(Size.getText());
         if(checkList.length>0)
         	jobEntry.setTest(this.checkList[0]);// Only when one needs to plot Univariate statistics
+        
+        if(chkBox.getSelection() && outputName != null){
+        	jobEntry.setOutputName(outputName.getText());
+        }
+        
+        if(chkBox.getSelection() && label != null){
+        	jobEntry.setLabel(label.getText());
+        }
+        
+        if(chkBox != null){
+        	jobEntry.setPersistOutputChecked(chkBox.getSelection()?"true":"false");
+        }
+        if(defJobName.trim().equals("")){
+        	defJobName = "Spoon-job";
+        }
+        jobEntry.setDefJobName(defJobName);
+        
         dispose();
     }
 

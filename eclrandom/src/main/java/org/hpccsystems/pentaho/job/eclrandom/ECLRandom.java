@@ -41,6 +41,44 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
     private String outrecordName = "";
     private String transform = "";
     private String resultDataset = "";
+    
+    private String label ="";
+	private String outputName ="";
+	private String persist = "";
+	private String defJobName = "";
+	
+	public String getDefJobName() {
+		return defJobName;
+	}
+
+	public void setDefJobName(String defJobName) {
+		this.defJobName = defJobName;
+	}
+
+	
+	public String getPersistOutputChecked() {
+		return persist;
+	}
+
+	public void setPersistOutputChecked(String persist) {
+		this.persist = persist;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public String getOutputName() {
+		return outputName;
+	}
+
+	public void setOutputName(String outputName) {
+		this.outputName = outputName;
+	}
 
     public String getDatasetName() {
         return datasetName;
@@ -90,7 +128,18 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
             sb.append(", RANDOM())); \r\n");
             
             project = sb.toString();
-            project += "OUTPUT("+this.getDatasetName()+"_with_random,NAMED('RandomGenerated'));\n";
+            if(persist.equalsIgnoreCase("true")){
+        		if(outputName != null && !(outputName.trim().equals(""))){
+        			project += "OUTPUT("+this.getDatasetName()+"_with_random"+",,'~eda::"+outputName+"::random', __compressed__, overwrite,NAMED('Random'))"+";\n";
+        		}else{
+        			project += "OUTPUT("+this.getDatasetName()+"_with_random"+",,'~eda::"+defJobName+"::random', __compressed__, overwrite,NAMED('Random'))"+";\n";
+        		}
+        	}
+        	else{
+        		project += "OUTPUT("+this.getDatasetName()+"_with_random,NAMED('Random'));\n";
+        	}
+           
+            //project += "OUTPUT("+this.getDatasetName()+"_with_random,THOR);\n";
             logBasic("Random Job =" + project); 
 	        
 	        result.setResult(true);
@@ -118,6 +167,14 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
                 setDatasetName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "dataset_name")));
             if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "resultDataset")) != null)
                 setresultDatasetName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "resultDataset")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "output_name")) != null)
+                setOutputName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "output_name")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "label")) != null)
+                setLabel(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "label")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "persist_Output_Checked")) != null)
+                setPersistOutputChecked(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "persist_Output_Checked")));
+            if(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "defJobName")) != null)
+                setDefJobName(XMLHandler.getNodeValue(XMLHandler.getSubNode(node, "defJobName")));
             
         } catch (Exception e) {
             throw new KettleXMLException("ECL Dataset Job Plugin Unable to read step info from XML node", e);
@@ -132,6 +189,10 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
       
         retval += "		<dataset_name ><![CDATA[" + datasetName + "]]></dataset_name>" + Const.CR;
         retval += "		<resultdataset eclIsGraphable=\"true\"><![CDATA[" + resultDataset + "]]></resultdataset>" + Const.CR;
+        retval += "		<label><![CDATA[" + label + "]]></label>" + Const.CR;
+        retval += "		<output_name><![CDATA[" + outputName + "]]></output_name>" + Const.CR;
+        retval += "		<persist_Output_Checked><![CDATA[" + persist + "]]></persist_Output_Checked>" + Const.CR;
+        retval += "		<defJobName><![CDATA[" + defJobName + "]]></defJobName>" + Const.CR;
         
         return retval;
 
@@ -144,6 +205,15 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
                 datasetName = rep.getStepAttributeString(id_jobentry, "datasetName"); //$NON-NLS-1$
             if(rep.getStepAttributeString(id_jobentry, "resultdataset") != null)
                 resultDataset = rep.getStepAttributeString(id_jobentry, "resultdataset"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "outputName") != null)
+            	outputName = rep.getStepAttributeString(id_jobentry, "outputName"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "label") != null)
+            	label = rep.getStepAttributeString(id_jobentry, "label"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "persist_Output_Checked") != null)
+            	persist = rep.getStepAttributeString(id_jobentry, "persist_Output_Checked"); //$NON-NLS-1$
+            if(rep.getStepAttributeString(id_jobentry, "defJobName") != null)
+            	defJobName = rep.getStepAttributeString(id_jobentry, "defJobName"); //$NON-NLS-1$
+
         } catch (Exception e) {
             throw new KettleException("Unexpected Exception", e);
         }
@@ -153,6 +223,10 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
         try {
             rep.saveStepAttribute(id_job, getObjectId(), "datasetName", datasetName); //$NON-NLS-1$
             rep.saveStepAttribute(id_job, getObjectId(), "resultdataset", resultDataset); //$NON-NLS-1$
+            rep.saveStepAttribute(id_job, getObjectId(), "outputName", outputName);
+        	rep.saveStepAttribute(id_job, getObjectId(), "label", label);
+        	rep.saveStepAttribute(id_job, getObjectId(), "persist_Output_Checked", persist);
+        	rep.saveStepAttribute(id_job, getObjectId(), "defJobName", defJobName);
             
         } catch (Exception e) {
             throw new KettleException("Unable to save info into repository" + id_job, e);

@@ -1,0 +1,31 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>ROWS(LEFT) and ROWS(RIGHT)</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch08.html" title="Reserved Keywords"><link rel="prev" href="bk01ch08s07.html" title="LEFT and RIGHT"><link rel="next" href="bk01ch08s09.html" title="SELF"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">ROWS(LEFT) and ROWS(RIGHT)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch08s07.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Reserved Keywords</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch08s09.html">Next</a></td></tr></table><hr></div><div class="sect1" title="ROWS(LEFT) and ROWS(RIGHT)"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="ROWS-LEFT-RIGHT"></a>ROWS(LEFT)<a class="indexterm" name="d4e3948"></a> and ROWS(RIGHT)<a class="indexterm" name="d4e3950"></a></h2></div></div></div><p><span class="bold"><strong>ROWS(LEFT)</strong></span></p><p><span class="bold"><strong>ROWS(RIGHT)</strong></span></p><p>The <span class="bold"><strong>ROWS(LEFT)</strong></span> and <span class="bold"><strong>ROWS(RIGHT)</strong></span> keywords indicate the parameter being passed to the TRANSFORM function is a record set. These are used in functions where a dataset is being passed, such as COMBINE, ROLLUP, JOIN, DENORMALIZE, and LOOP.</p><p>Example:</p><pre class="programlisting">NormRec := RECORD
+  STRING20 thename;
+  STRING20 addr;
+END;
+NamesRec := RECORD
+  UNSIGNED1 numRows;
+  STRING20 thename;
+  DATASET(NormRec) addresses;
+END;
+NamesTable := DATASET([ {0,'Kevin',[]},{0,'Liz',[]},
+                        {0,'Mr Nobody',[]},{0,'Anywhere',[]}],
+                      NamesRec);
+NormAddrs := DATASET([{'Kevin','10 Malt Lane'},
+                      {'Liz','10 Malt Lane'},
+                      {'Liz','3 The cottages'},
+                      {'Anywhere','Here'},
+                      {'Anywhere','There'},
+                      {'Anywhere','Near'},
+                      {'Anywhere','Far'}],NormRec);
+NamesRec DeNormThem(NamesRec L, DATASET(NormRec) R) := TRANSFORM
+  SELF.NumRows := COUNT(R);
+  SELF.addresses := R;
+  SELF := L;
+END;
+DeNormedRecs := DENORMALIZE(NamesTable, NormAddrs,
+                            LEFT.thename = RIGHT.thename,
+                            GROUP,
+                            DeNormThem(LEFT,ROWS(RIGHT)));
+OUTPUT(DeNormedRecs);</pre><p>See Also: <a class="link" href="bk01ch09s07.html" title="TRANSFORM Structure">TRANSFORM Structure</a>, <a class="link" href="bk01ch10s19.html" title="COMBINE">COMBINE</a>, <a class="link" href="bk01ch10s100.html" title="ROLLUP">ROLLUP</a> , <a class="link" href="bk01ch10s60.html" title="JOIN">JOIN</a>, <a class="link" href="bk01ch10s28.html" title="DENORMALIZE">DENORMALIZE</a>, <a class="link" href="bk01ch10s71.html" title="LOOP">LOOP</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch08s07.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch08.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch08s09.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">LEFT and RIGHT&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;SELF</td></tr></table></div></body></html>

@@ -1,0 +1,128 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>#EXPORT</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch12.html" title="Template Language"><link rel="prev" href="bk01ch12s07.html" title="#EXPAND"><link rel="next" href="bk01ch12s09.html" title="#EXPORTXML"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">#EXPORT</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch12s07.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Template Language</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch12s09.html">Next</a></td></tr></table><hr></div><div class="sect1" title="#EXPORT"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_EXPORT"></a>#EXPORT</h2></div></div></div><p><span class="bold"><strong>#EXPORT( </strong></span><span class="emphasis"><em>symbol, data</em></span> <span class="bold"><strong>);</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="76"><col width="276"></colgroup><tbody><tr><td><span class="emphasis"><em>symbol</em></span></td><td>The name of a previously declared template variable.</td></tr><tr><td><span class="emphasis"><em>data</em></span></td><td>The name of a field, RECORD structure, or dataset.</td></tr></tbody></table></div><p>The <span class="bold"><strong>#EXPORT </strong></span><a class="indexterm" name="d4e14412"></a>statement produces XML text from the specified <span class="emphasis"><em>data</em></span> and places it in the <span class="emphasis"><em>symbol</em></span>. This allows the LOADXML(symbol,name) form to instantiate an XML scope on the information from the <span class="emphasis"><em>data</em></span> to process.</p><p>The XML output is generated with the following format:</p><pre class="programlisting">  &lt;Data&gt;
+    &lt;Field label="&lt;label-of-field&gt;"
+           name="&lt;name-of-field&gt;"
+           position="&lt;n&gt;"
+           rawtype="&lt;n&gt;"
+           size="&lt;n&gt;"
+           type="&lt;ecl-type-without-size&gt;" /&gt;
+    ...
+  &lt;/Data&gt;
+</pre><p>IFBLOCKs are simply expanded out in the XML. Nested RECORD types have an isRecord attribute that is set to 1, and are followed by the fields they contain, and then a Field tag with no name and the isEnd attribute set to 1. This representation is used rather than nested objects so it can be processed by a #FOR statement. Child dataset types are also expanded out in a similar way, and have an isDataset attribute set to 1 on the field.</p><p>Example:</p><pre class="programlisting">  LOADXML('&lt;xml/&gt;'); //"dummy" just to open an XML scope
+  
+  NamesRecord := RECORD
+    STRING10 first;
+    STRING20 last;
+  END;
+  r := RECORD
+    UNSIGNED4 dg_parentid;
+    STRING10 dg_firstname;
+    STRING dg_lastname;
+    UNSIGNED1 dg_prange;
+    IFBLOCK(SELF.dg_prange % 2 = 0)
+      STRING20 extrafield;
+    END;
+    NamesRecord namerec;
+    DATASET(NamesRecord) childNames;
+  END;
+  
+  ds := DATASET('~RTTEST::OUT::ds', r, thor);
+  
+  #DECLARE(out);
+  #EXPORT(out, r);
+  OUTPUT(%'out'%);
+  /* produces this result:
+  &lt;Data&gt;
+    &lt;Field label="DG_ParentID"
+        name="DG_ParentID"
+        position="0"
+        rawtype="262401"
+        size="4"
+        type="unsigned integer"/&gt;
+    &lt;Field label="DG_firstname"
+        name="DG_firstname"
+        position="1"
+        rawtype="655364"
+        size="10"
+        type="string"/&gt;
+    &lt;Field label="DG_lastname"
+        name="DG_lastname"
+        position="2"
+        rawtype="-983036"
+        size="-15"
+        type="string"/&gt;
+    &lt;Field label="DG_Prange"
+        name="DG_Prange"
+        position="3"
+        rawtype="65793"
+        size="1"
+        type="unsigned integer"/&gt;
+    &lt;Field label="ExtraField"
+        name="ExtraField"
+        position="4"
+        rawtype="1310724"
+        size="20"
+        type="string"/&gt;
+    &lt;Field isRecord="1"
+        label="namerec"
+        name="namerec"
+        position="5"
+        rawtype="13"
+        size="30"
+        type="namesRecord"/&gt;
+    &lt;Field label="first"
+        name="first"
+        position="6"
+        rawtype="655364"
+        size="10"
+        type="string"/&gt;
+    &lt;Field label="last"
+        name="last"
+        position="7"
+        rawtype="1310724"
+        size="20"
+        type="string"/&gt;
+    &lt;Field isEnd="1" name="namerec"/&gt;
+    &lt;Field isDataset="1"
+        label="childNames"
+        name="childNames"
+        position="8"
+        rawtype="-983020"
+        size="30"
+        type="table of &amp;lt;unnamed&amp;gt;"/&gt;
+    &lt;Field label="first"
+        name="first"
+        position="9"
+        rawtype="655364"
+        size="10"
+        type="string"/&gt;
+    &lt;Field label="last"
+        name="last"
+        position="10"
+        rawtype="1310724"
+        size="20"
+        type="string"/&gt;
+    &lt;Field isEnd="1" name="childNames"/&gt;
+  &lt;/Data&gt;
+  */
+  
+  //which you can then process ;ike this:
+  LOADXML(%'out'%, 'Fred');
+  #FOR (Fred)
+   #FOR (Field)
+    #IF (%'{@isEnd}'% &lt;&gt; '')
+  OUTPUT('END');
+    #ELSE
+  OUTPUT(%'{@type}'%
+    #IF (%'{@size}'% &lt;&gt; '-15' AND
+         %'{@isRecord}'%='' AND
+         %'{@isDataset}'%='')
+  + %'{@size}'%
+     #END
+  + ' ' + %'{@label}'% + ';');
+    #END
+   #END
+  #END
+  OUTPUT('Done');
+</pre><p>See Also: <a class="link" href="bk01ch10s68.html" title="LOADXML">LOADXML</a>, <a class="link" href="bk01ch12s09.html" title="#EXPORTXML">#EXPORTXML</a>, <a class="link" href="bk01ch12s04.html" title="#DECLARE">#DECLARE</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch12s07.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch12.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch12s09.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">#EXPAND&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;#EXPORTXML</td></tr></table></div></body></html>

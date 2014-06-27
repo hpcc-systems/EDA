@@ -1,0 +1,19 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>UNGROUP</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10.html" title="Built-in Functions and Actions"><link rel="prev" href="bk01ch10s126.html" title="TRUNCATE"><link rel="next" href="bk01ch10s128.html" title="UNICODEORDER"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">UNGROUP</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s126.html">Prev</a>&nbsp;</td><th width="60%" align="center"><span class="bold"><strong>Built-in Functions and Actions</strong></span></th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s128.html">Next</a></td></tr></table><hr></div><div class="sect1" title="UNGROUP"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="UNGROUP"></a>UNGROUP</h2></div></div></div><p><span class="bold"><strong>UNGROUP<a class="indexterm" name="d4e13266"></a>( </strong></span><span class="emphasis"><em>recordset </em></span><span class="bold"><strong>)</strong></span></p><div class="informaltable"><table border="0"><colgroup><col width="77"><col width="275"></colgroup><tbody><tr><td><span class="emphasis"><em>recordset</em></span></td><td>The set of previously GROUPed records.</td></tr><tr><td>Return:</td><td>UNGROUP returns a record set.</td></tr></tbody></table></div><p>The <span class="bold"><strong>UNGROUP </strong></span>function<a class="indexterm" name="d4e13285"></a> removes previous grouping. This is equivalent to using the GROUP function<a class="indexterm" name="d4e13287"></a> without a second parameter.</p><p>Example:</p><pre class="programlisting">  MyRec := RECORD
+  STRING20 Last;
+  STRING20 First;
+  END;
+  
+  SortedSet := SORT(Person,Person.last_name); //sort by last
+          name
+  GroupedSet := GROUP(SortedSet,last_name); //then group
+          them
+  
+  SecondSort := SORT(GroupedSet,Person.first_name);
+  //sorts by first name within each last name group
+  // this is a "sort within group"
+  
+  UnGroupedSet := UNGROUP(GroupedSet); //ungroup the
+          dataset
+</pre><p>See Also: <a class="link" href="bk01ch08s04.html" title="GROUP keyword">GROUP</a></p></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s126.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s128.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">TRUNCATE&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;UNICODEORDER</td></tr></table></div></body></html>

@@ -1,0 +1,138 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Extended PARSE Examples</title><link rel="stylesheet" href="eclipsehelp.css" type="text/css"><meta name="generator" content="DocBook XSL Stylesheets V1.75.1"><link rel="home" href="index.html" title="ECL Reference"><link rel="up" href="bk01ch10s84.html" title="PARSE"><link rel="prev" href="bk01ch10s84s02.html" title="PARSE XML Data"><link rel="next" href="bk01ch10s85.html" title="PIPE"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Extended PARSE Examples</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="bk01ch10s84s02.html">Prev</a>&nbsp;</td><th width="60%" align="center">PARSE</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s85.html">Next</a></td></tr></table><hr></div><div class="sect2" title="Extended PARSE Examples"><div class="titlepage"><div><div><h3 class="title"><a name="Extended_PARSE_Examples"></a>Extended PARSE<a class="indexterm" name="d4e10893"></a> Examples<a class="indexterm" name="d4e10895"></a><a class="indexterm" name="d4e10897"></a></h3></div></div></div><p>This example parses raw phone numbers from a specific field in an input dataset into a single standard output containing just the numbers. A missing area code in the raw input results in three leading zeroes in the output.</p><pre class="programlisting">infile := DATASET([{'5619994581'},{'15619994581'},
+                   {'(561) 999-4581'},{'(561)999-4581'},
+                   {'561-999-4581'},{'561 999 4581'},
+                   {'561.999.4581'},{'561/999/4581'},
+                   {'561 999-4581'},{'9994581'},
+                   {'999-4581'}],{STRING20 rawnumber});
+  
+            
+PATTERN numbers := PATTERN('[0-9]')+;
+PATTERN alpha := PATTERN('[A-Za-z]')+;
+PATTERN ws := [' ','\t']*;
+PATTERN sepchar := PATTERN('[-./ ]');
+PATTERN Seperator := ws sepchar ws;
+
+// Area Code
+PATTERN OpenParen := ['[','(','{','&lt;'];
+PATTERN CloseParen := [']',')','}','&gt;'];
+PATTERN FrontDigit := ['1', '0'] OPT(Seperator);
+PATTERN areacode := OPT(FrontDigit) OPT(OpenParen) numbers length(3) OPT(CloseParen);
+
+// Last Seven digits
+PATTERN exchange := numbers length(3);
+PATTERN lastfour := numbers length(4);
+PATTERN seven := exchange OPT(Seperator) lastfour;
+
+// Extension
+PATTERN extension := ws alpha ws numbers;
+
+// Phone Number
+PATTERN phonenumber := OPT(areacode) OPT(Seperator) seven
+          opt(extension) ws;
+
+layout_phone_append := RECORD
+  infile;
+  STRING10 clean_phone := MAP(NOT MATCHED(phonenumber) =&gt; '',
+                              NOT MATCHED(areacode) =&gt; '000' + MATCHTEXT(exchange) + MATCHTEXT(lastfour),
+                              MATCHTEXT(areacode/numbers) + MATCHTEXT(exchange) + MATCHTEXT(lastfour));
+END;
+
+outfile := PARSE(infile, rawnumber, phonenumber, layout_phone_append,FIRST, NOT MATCHED, WHOLE);
+
+OUTPUT(outfile);
+</pre><p>This example parses a small subset of raw movie data (freely available at IMDB.com) into standard database fields:</p><pre class="programlisting">Layout_Actors_Raw := RECORD
+STRING120 IMDB_Actor_Desc;
+END;
+
+File_Actors := DATASET([
+{'A.V., Subba Rao Chenchu Lakshmi (1958/I) &lt;10&gt;'},
+{' Jayabheri (1959) &lt;17&gt;'},
+{' Madalasa (1948) &lt;3&gt;'},
+{' Mangalya Balam (1958) &lt;12&gt;'},
+{' Mohini Bhasmasura (1938) &lt;3&gt;'},
+{' Palletoori Pilla (1950) [Kampanna Dora] &lt;4&gt;'},
+{' Peddamanushulu (1954) &lt;6&gt;'},
+{' Sarangadhara (1957) &lt;12&gt;'},
+{' Sri Seetha Rama Kalyanam (1961) &lt;12&gt;'},
+{' Sri Venkateswara Mahatmyam (1960) [Akasa Raju] &lt;5&gt;'},
+{' Vara Vikrayam (1939) [Judge] &lt;12&gt;'},
+{' Vindhyarani (1948) &lt;7&gt;'},
+{''},
+{'Aa, Brynjar Adjo solidaritet (1985) [Ponker] &lt;40&gt;'},
+{''},
+{'Aabel, Andreas Bor Borson Jr. (1938) [O.G. Hansen] &lt;9&gt;'},
+{' Jeppe pa bjerget (1933) [En skomakerlaerling]'},
+{' Kampen om tungtvannet (1948) &lt;8&gt;'},
+{' Prinsessen som ingen kunne maqlbinde (1932) [Espen
+          Askeladd] &lt;3&gt;'},
+{' Spokelse forelsker seg, Et (1946) [Et spokelse] &lt;6&gt;'},
+{''},
+{'Aabel, Hauk (I) Alexander den store (1917) [Alexander Nyberg]'},
+{' Du har lovet mig en kone! (1935) [Professoren] &lt;6&gt;'},
+{' Glad gutt, En (1932) [Ola Nordistua] &lt;1&gt;'},
+{' Jeppe pa bjerget (1933) [Jeppe] &lt;1&gt;'},
+{' Morderen uten ansikt (1936)'},
+{' Store barnedapen, Den (1931) [Evensen, kirketjener] &lt;5&gt;'},
+{' Troll-Elgen (1927) [Piper, direktor] &lt;9&gt;'},
+{' Ungen (1938) [Krestoffer] &lt;8&gt;'},
+{' Valfangare (1939) [Jensen Sr.] &lt;4&gt;'},
+{''},
+{'Aabel, Per (I) Brudebuketten (1953) [Hoyland jr.] &lt;3&gt;'},
+{' Cafajestes, Os (1962)'},
+{' Farlige leken, Den (1942) [Fredrik Holm, doktor]'},
+{' Herre med bart, En (1942) [Ole Grong, advokat] &lt;1&gt;'},
+{' Kjaere Maren (1976) [Doktor]'},
+{' Kjaerlighet og vennskap (1941) [Anton Schack] &lt;3&gt;'},
+{' Ombyte fornojer (1939) [Gregor Ivanow] &lt;2&gt;'},
+{' Portrettet (1954) [Per Haug, provisor] &lt;1&gt;'}],
+Layout_Actors_Raw);
+
+//Basic patterns:
+PATTERN arb := PATTERN('[-!.,\t a-zA-Z0-9]')+;
+
+//all alphanumeric &amp; certain special characters
+PATTERN ws := [' ','\t']+; //word separators (space &amp; tab)
+PATTERN number := PATTERN('[0-9]')+; //numbers
+
+//extended patterns:
+PATTERN age := '(' number OPT('/I') ')';
+
+//movie year -- OPT('/I') required for first rec
+PATTERN role := '[' arb ']'; //character played
+PATTERN m_rank := '&lt;' number '&gt;'; //credit appearance number
+PATTERN actor := arb OPT(ws '(I)' ws);
+//actor's name -- OPT(ws '(I)' ws)
+// required for last two actors
+
+//extended pattern to parse the actual text:
+PATTERN line := actor '\t' arb ws OPT(age) ws OPT(role) ws OPT(m_rank) ws;
+
+//output record structure:
+NLP_layout_actor_movie := RECORD
+  STRING30 actor_name := Std.Str.filterout(MATCHTEXT(actor),'\t');
+  STRING50 movie_name := MATCHTEXT(arb[2]);
+  UNSIGNED2 movie_year := (UNSIGNED)MATCHTEXT(age/number);
+  STRING20 movie_role := MATCHTEXT(role/arb);
+  UNSIGNED1 cast_rank := (UNSIGNED)MATCHTEXT(m_rank/number);
+END;
+
+//and the actual parsing operation
+Actor_Movie_Init := PARSE(File_Actors,
+                          IMDB_Actor_Desc,
+                          line,
+                          NLP_layout_actor_movie,WHOLE,FIRST);
+
+// then iterate to propagate actor name in each record
+NLP_layout_actor_movie IterNames(NLP_layout_actor_movie L,
+                                 NLP_layout_actor_movie R) := TRANSFORM
+  SELF.actor_name := IF(R.actor_Name='',L.actor_Name,R.actor_name);
+  SELF:= R;
+END;
+
+NLP_Actor_Movie := ITERATE(Actor_Movie_Init,IterNames(LEFT,RIGHT));
+
+// and output the result set
+OUTPUT(NLP_Actor_Movie);
+</pre></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="bk01ch10s84s02.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="bk01ch10s84.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="bk01ch10s85.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">PARSE XML Data&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;PIPE</td></tr></table></div></body></html>
