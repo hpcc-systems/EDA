@@ -201,9 +201,9 @@ public class ECLTabulateBuckets extends ECLJobEntry{//extends JobEntryBase imple
         		ecl += "MyTable := TABLE(Smokin,MyRec,left_bucket,right_bucket,left_field,right_field,"+group+");\n";
         		if(persist.equalsIgnoreCase("true")){
             		if(outputName != null && !(outputName.trim().equals(""))){
-            			ecl += "OUTPUT(MyTable"+",,'~"+outputName+"::tabulateBuckets', __compressed__, overwrite,NAMED('TabulateBuckets'))"+";\n";
+            			ecl += "OUTPUT(MyTable"+",,'~eda::"+outputName+"::tabulateBuckets', __compressed__, overwrite,NAMED('TabulateBuckets'))"+";\n";
             		}else{
-            			ecl += "OUTPUT(MyTable"+",,'~"+defJobName+"::tabulateBuckets', __compressed__, overwrite,NAMED('TabulateBuckets'))"+";\n";
+            			ecl += "OUTPUT(MyTable"+",,'~eda::"+defJobName+"::tabulateBuckets', __compressed__, overwrite,NAMED('TabulateBuckets'))"+";\n";
             		}
             	}
             	else{
@@ -218,9 +218,9 @@ public class ECLTabulateBuckets extends ECLJobEntry{//extends JobEntryBase imple
 	        	
 	        	if(persist.equalsIgnoreCase("true")){
             		if(outputName != null && !(outputName.trim().equals(""))){
-            			ecl += "OUTPUT(MyTable"+",,'~"+outputName+"::tabulateBuckets', __compressed__, overwrite,NAMED('TabulateBuckets'))"+";\n";
+            			ecl += "OUTPUT(MyTable"+",,'~eda::"+outputName+"::tabulateBuckets', __compressed__, overwrite,NAMED('TabulateBuckets'))"+";\n";
             		}else{
-            			ecl += "OUTPUT(MyTable"+",,'~"+defJobName+"::tabulateBuckets', __compressed__, overwrite,NAMED('TabulateBuckets'))"+";\n";
+            			ecl += "OUTPUT(MyTable"+",,'~eda::"+defJobName+"::tabulateBuckets', __compressed__, overwrite,NAMED('TabulateBuckets'))"+";\n";
             		}
             	}
             	else{

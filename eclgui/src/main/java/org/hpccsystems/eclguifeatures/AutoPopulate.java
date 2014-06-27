@@ -198,6 +198,10 @@ public class AutoPopulate {
     }
     
     public String[] parseAllDefinitions(List<JobEntryCopy> jobs) throws Exception{
+        //String datasets1[] =  parseDefinitions(jobs,"eclIsDef","true");
+        //String datasets2[] =  parseDefinitions(jobs,"eclIsGraphable","true");
+        
+        //return merge(datasets1,datasets2);
     	return parseDefinitions(jobs,"eclIsDef","true");
     }
     
@@ -281,15 +285,15 @@ public class AutoPopulate {
     	//find the dataset declaration from the value in the select
     	
     	
-    	 //System.out.println(" ------------ parseDataSet ------------- ");
+    	//System.out.println(" ------------ parseDataSet ------------- ");
         String datasets[] = null;
         ArrayList<String> adDS = new ArrayList<String>();
-      
+        
         
         Object[] jec = jobs.toArray();
-
+        
         int k = 0;
-
+        
         for(int j = 0; j<jec.length; j++){
            // System.out.println("Node(i): " + j + " | " +((JobEntryCopy)jec[j]).getName());
 
@@ -332,7 +336,7 @@ public class AutoPopulate {
 				                	  
 				                	   if(defValue != null){
 				                		   //System.out.println("---------------NODE_VALUE: " + defValue);
-
+				                		   
 				                		   
 				                		   
 				                		   if(defValue.equals(datasetValue)){
@@ -985,7 +989,11 @@ public class AutoPopulate {
         }else if(type != null && type.equalsIgnoreCase("ECLMerge")){
          parents.add(datasetParentName("recordsetSet"));
         
-        }else if(type != null && type.equalsIgnoreCase("ECLFilter")){
+        }else if(type != null && type.equalsIgnoreCase("ECLUnivariate")){
+            parents.add(datasetParentName("single"));
+            
+            }
+        else if(type != null && type.equalsIgnoreCase("ECLFilter")){
          parents.add(datasetParentName("inRecordName"));
         }else if(type != null && type.equalsIgnoreCase("ECLML_FromField")){
         
@@ -1184,8 +1192,8 @@ public class AutoPopulate {
     			}
     		}
     	}
-    	//System.out.println("_______________________");
-    	//System.out.println("Multiple Line Test");
+    	System.out.println("_______________________");
+    	System.out.println("Multiple Line Test");
     	compileFlags = "-I /home/ubuntu/DeepGlance\r\n-I /ho me/ubu ntu/DeepGlance\r\n-O\r\n";
     	compileFlagsAL = ap.compileFlagsToArrayList(compileFlags);
     	

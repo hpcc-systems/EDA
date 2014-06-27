@@ -130,9 +130,9 @@ public class ECLRandom extends ECLJobEntry{//extends JobEntryBase implements Clo
             project = sb.toString();
             if(persist.equalsIgnoreCase("true")){
         		if(outputName != null && !(outputName.trim().equals(""))){
-        			project += "OUTPUT("+this.getDatasetName()+"_with_random"+",,'~"+outputName+"::random', __compressed__, overwrite,NAMED('Random'))"+";\n";
+        			project += "OUTPUT("+this.getDatasetName()+"_with_random"+",,'~eda::"+outputName+"::random', __compressed__, overwrite,NAMED('Random'))"+";\n";
         		}else{
-        			project += "OUTPUT("+this.getDatasetName()+"_with_random"+",,'~"+defJobName+"::random', __compressed__, overwrite,NAMED('Random'))"+";\n";
+        			project += "OUTPUT("+this.getDatasetName()+"_with_random"+",,'~eda::"+defJobName+"::random', __compressed__, overwrite,NAMED('Random'))"+";\n";
         		}
         	}
         	else{

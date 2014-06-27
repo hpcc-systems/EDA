@@ -84,11 +84,11 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
     private Text jobEntryName;
     private Combo datasetName;
     private Combo datasetNameOriginal;
-<<<<<<< HEAD
+
     private Combo GraphType;
-=======
-    private Combo GraphType;  
->>>>>>> 5321a09bc3fa68322f562f57db1a16fc35a5975e
+
+    private String[] group = null;
+
     private Text GHeight;
     private Text GWidth;
     private Combo Size;
@@ -128,7 +128,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         
         String datasets[] = null;
         String datasets1[] = null;
-        
+         
         AutoPopulate ap = new AutoPopulate();
         try{
             //Object[] jec = this.jobMeta.getJobCopies().toArray();
@@ -138,6 +138,7 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
             checkList = ap.parseUnivariate(this.jobMeta.getJobCopies());
             filePath = ap.getGlobalVariable(this.jobMeta.getJobCopies(), "compileFlags"); 
             defJobName = ap.getGlobalVariable(this.jobMeta.getJobCopies(), "jobName");
+            group = ap.parseGroupDefinitions(this.jobMeta.getJobCopies());
         }catch (Exception e){
             System.out.println("Error Parsing existing Datasets");
             System.out.println(e.toString());
@@ -154,17 +155,8 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         TabFolder tab = new TabFolder(shell, SWT.FILL | SWT.RESIZE | SWT.MIN | SWT.MAX);
         FormData datatab = new FormData();
         
-<<<<<<< HEAD
-<<<<<<< HEAD
         datatab.height = 500;
-=======
-        datatab.height = 370;
->>>>>>> 45320053d50cd1f69e42a261625e082f6a2ed5f0
-        datatab.width = 650;
-=======
-        datatab.height = 580;
         datatab.width = 680;
->>>>>>> 5321a09bc3fa68322f562f57db1a16fc35a5975e
         tab.setLayoutData(datatab);
         
         //Composite compForGrp = new Composite(tab, SWT.NONE | SWT.V_SCROLL | SWT.SHADOW_OUT);
@@ -238,22 +230,13 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         datasetGroup.setLayoutData(datasetGroupFormat);
 		
 		
-<<<<<<< HEAD
-<<<<<<< HEAD
-        datasetNameOriginal = buildCombo("Original Dataset Name :", jobEntryName, lsMod, middle, margin, datasetGroup, datasets1);
-        
-        datasetName = buildCombo("Derived Dataset :", datasetNameOriginal, lsMod, middle, margin*2, datasetGroup, datasets);
-=======
         datasetNameOriginal = buildCombo("Original Dataset Name : ", jobEntryName, lsMod, middle, margin, datasetGroup, datasets1);
         
         datasetName = buildCombo("Dataset Name :    ", datasetNameOriginal, lsMod, middle, margin, datasetGroup, datasets);
->>>>>>> 45320053d50cd1f69e42a261625e082f6a2ed5f0
-		
         GraphType = buildCombo("Graph Type :", datasetName, lsMod, middle, margin*2, datasetGroup, new String[]{"PieChart", "LineChart","ScatterChart","BarChart"});
         
         Size = buildCombo("Set Size :", GraphType, lsMod, middle, margin*2, datasetGroup, new String[]{"YES","NO"});
         
-<<<<<<< HEAD
         Size.addSelectionListener(new SelectionAdapter(){
 
 			@Override
@@ -297,20 +280,8 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         
         
         
-        item1.setControl(sc1);
-=======
-        Group perGroup = new Group(compForGrp, SWT.SHADOW_NONE);
-=======
-        datasetNameOriginal = buildCombo("Original Dataset Name :", jobEntryName, lsMod, middle, margin, datasetGroup, datasets1);
-        
-        datasetName = buildCombo("Derived Dataset :", datasetNameOriginal, lsMod, middle, margin*2, datasetGroup, datasets);
-		
-        GraphType = buildCombo("Graph Type :", datasetName, lsMod, middle, margin*2, datasetGroup, new String[]{"PieChart", "LineChart","ScatterChart","BarChart"});
-        
-        Size = buildCombo("Set Size :", GraphType, lsMod, middle, margin*2, datasetGroup, new String[]{"YES","NO"});
-        
+        //item1.setControl(sc1);
         final Group perGroup = new Group(compForGrp1, SWT.SHADOW_NONE);
->>>>>>> 5321a09bc3fa68322f562f57db1a16fc35a5975e
         props.setLook(perGroup);
         perGroup.setText("Persist");
         perGroup.setLayout(groupLayout);
@@ -380,10 +351,6 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
             }
         });
         
-<<<<<<< HEAD
-        item1.setControl(compForGrp);
->>>>>>> 45320053d50cd1f69e42a261625e082f6a2ed5f0
-=======
         Size.addSelectionListener(new SelectionAdapter(){
 
 			@Override
@@ -428,7 +395,6 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         
         
         item1.setControl(sc1);
->>>>>>> 5321a09bc3fa68322f562f57db1a16fc35a5975e
         /**
          * TableViewer in new Tab starts
          */
@@ -607,9 +573,13 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 		    			 
 		    			 
 		    			 String[] check = checkList[num-1].split(",");
-		    			 String[] items1 = new String[check.length];
-		    			 String[] types1 = new String[check.length];
-		    			 items1[0] = "field"; types1[0] = "STRING";int j = 1;
+		    			 String[] items1 = new String[group.length+check.length];
+		    			 String[] types1 = new String[group.length+check.length];
+		    			 for(int i = 0; i<group.length; i++){
+		    				 items1[i] = group[i].split(",")[0];
+		    				 types1[i] = group[i].split(",")[1];
+		    			 }
+		    			 items1[group.length] = "field"; types1[group.length] = "STRING";int j = group.length+1;
 		    			 for(int i = 0; i<check.length; i++){
 		    				 if(check[i].equalsIgnoreCase("true") && i != 2)
 		    					 {
@@ -881,10 +851,6 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         	filePath = jobEntry.getFilePath();
         }
         
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 5321a09bc3fa68322f562f57db1a16fc35a5975e
         if(jobEntry.getSize() != null){
         	Size.setText(jobEntry.getSize());
         	if(jobEntry.getSize().equals("YES")){
@@ -893,11 +859,8 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
 			     sizeGroup.setText("Size of Graph");
 			     sizeGroup.setLayout(groupLayout);
 			     FormData GroupFormat = new FormData();
-<<<<<<< HEAD
 			     GroupFormat.top = new FormAttachment(datasetGroup, margin); 
-=======
 			     GroupFormat.top = new FormAttachment(perGroup, margin); 
->>>>>>> 5321a09bc3fa68322f562f57db1a16fc35a5975e
 			     GroupFormat.width = 400;
 			     GroupFormat.height = 100;
 			     GroupFormat.left = new FormAttachment(middle, 0);
@@ -922,10 +885,6 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         	}
         }
         
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 5321a09bc3fa68322f562f57db1a16fc35a5975e
         if (jobEntry.getPersistOutputChecked() != null && chkBox != null) {
         	chkBox.setSelection(jobEntry.getPersistOutputChecked().equals("true")?true:false);
         }
@@ -946,7 +905,6 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
         	defJobName = jobEntry.getDefJobName();
         }
         
->>>>>>> 45320053d50cd1f69e42a261625e082f6a2ed5f0
         shell.pack();
         shell.open();
         while (!shell.isDisposed()) {
@@ -1004,18 +962,8 @@ public class ECLGraphDialog extends ECLJobEntryDialog{
    		}
    		if(this.normlist.equals("")){
    			isValid = false;
-<<<<<<< HEAD
-<<<<<<< HEAD
    			errors += "You need to select a field from the \"Columns From Graph\" Tab to produce Graph\r\n";
    		}   		
-=======
-   			errors += "You need to select a field to produce Graph\r\n";
-   		}
->>>>>>> 45320053d50cd1f69e42a261625e082f6a2ed5f0
-=======
-   			errors += "You need to select a field from the \"Columns From Graph\" Tab to produce Graph\r\n";
-   		}   		
->>>>>>> 5321a09bc3fa68322f562f57db1a16fc35a5975e
    		
     	if(!isValid){
     		ErrorNotices en = new ErrorNotices();

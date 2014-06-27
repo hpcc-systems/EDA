@@ -4,6 +4,7 @@ import java.awt.Robot;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -19,9 +20,11 @@ import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.FocusCellOwnerDrawHighlighter;
 import org.eclipse.jface.viewers.ICellEditorListener;
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerEditor;
@@ -69,6 +72,11 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.graphics.Image;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class CreateTable {
     private Shell shell;
@@ -76,11 +84,17 @@ public class CreateTable {
 	private Table table;
 	private TableViewer tableViewer;
 	private TabFolder tabFolder;
+	private Listener L1;
+	private Listener L2;
+	private Date date = new Date();
+	private long origTime = date.getTime();
+	private String s = "";
+	private long check = 0;
 	
 	// Create a RecordList and assign it to an instance variable
 	private RecordList recordList = new RecordList();
-	
 	private Button closeButton;
+	private Button expandButton;
 	
 	// Set the table column property names
 	public final static String NAME_COLUMN 			= "column_name";
@@ -96,17 +110,11 @@ public class CreateTable {
 	
 	private boolean includeCopyParent = false;
 	private boolean selectColumns = false;
-	private boolean isAddButton = true;
+	
 	
 	private String[] filedNameArr = null;
 
 	
-	public boolean isAddButton() {
-		return isAddButton;
-	}
-	public void setAddButton(boolean isAddButton) {
-		this.isAddButton = isAddButton;
-	}
 	public String[] getFiledNameArr() {
 		return filedNameArr;
 	}
@@ -135,7 +143,7 @@ public class CreateTable {
 	public void setIncludeCopyParent(boolean includeCopyParent) {
 		this.includeCopyParent = includeCopyParent;
 	}
-	public TabItem buildDefTab(String tabName, TabFolder tabFolder) {
+	public TabItem buildDefTab(String tabName, TabFolder tabFolder){
 		this.tabFolder = tabFolder;
 		TabItem tabItem = new TabItem(tabFolder, SWT.NULL);
 		tabItem.setText(tabName);
@@ -166,6 +174,7 @@ public class CreateTable {
 		// tableViewer.setInput(recordList);
 		// table.setRedraw( true );
 	}
+	
 
 	public CreateTable(Shell shell) {
 		this.shell = shell;
@@ -323,7 +332,7 @@ public class CreateTable {
 	 * Create a new shell, add the widgets, open the shell
 	 * @return the shell that was created	 
 	 */
-	private void addChildControls(Composite composite) {
+	private void addChildControls(Composite composite){//,Element[] eElement, ArrayList<Integer> list) {
 
 		// Create a composite to hold the children
 		GridData gridData = new GridData (GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_BOTH);
@@ -344,7 +353,7 @@ public class CreateTable {
 		addCellNavigation();	//	Add Cell Navigation(Tab and Arrow keys for column navigation)
 		addMenu(composite);		//	Add Right Click Menu options
 	}
-	
+
 	/**
 	 * This method is used to add Right Click Menu options
 	 * @param composite
@@ -559,15 +568,25 @@ public class CreateTable {
 				public String letter = "";
 				public List<String> tempList = null;
 				public void keyPressed(KeyEvent e) {
+					date = new Date();
+					long time = date.getTime();
 					
+					check = time - origTime;
+					origTime = time;
 				} //End of keyPressed event
 
 				public void keyReleased(KeyEvent e) {
 					String key = Character.toString(e.character);
+					if(check > 500)
+						s = key;
+					else
+						s += key;
 					String[] items = typeComboBox.getItems();
+					if(items.length == 0)
+						s = "";
 					for (int i = 0; i < items.length; i++) {
-						if (items[i].toLowerCase().startsWith(key.toLowerCase())) {
-							if(!letter.equals(key)){
+						if (items[i].toLowerCase().startsWith(s.toLowerCase())) {
+							if(!letter.equals(s)){
 								tempList = new ArrayList<String>();
 							}
 							if (items[i].equalsIgnoreCase("select")) {
@@ -581,7 +600,7 @@ public class CreateTable {
 									} else {
 										((CCombo) typeComboBox.getControl()).select(i);
 									}
-									letter = key;
+									letter = s;
 									return;
 								} 
 							}
@@ -812,13 +831,140 @@ public class CreateTable {
 	 * Add the Buttons
 	 * @param parent
 	 */
+	public void createExpand(final Display display, final Element[] eElement, final ArrayList<Integer> list){
+		
+		table.addListener (SWT.Selection, new Listener () {
+            public void handleEvent (Event event) {
+            	boolean flag = true;
+            	for(int k = 0; k<table.getItemCount(); k++){
+        			if(table.getItem(k).getChecked() && table.getItem(k).getText(2).equalsIgnoreCase("DATASET")){
+        				flag = false;
+        				int temp = list.get(k);
+        				System.out.println(temp); 
+        				L1 = create_table(display,eElement[temp],expandButton);
+        			}
+        		}
+            	if(flag && L1!= null){
+            		expandButton.removeListener(SWT.Selection, L1);
+            	}
+            }
+        });
+		
+	}
+	
+	private Listener create_table(final Display display, final Element element,final Button expand){
+		Listener expandListener = new Listener(){
+
+			@Override
+			public void handleEvent(Event arg0) {		
+				final Shell exp = new Shell(display);
+				exp.setLayout(new GridLayout(1,false));
+				exp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				ArrayList fields = new ArrayList();
+				TableViewer tv = new TableViewer(exp,  SWT.CHECK | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
+
+			    tv.setContentProvider(new PlayerContentProvider());
+			    tv.setLabelProvider(new PlayerLabelProvider());
+			    
+			    final Table table = tv.getTable();
+			    table.setLayoutData(new GridData(GridData.FILL_BOTH));
+			    table.setLinesVisible(true);
+			    table.setHeaderVisible(true);
+			    TableColumn tc = new TableColumn(table, SWT.LEFT);
+			    tc.setWidth(150);
+			    tc.setText("Column Name");
+			    
+			    TableColumn tc1 = new TableColumn(table, SWT.LEFT);
+			    tc1.setWidth(150);
+			    tc1.setText("Type");
+			    tc1 = new TableColumn(table, SWT.LEFT);
+			    tc1.setWidth(150);
+			    tc1.setText("Size");
+			    
+			    final Button expand = new Button(exp, SWT.NONE);
+			    expand.setText("Expand");
+			    expand.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+
+			    NodeList n = element.getElementsByTagName("Field");
+			    final Element[] eElement = new Element[n.getLength()];
+			    final ArrayList<Integer> list = new ArrayList<Integer>();
+
+				for (int temp = 0; temp < n.getLength(); temp++) {
+					Node nNode = n.item(temp);
+					
+					System.out.println("\nCurrent Element :" + nNode.getNodeName());
+			 
+					if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+			 
+						eElement[temp] = (Element) nNode;
+						
+						System.out.println("Label : " + eElement[temp].getElementsByTagName("Field").getLength());
+						if(eElement[temp].getElementsByTagName("Field").getLength()>0){
+							if(eElement[temp].getAttribute("isDataset").equals("1")){
+								System.out.println("Type : " + "DATASET");
+								Player P = new Player();
+								P.setFirstName(eElement[temp].getAttribute("name").toString());
+								P.setTy("DATASET");
+								P.setSize(eElement[temp].getAttribute("size").toString());
+								fields.add(P);
+								tv.setInput(fields);						
+								//create_table(eElement[temp],expand,display);
+							}
+							list.add(temp);
+							temp += eElement[temp].getElementsByTagName("Field").getLength();					
+						}
+						else{
+							//System.out.println(eElement[temp].getAttribute("ecltype"));
+							list.add(temp);
+							Player P = new Player();
+							P.setFirstName(eElement[temp].getAttribute("name").toString());
+							P.setTy(eElement[temp].getAttribute("ecltype").toString());
+							P.setSize(eElement[temp].getAttribute("size").toString());
+							fields.add(P);
+							tv.setInput(fields);
+						}
+					}
+				
+				}
+				table.addListener (SWT.Selection, new Listener () {
+		            public void handleEvent (Event event) {
+		            	//Listener L1 = null;
+		            	boolean flag = true;
+		            	for(int k = 0; k<table.getItemCount(); k++){
+		        			if(table.getItem(k).getChecked() && table.getItem(k).getText(1).equalsIgnoreCase("DATASET")){
+		        				flag = false;
+		        				int temp = list.get(k);
+		        				System.out.println(temp); 
+		        				L2 = create_table(display,eElement[temp],expand);
+		        				
+		        			}
+		        		}
+		            	if(flag && L2 != null){
+		            		expand.removeListener(SWT.Selection, L2);
+		            	}
+		            }
+		        });
+			    
+				exp.pack();
+		        exp.open();
+				while (!exp.isDisposed()) {
+					if (!display.readAndDispatch())
+						display.sleep();
+				}
+
+			}
+			
+		};
+		expand.addListener(SWT.Selection, expandListener);
+		return expandListener;
+	}
+
 	private void createButtons(Composite parent) {
 		GridData gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gridData.widthHint = 80;
 		
 		// Create and configure the "Add" button
 		//if(!this.selectColumns){//decided to keep the add button in all cases if user prefers this use case
-		if(this.isAddButton){
 			Button add = new Button(parent, SWT.PUSH | SWT.CENTER);
 			add.setText("Add");
 			
@@ -832,14 +978,12 @@ public class CreateTable {
 	                                table.redraw();
 				}
 			});
-		}
 		//}
 		
 		if(this.selectColumns){
 			Button selCol = new Button(parent, SWT.PUSH | SWT.CENTER);
 			selCol.setText("Select Columns");
-			gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
-			gridData.widthHint = 120; 
+			
 			
 			selCol.setLayoutData(gridData);
 			selCol.addSelectionListener(new SelectionAdapter() {
@@ -985,7 +1129,7 @@ public class CreateTable {
 		btnRowDown.setImage(RecordLabels.getImage("downArrow"));
 		btnRowDown.setText("Move Down");
 		gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gridData.widthHint = 100;
+		gridData.widthHint = 90;
 		btnRowDown.setLayoutData(gridData); 
 
 		btnRowDown.addSelectionListener(new SelectionAdapter() {
@@ -1024,11 +1168,15 @@ public class CreateTable {
 		//gridData.widthHint = 80; 
 		//closeButton.setLayoutData(gridData);
 		
-		/*closeButton = new Button(parent, SWT.PUSH | SWT.CENTER);
-		closeButton.setText("Close");
-		gridData = new GridData (GridData.HORIZONTAL_ALIGN_END);
-		gridData.widthHint = 80; 
-		closeButton.setLayoutData(gridData);*/
+		gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gridData.widthHint = 80;
+		expandButton = new Button(parent, SWT.PUSH | SWT.CENTER);
+		expandButton.setText("Expand");
+		gridData = new GridData (GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gridData.widthHint = 90; 
+		expandButton.setLayoutData(gridData);
+		
+		
 		
 		
 		//This filter is used to handle the CRTL+ENTER Event, which adds the new row to the Grid
@@ -1221,3 +1369,103 @@ public class CreateTable {
 		return recordList;	
 	}
 }
+class Player {
+	  private String firstName;
+	  private String type;
+	  private String size;
+
+	  public String getFirstName() {
+		  return firstName;
+	  }
+
+	  public void setFirstName(String firstName) {
+		  this.firstName = firstName;
+	  }
+
+	  public String getTy() {
+		  return type;
+	  }
+
+	  public void setTy(String type) {
+		  this.type = type;
+	  }
+
+	  public String getSize() {
+		  return size;
+	  }
+
+	  public void setSize(String size) {
+		  this.size = size;
+	  }
+
+}
+
+
+
+
+
+class PlayerLabelProvider implements ITableLabelProvider {
+
+
+//Constructs a PlayerLabelProvider
+	public PlayerLabelProvider() {
+	}
+
+
+	public Image getColumnImage(Object arg0, int arg1) {
+
+		return null;
+	}
+
+
+	public String getColumnText(Object arg0, int arg1) {
+	  Player values = (Player) arg0;
+	//  String text = "";
+	  switch(arg1){
+	  case 0:
+	  	  return values.getFirstName();//text = values[0];
+	  	//break;
+	  
+	  case 1:
+		  return values.getTy();
+	  case 2:
+		  return values.getSize();
+	  	//break;
+	  }
+	  return null;
+	}
+	
+	public void addListener(ILabelProviderListener arg0) {
+	  // Throw it away
+	}
+	
+	public void dispose() {
+	 
+	}
+	
+	public boolean isLabelProperty(Object arg0, String arg1) {
+	  return false;
+	}
+	
+	public void removeListener(ILabelProviderListener arg0) {
+	  // Do nothing
+	}
+}
+
+
+class PlayerContentProvider implements IStructuredContentProvider {
+
+	public Object[] getElements(Object arg0) {
+	  
+	  return ((List) arg0).toArray();
+	}
+	
+	public void dispose() {
+	  // We don't create any resources, so we don't dispose any
+	}
+	
+	public void inputChanged(Viewer arg0, Object arg1, Object arg2) {
+	  // Nothing to do
+	}
+}
+

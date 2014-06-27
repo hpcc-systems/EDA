@@ -206,9 +206,9 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        			//frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
 	        			if(persist.equalsIgnoreCase("true")){
 	        	    		if(outputName != null && !(outputName.trim().equals(""))){
-	        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~"+outputName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
+	        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::"+outputName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
 	        	    		}else{
-	        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~"+defJobName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
+	        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::"+defJobName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
 	        	    		}
 	        	    	}
 	        	    	else{
@@ -221,9 +221,9 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        			//frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
 	        			if(persist.equalsIgnoreCase("true")){
 	        	    		if(outputName != null && !(outputName.trim().equals(""))){
-	        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~"+outputName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
+	        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::"+outputName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
 	        	    		}else{
-	        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~"+defJobName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
+	        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::"+defJobName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
 	        	    		}
 	        	    	}
 	        	    	else{
@@ -251,9 +251,9 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        				//frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
 	        				if(persist.equalsIgnoreCase("true")){
 		        	    		if(outputName != null && !(outputName.trim().equals(""))){
-		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~"+outputName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
+		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::"+outputName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
 		        	    		}else{
-		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~"+defJobName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
+		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::"+defJobName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
 		        	    		}
 		        	    	}
 		        	    	else{
@@ -269,9 +269,9 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        				//frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
 	        				if(persist.equalsIgnoreCase("true")){
 		        	    		if(outputName != null && !(outputName.trim().equals(""))){
-		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~"+outputName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
+		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::"+outputName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
 		        	    		}else{
-		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~"+defJobName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
+		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::"+defJobName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
 		        	    		}
 		        	    	}
 		        	    	else{
@@ -298,9 +298,9 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        				//frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
 	        				if(persist.equalsIgnoreCase("true")){
 		        	    		if(outputName != null && !(outputName.trim().equals(""))){
-		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~"+outputName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
+		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::"+outputName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
 		        	    		}else{
-		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~"+defJobName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
+		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::"+defJobName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
 		        	    		}
 		        	    	}
 		        	    	else{
@@ -316,9 +316,9 @@ public class ECLFrequency extends ECLJobEntry{//extends JobEntryBase implements 
 	        				//frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",THOR);\n";
 	        				if(persist.equalsIgnoreCase("true")){
 		        	    		if(outputName != null && !(outputName.trim().equals(""))){
-		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~"+outputName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
+		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::"+outputName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
 		        	    		}else{
-		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~"+defJobName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
+		        	    			frequency += "OUTPUT("+cols[0]+"_Frequency"+getNumber()+",,'~eda::"+defJobName+cols[0]+"::frequency', __compressed__, overwrite,NAMED('Frequency_"+cols[0]+"'))"+";\n";
 		        	    		}
 		        	    	}
 		        	    	else{

@@ -235,9 +235,9 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
 	        			//ecl += "OUTPUT("+getSingle()+",NAMED('UnivariateStats'));\n";
 	        			if(persist.equalsIgnoreCase("true")){
 	    	        		if(outputName != null && !(outputName.trim().equals(""))){
-	    	        			ecl += "OUTPUT("+getSingle()+",,'~"+outputName+"::univariate_stats', __compressed__, overwrite,NAMED('UnivariateStats'))"+";\n";
+	    	        			ecl += "OUTPUT("+getSingle()+",,'~eda::"+outputName+"::univariate_stats', __compressed__, overwrite,NAMED('UnivariateStats'))"+";\n";
 	    	        		}else{
-	    	        			ecl += "OUTPUT("+getSingle()+",,'~"+defJobName+"::univariate_stats', __compressed__, overwrite,NAMED('UnivariateStats'))"+";\n";
+	    	        			ecl += "OUTPUT("+getSingle()+",,'~eda::"+defJobName+"::univariate_stats', __compressed__, overwrite,NAMED('UnivariateStats'))"+";\n";
 	    	        		}
 	    	        	}
 	    	        	else{
@@ -249,9 +249,9 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
 	        			//ecl += "OUTPUT("+getSingle()+",NAMED('UniVariate'));\n";
 	        			if(persist.equalsIgnoreCase("true")){
 	    	        		if(outputName != null && !(outputName.trim().equals(""))){
-	    	        			ecl += "OUTPUT("+getSingle()+",,'~"+outputName+"::univariate_stats', __compressed__, overwrite,NAMED('UnivariateStats'))"+";\n";
+	    	        			ecl += "OUTPUT("+getSingle()+",,'~eda::"+outputName+"::univariate_stats', __compressed__, overwrite,NAMED('UnivariateStats'))"+";\n";
 	    	        		}else{
-	    	        			ecl += "OUTPUT("+getSingle()+",,'~"+defJobName+"::univariate_stats', __compressed__, overwrite,NAMED('UnivariateStats'))"+";\n";
+	    	        			ecl += "OUTPUT("+getSingle()+",,'~eda::"+defJobName+"::univariate_stats', __compressed__, overwrite,NAMED('UnivariateStats'))"+";\n";
 	    	        		}
 	    	        	}
 	    	        	else{
@@ -268,11 +268,11 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
 	        		//ecl += "OUTPUT("+getMode()+",NAMED('UniVariate_Mode'));\n";
 	        		if(persist.equalsIgnoreCase("true")){
     	        		if(outputName != null && !(outputName.trim().equals(""))){
-    	        			ecl += "OUTPUT("+getMode()+",,'~"+outputName+"::univariate_mode', __compressed__, overwrite,NAMED('Univariate_Mode'))"+";\n";
+    	        			ecl += "OUTPUT("+getMode()+",,'~eda::"+outputName+"::univariate_mode', __compressed__, overwrite,NAMED('Univariate_Mode'))"+";\n";
     	        		}else{
-    	        			ecl += "OUTPUT("+getMode()+",,'~"+defJobName+"::univariate_mode', __compressed__, overwrite,NAMED('Univariate_Mode'))"+";\n";
+    	        			ecl += "OUTPUT("+getMode()+",,'~eda::"+defJobName+"::univariate_mode', __compressed__, overwrite,NAMED('Univariate_Mode'))"+";\n";
     	        		}
-    	        	} 
+    	        	}
     	        	else{
     	        		ecl += "OUTPUT("+getMode()+",NAMED('Univariate_Mode'));\n";
     	        	}
@@ -284,9 +284,9 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
         		//ecl += "OUTPUT("+getSingle()+",NAMED('Univariate'));\n";
         		if(persist.equalsIgnoreCase("true")){
 	        		if(outputName != null && !(outputName.trim().equals(""))){
-	        			ecl += "OUTPUT("+getSingle()+",,'~"+outputName+"::univariate', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
+	        			ecl += "OUTPUT("+getSingle()+",,'~eda::"+outputName+"::univariate', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
 	        		}else{
-	        			ecl += "OUTPUT("+getSingle()+",,'~"+defJobName+"::univariate', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
+	        			ecl += "OUTPUT("+getSingle()+",,'~eda::"+defJobName+"::univariate', __compressed__, overwrite,NAMED('Univariate'))"+";\n";
 	        		}
 	        	}
 	        	else{
@@ -426,10 +426,10 @@ public class ECLUnivariate extends ECLJobEntry{//extends JobEntryBase implements
         retval += "		<logical_file_name><![CDATA[" + logicalFileName + "]]></logical_file_name>" + Const.CR;
         retval += "		<checklist eclIsUniv=\"true\"><![CDATA[" + checkList + "]]></checklist>" + Const.CR;
         retval += "		<dataset_name><![CDATA[" + datasetName + "]]></dataset_name>" + Const.CR;		
-        retval += "		<single eclIsGraphable=\"true\" eclInception=\"true\"><![CDATA[" + single + "]]></single>" + Const.CR;
+        retval += "		<single eclIsGraphable=\"true\" eclIsDef=\"true\" eclType=\"recordset\" eclInception=\"true\"><![CDATA[" + single + "]]></single>" + Const.CR;
         if(getCheckList().length() > 0){
         	if(getCheckList().split(",")[2].equals("true"))
-        		retval += "		<mode eclIsGraphable=\"true\" eclInception=\"true\"><![CDATA[" + mode + "]]></mode>" + Const.CR;
+        		retval += "		<mode eclIsGraphable=\"true\" eclIsDef=\"true\" eclType=\"recordset\" eclInception=\"true\"><![CDATA[" + mode + "]]></mode>" + Const.CR;
         }
         retval += "		<label><![CDATA[" + label + "]]></label>" + Const.CR;
         retval += "		<output_name><![CDATA[" + outputName + "]]></output_name>" + Const.CR;

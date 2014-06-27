@@ -3,11 +3,7 @@ package org.hpccsystems.mapper.filter;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
-<<<<<<< HEAD
-import org.hpccsystems.mapper.MainMapperSimpleFilter;
-=======
 import org.hpccsystems.mapper.MainMapperForFilter;
->>>>>>> d067636a2c3b23ca222c3b3ca8764d88788b4070
 
 public class PersonLabelProviderForFilter implements ITableLabelProvider{
 	public PersonLabelProviderForFilter() {
@@ -23,16 +19,6 @@ public class PersonLabelProviderForFilter implements ITableLabelProvider{
 	//  String text = "";
 	  switch(arg1){
 	  case 0:
-<<<<<<< HEAD
-	  	  return MainMapperSimpleFilter.columnList[values.getColumns().intValue()];//text = values[0];
-	  	//break;
-	  case 1:
-		  return MainMapperSimpleFilter.operatorsList[values.getOperators().intValue()];	 //text = values[1];
-	  case 2:
-		  return values.getValue();	   
-	  case 3:
-		  return MainMapperSimpleFilter.booleanOperatorsList[values.getBoolean_operators().intValue()];
-=======
 	  	  return MainMapperForFilter.columnList[values.getColumns().intValue()];//text = values[0];
 	  	//break;
 	  case 1:
@@ -41,7 +27,6 @@ public class PersonLabelProviderForFilter implements ITableLabelProvider{
 		  return values.getValue();	   
 	  case 3:
 		  return MainMapperForFilter.booleanOperatorsList[values.getBoolean_operators().intValue()];
->>>>>>> d067636a2c3b23ca222c3b3ca8764d88788b4070
 	}
 	  return null;
 	}

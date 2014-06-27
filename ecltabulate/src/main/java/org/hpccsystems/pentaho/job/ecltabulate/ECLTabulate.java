@@ -260,9 +260,9 @@ public class ECLTabulate extends ECLJobEntry{//extends JobEntryBase implements C
 	        			//ecl += "OUTPUT(PercentTable"+cnt+",NAMED('WithParentPercentage"+cnt+"'));\n";
 	        			if(persist.equalsIgnoreCase("true")){
         	        		if(outputName != null && !(outputName.trim().equals(""))){
-        	        			ecl += "OUTPUT((PercentTable"+cnt+")"+",,'~"+outputName+"::tabulate_parent', __compressed__, overwrite,NAMED('WithParentPercentage"+cnt+"'))"+";\n";
+        	        			ecl += "OUTPUT((PercentTable"+cnt+")"+",,'~eda::"+outputName+"::tabulate_parent', __compressed__, overwrite,NAMED('WithParentPercentage"+cnt+"'))"+";\n";
         	        		}else{
-        	        			ecl += "OUTPUT((PercentTable"+cnt+")"+",,'~"+defJobName+"::tabulate_parent', __compressed__, overwrite,NAMED('WithParentPercentage"+cnt+"'))"+";\n";
+        	        			ecl += "OUTPUT((PercentTable"+cnt+")"+",,'~eda::"+defJobName+"::tabulate_parent', __compressed__, overwrite,NAMED('WithParentPercentage"+cnt+"'))"+";\n";
         	        		}
         	        	}
         	        	else{
@@ -280,9 +280,9 @@ public class ECLTabulate extends ECLJobEntry{//extends JobEntryBase implements C
 	        			//ecl += "OUTPUT(PercentTable"+cnt+",NAMED('WithParentPercentage"+cnt+"'));\n";
 	        			if(persist.equalsIgnoreCase("true")){
         	        		if(outputName != null && !(outputName.trim().equals(""))){
-        	        			ecl += "OUTPUT((PercentTable"+cnt+")"+",,'~"+outputName+"::tabulate_parent', __compressed__, overwrite,NAMED('WithParentPercentage"+cnt+"'))"+";\n";
+        	        			ecl += "OUTPUT((PercentTable"+cnt+")"+",,'~eda::"+outputName+"::tabulate_parent', __compressed__, overwrite,NAMED('WithParentPercentage"+cnt+"'))"+";\n";
         	        		}else{
-        	        			ecl += "OUTPUT((PercentTable"+cnt+")"+",,'~"+defJobName+"::tabulate_parent', __compressed__, overwrite,NAMED('WithParentPercentage"+cnt+"'))"+";\n";
+        	        			ecl += "OUTPUT((PercentTable"+cnt+")"+",,'~eda::"+defJobName+"::tabulate_parent', __compressed__, overwrite,NAMED('WithParentPercentage"+cnt+"'))"+";\n";
         	        		}
         	        	}
         	        	else{
@@ -340,9 +340,9 @@ public class ECLTabulate extends ECLJobEntry{//extends JobEntryBase implements C
         			//ecl += "OUTPUT(PercentGrandTable"+cnt+",NAMED('WithGrandTotalPercentage"+cnt+"'));\n";
         			if(persist.equalsIgnoreCase("true")){
     	        		if(outputName != null && !(outputName.trim().equals(""))){
-    	        			ecl += "OUTPUT((PercentGrandTable"+cnt+")"+",,'~"+outputName+"::tabulate_grand', __compressed__, overwrite,NAMED('WithGrandTotalPercentage"+cnt+"'))"+";\n";
+    	        			ecl += "OUTPUT((PercentGrandTable"+cnt+")"+",,'~eda::"+outputName+"::tabulate_grand', __compressed__, overwrite,NAMED('WithGrandTotalPercentage"+cnt+"'))"+";\n";
     	        		}else{
-    	        			ecl += "OUTPUT((PercentGrandTable"+cnt+")"+",,'~"+defJobName+"::tabulate_grand', __compressed__, overwrite,NAMED('WithGrandTotalPercentage"+cnt+"'))"+";\n";
+    	        			ecl += "OUTPUT((PercentGrandTable"+cnt+")"+",,'~eda::"+defJobName+"::tabulate_grand', __compressed__, overwrite,NAMED('WithGrandTotalPercentage"+cnt+"'))"+";\n";
     	        		}
     	        	}
     	        	else{
@@ -354,9 +354,9 @@ public class ECLTabulate extends ECLJobEntry{//extends JobEntryBase implements C
         			//ecl += "OUTPUT(MyTab"+cnt+",NAMED('"+Sr+"_crossTab'));\n";
         			if(persist.equalsIgnoreCase("true")){
     	        		if(outputName != null && !(outputName.trim().equals(""))){
-    	        			ecl += "OUTPUT((MyTab"+cnt+")"+",,'~"+outputName+"::tabulate', __compressed__, overwrite,NAMED('"+Sr+"_crossTab'))"+";\n";
+    	        			ecl += "OUTPUT((MyTab"+cnt+")"+",,'~eda::"+outputName+"::tabulate', __compressed__, overwrite,NAMED('"+Sr+"_crossTab'))"+";\n";
     	        		}else{
-    	        			ecl += "OUTPUT((MyTab"+cnt+")"+",,'~"+defJobName+"::tabulate', __compressed__, overwrite,NAMED('"+Sr+"_crossTab'))"+";\n";
+    	        			ecl += "OUTPUT((MyTab"+cnt+")"+",,'~eda::"+defJobName+"::tabulate', __compressed__, overwrite,NAMED('"+Sr+"_crossTab'))"+";\n";
     	        		}
     	        	}
     	        	else{

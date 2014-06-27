@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Built-By: ChambeJX
-Build-Jdk: 1.7.0_45
+Built-By: 703119704
+Build-Jdk: 1.7.0_55
 Created-By: Maven Integration for Eclipse
 

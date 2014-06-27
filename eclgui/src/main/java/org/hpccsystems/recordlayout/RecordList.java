@@ -14,6 +14,7 @@ public class RecordList {
 	static final String[] COLUMN_TYPE_ARRAY = {"Select", 
 		"BOOLEAN",
 		"DATA",
+		"DATASET",
 		"DECIMAL",
 		"INTEGER", 
 		"QSTRING",

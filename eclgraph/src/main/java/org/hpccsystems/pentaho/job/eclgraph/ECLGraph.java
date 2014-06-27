@@ -192,29 +192,10 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         if(result.isStopped()){
         	return result;
         }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 5321a09bc3fa68322f562f57db1a16fc35a5975e
-        else{        	
-        		String[] path = null;
-        		String[] flag = FilePath.split("-");
-        		for(int i = 0; i<flag.length; i++){
-        			if(flag[i].startsWith("manifest")){
-        				path = flag[i].split("\"");
-        			} 
-        		}
-        		//String[] path = FilePath.split("\"");
-        		logBasic(path[1]);//.replaceAll("manifest.xml", "")); 
-<<<<<<< HEAD
-=======
         else{        		
         		
         		String[] path = FilePath.split("\"");
         		logBasic(path[1].replaceAll("manifest.xml", "")); 
->>>>>>> 45320053d50cd1f69e42a261625e082f6a2ed5f0
-=======
->>>>>>> 5321a09bc3fa68322f562f57db1a16fc35a5975e
         		Player axis = new Player();
         		String haxis = "";//tooltip: { textStyle: { fontName: 'Arial', fontSize: 18, bold:false }},hAxis: {title: '
         		String Colours = "colors : ["; String fields = ""; String graph = "";String h = ""; String w = "";String name = "";
@@ -295,19 +276,22 @@ public class ECLGraph extends ECLJobEntry{//extends JobEntryBase implements Clon
         	
 	        	graph += "MyRec:=RECORD\n"+fields+"END;\n";
 	        	if(this.getDatasetName().equals(""))
-	        		graph += "MyTable:=TABLE("+getDatasetNameOriginal()+",MyRec);\n";
+	        		graph += "MyTable:=TABLE("+getDatasetNameOriginal()+",MyRec)";
 	        	else
-	        		graph += "MyTable:=TABLE("+getDatasetName()+",MyRec);\n";
-	        	//graph += "OUTPUT(MyTable,named(\'"+this.getTyp()+"_MyChart\'));\n";
+	        		graph += "MyTable:=TABLE("+getDatasetName()+",MyRec)";
+	        	
 	        	
 	        	if(persist.equalsIgnoreCase("true")){
 	        		if(outputName != null && !(outputName.trim().equals(""))){
-	        			graph += "OUTPUT(MyTable"+",,'~"+outputName+"::graph', __compressed__, overwrite,NAMED(\'"+this.getTyp()+"_MyChart\'))"+";\n";
+	        			graph += " : PERSIST('~eda::"+outputName+"::graph');\n";
+	        			graph += "OUTPUT(MyTable"+",NAMED(\'"+this.getTyp()+"_MyChart\'))"+";\n";
 	        		}else{
-	        			graph += "OUTPUT(MyTable"+",,'~"+defJobName+"::graph', __compressed__, overwrite,NAMED(\'"+this.getTyp()+"_MyChart\'))"+";\n";
+	        			graph += " : PERSIST('~eda::"+defJobName+"::graph');\n";
+	        			graph += "OUTPUT(MyTable"+",NAMED(\'"+this.getTyp()+"_MyChart\'))"+";\n";
 	        		}
 	        	}
 	        	else{
+	        		graph += ";\n";
 	        		graph += "OUTPUT(MyTable,NAMED(\'"+this.getTyp()+"_MyChart\'));\n";
 	        	}
 	        	

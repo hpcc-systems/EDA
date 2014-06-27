@@ -58,13 +58,10 @@ import org.pentaho.di.job.entry.JobEntryInterface;
 import org.pentaho.di.repository.Repository;
 import org.pentaho.di.ui.job.dialog.JobDialog;
 import org.pentaho.di.ui.trans.step.BaseStepDialog;
+
 import org.hpccsystems.eclguifeatures.AutoPopulate;
 import org.hpccsystems.eclguifeatures.ErrorNotices;
 import org.hpccsystems.ecljobentrybase.*;
-//import org.hpccsystems.mapper.MainMapperForOutliers;
-import org.hpccsystems.pentaho.job.ecloutliers.ECLOutliers;
-import org.hpccsystems.recordlayout.AddColumnsDialog;
-import org.hpccsystems.recordlayout.RecordBO;
 import org.hpccsystems.recordlayout.RecordLabels;
 import org.hpccsystems.recordlayout.RecordList;
 /**
@@ -416,179 +413,6 @@ public class ECLCorrelationDialog extends ECLJobEntryDialog{//extends JobEntryDi
 
 	    // Add a listener to change the tableviewer's input
 	    button.addSelectionListener(new SelectionAdapter() {
-<<<<<<< HEAD
-	      public void widgetSelected(SelectionEvent event) {
-	    	    final Shell shellFilter = new Shell(display);
-				FormLayout layoutFilter = new FormLayout();
-				layoutFilter.marginWidth = 25;
-				layoutFilter.marginHeight = 25;
-				shellFilter.setLayout(layoutFilter);
-				shellFilter.setText("Filter Columns");
-				
-				Label filter = new Label(shellFilter, SWT.NONE);
-				filter.setText("Filter: ");
-				final Text NameFilter = new Text(shellFilter, SWT.SINGLE | SWT.BORDER);
-				
-				final ArrayList<String[]> field = new ArrayList<String[]>();
-				final Tree tab = new Tree(shellFilter, SWT.CHECK | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-				tab.setHeaderVisible(true);
-				tab.setLinesVisible(true);
-				
-			    final TreeColumn column1 = new TreeColumn(tab, SWT.LEFT);
-			    column1.setText("Fields");
-			    column1.setWidth(200);
-			    column1.setImage(RecordLabels.getImage("unchecked"));
-			    
-			    final TreeColumn column2 = new TreeColumn(tab, SWT.LEFT);			   
-			    column2.setWidth(0);
-			    
-			    column1.addListener(SWT.Selection, new Listener() {
-					@Override
-					public void handleEvent(Event event) {
-				        boolean checkBoxFlag = false;
-				        for (int i = 0; i < tab.getItemCount(); i++) {
-				            if (tab.getItems()[i].getChecked()) {
-				                checkBoxFlag = true;
-				                
-				            }
-				        }
-				        if (checkBoxFlag) {
-				            for (int m = 0; m < tab.getItemCount(); m++) {
-				                tab.getItems()[m].setChecked(false);
-				                column1.setImage(RecordLabels.getImage("unchecked"));				                
-				                tab.deselectAll();
-				            }
-				        } else {
-				            for (int m = 0; m < tab.getItemCount(); m++) {
-				            	if(!tab.getItem(m).getText(1).equals("string")){
-				            		tab.getItem(m).setChecked(true);
-				            		column1.setImage(RecordLabels.getImage("checked"));
-				            	}
-				            }
-				        } 		
-				        for(int m = 0; m<tab.getItemCount(); m++){
-				        	if(tab.getItem(m).getChecked()){
-				        		String st = tab.getItem(m).getText();
-				        		
-				        		int idx = 0; String type = "";
-				 	   	      	 for(Iterator<String[]> it2 = field.iterator(); it2.hasNext(); ){
-				 	   	     	 	 String[] s = it2.next();
-				 	   	     	 	 type = s[2];
-				 	   	     		 if(s[0].equalsIgnoreCase(st)){
-				 	   	     				idx = field.indexOf(s);
-				 	   	     				break;
-				 	   	     		 }
-				 	   	     	 }
-				 	   	     	 field.remove(idx);
-				 	   	     	 field.add(idx,new String[]{st,"true",type});
-				 	   	     	 // to find index of the selected item in the original field array list
-				        	}
-				        	if(!tab.getItem(m).getChecked()){
-				        		String st = tab.getItem(m).getText();
-				        		
-				        		int idx = 0; String type = "";
-				 	   	      	 for(Iterator<String[]> it2 = field.iterator(); it2.hasNext(); ){
-				 	   	     	 	 String[] s = it2.next();
-				 	   	     	 	 type = s[2];
-				 	   	     		 if(s[0].equalsIgnoreCase(st)){
-				 	   	     				idx = field.indexOf(s);
-				 	   	     				break;
-				 	   	     		 }
-				 	   	     	 }
-				 	   	     	 field.remove(idx);
-				 	   	     	 field.add(idx,new String[]{st,"false",type});
-				 	   	     	 // to find index of the selected item in the original field array list
-				        	}
-				        }
-		                tab.redraw();
-				    } 
-				});
-			    
-			    Button okFilter = new Button(shellFilter, SWT.PUSH);
-				okFilter.setText("     OK     ");
-				Button CancelFilter = new Button(shellFilter, SWT.PUSH);
-				CancelFilter.setText("   Cancel   ");
-			    				
-				AutoPopulate ap = new AutoPopulate();
-          try{
-      		
-              String[] items = ap.fieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
-              RecordList rec = ap.rawFieldsByDataset( datasetName.getText(),jobMeta.getJobCopies());
-              
-              for(int i = 0; i < items.length; i++){
-            		TreeItem item = new TreeItem(tab, SWT.NONE);
-            		item.setText(0,items[i].toLowerCase());
-            		String type = "String";
-            		String width = "";
-            		try{
-            			type = rec.getRecords().get(i).getColumnType();
-                		width = rec.getRecords().get(i).getColumnWidth();
-                		item.setText(1,type+width);
-                		if(rec.getRecords().get(i).getColumnType().startsWith("String")){
-                			item.setBackground(0, new Color(null,211,211,211));
-                		}
-            		}catch (Exception e){
-            			System.out.println("Frequency Cant look up column type");
-            		}
-            		
-            		field.add(new String[]{items[i].toLowerCase(),"false",type+width});
-            	}
-              
-              
-          }catch (Exception ex){
-              System.out.println("failed to load record definitions");
-              System.out.println(ex.toString());
-              ex.printStackTrace();
-          }
-          FormData dat = new FormData();
-		        dat.top = new FormAttachment(NameFilter, 0, SWT.CENTER);
-		        filter.setLayoutData(dat);
-		        dat = new FormData();
-		        dat.left = new FormAttachment(filter, 75, SWT.LEFT);
-		        dat.right = new FormAttachment(100, 0);
-		        NameFilter.setLayoutData(dat);
-		        
-		        dat = new FormData(200,200);
-		        dat.top = new FormAttachment(filter, 25);
-		        dat.left = new FormAttachment(filter, 0, SWT.LEFT);
-		        dat.right = new FormAttachment(100, 0);
-		        tab.setLayoutData(dat);
-		        
-		        dat = new FormData();
-		        dat.top = new FormAttachment(tab, 25);
-		        dat.left = new FormAttachment(0, 45);
-		        okFilter.setLayoutData(dat);
-		        
-		        dat = new FormData();
-		        dat.top = new FormAttachment(tab, 25);
-		        dat.left = new FormAttachment(okFilter, 15);
-		        CancelFilter.setLayoutData(dat);
-	       
-		        NameFilter.addModifyListener(new ModifyListener(){
-		        	
-		            public void modifyText(ModifyEvent e){
-		            		
-		            		tab.setItemCount(0);		            		
-		            		for(Iterator<String[]> it1 = field.iterator(); it1.hasNext(); ){
-		            			String[] s = it1.next();
-		            			if(s[0].startsWith(NameFilter.getText())){
-		            				TreeItem I = new TreeItem(tab, SWT.NONE);
-		            				I.setText(0,s[0]);
-		            				I.setText(1,s[2]);
-		            				if(s[1].equalsIgnoreCase("true")) 
-		            					I.setChecked(true);
-		            				if(s[2].equalsIgnoreCase("string")){ 
-		            					I.setChecked(false);
-		            					I.setBackground(new Color(null,211,211,211));
-		            				}
-		            			}
-		            		}
-		            		tab.setRedraw(true);
-		            		
-		            }
-		        });
-		        
-=======
 		      public void widgetSelected(SelectionEvent event) {
 		    	    final Shell shellFilter = new Shell(display);
 					FormLayout layoutFilter = new FormLayout();
@@ -735,7 +559,6 @@ public class ECLCorrelationDialog extends ECLJobEntryDialog{//extends JobEntryDi
 			        dat.top = new FormAttachment(tab, 25);
 			        dat.left = new FormAttachment(okFilter, 15);
 			        CancelFilter.setLayoutData(dat);
->>>>>>> 5321a09bc3fa68322f562f57db1a16fc35a5975e
 		       
 			        NameFilter.addModifyListener(new ModifyListener(){
 			        	

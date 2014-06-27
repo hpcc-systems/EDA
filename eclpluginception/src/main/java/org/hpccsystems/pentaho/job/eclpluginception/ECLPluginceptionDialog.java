@@ -400,7 +400,7 @@ public class ECLPluginceptionDialog extends ECLJobEntryDialog{//extends JobEntry
 
             public void handleEvent(Event e) {
             	code = new ArrayList<String>();
-            	String[] S = t.getText().split(";");
+            	String[] S = t.getText().split("\n");
             	for(int i = 0; i<S.length; i++){
             		code.add(S[i]);
             	}
