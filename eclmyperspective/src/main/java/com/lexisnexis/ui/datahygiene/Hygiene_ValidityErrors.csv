@@ -1,0 +1,17 @@
+productline,fieldnme,errormessage,cnt,sourcegroupcount
+0.058333333,productname       ,String contains lower case characters,27,27
+0.076388889,buyprice          ,Contains characters not in:1234567890,4,4
+0.076388889,productname       ,String contains lower case characters,4,4
+0.054166667,productname       ,String contains lower case characters,42,42
+0.091666667,productname       ,String contains lower case characters,4,4
+0.063888889,productname       ,String contains lower case characters,8,8
+0.091666667,buyprice          ,Contains characters not in:1234567890,3,4
+0.054166667,buyprice          ,Contains characters not in:1234567890,34,42
+0.05,productname       ,String contains lower case characters,9,9
+0.048611111,buyprice          ,Contains characters not in:1234567890,5,6
+0.05,buyprice          ,Contains characters not in:1234567890,9,9
+0.527777778,productname       ,String contains lower case characters,10,10
+0.063888889,buyprice          ,Contains characters not in:1234567890,8,8
+0.048611111,productname       ,String contains lower case characters,6,6
+0.058333333,buyprice          ,Contains characters not in:1234567890,25,27
+0.527777778,buyprice          ,Contains characters not in:1234567890,8,10

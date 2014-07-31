@@ -1,0 +1,12 @@
+au.com.bytecode.opencsv
+au.com.bytecode.opencsv.bean
+com.lexisnexis.ui.clustercounts
+com.lexisnexis.ui.clustersources
+com.lexisnexis.ui.constants
+com.lexisnexis.ui.datahygiene
+com.lexisnexis.ui.dataprofiling
+com.lexisnexis.ui.datasummary
+com.lexisnexis.ui.optimizedlayout
+com.lexisnexis.ui.sourceoutliers
+com.lexisnexis.ui.sourceprofiles
+org.pentaho.di.plugins.perspectives.eclmyperspective

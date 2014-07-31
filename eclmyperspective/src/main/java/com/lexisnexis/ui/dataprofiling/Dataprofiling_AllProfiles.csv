@@ -1,0 +1,1591 @@
+fldno,fieldname,cardinality,len,words,characters,patterns,frequent_terms
+1,productCode,110,898912,1110,21241111_110S110879479069368742937635528,A99_999998A999_999912,S10_46981S12_16661S12_28231S12_33801S12_46751S18_13671S18_24321S18_32591S18_33201S18_37821S24_15781S24_16281S24_23601S24_27661S24_38561S24_39491S50_13411S700_11381S700_19381S700_26101S700_39621S700_40021S72_12531S10_16781S18_11291S18_17491S18_19841S18_23191S18_23251S18_26251S18_40271S18_49331S24_10461S24_28401S24_31511S24_33711S24_40481S50_47131S700_35051S10_47571S10_49621S12_11081S12_31481S12_38911S12_39901S18_15891S18_16621S18_29571S18_30291S18_31401S18_32331S18_32781S18_34821S18_36851S18_45221S18_47211S24_17851S24_20111S24_28411S24_28871S24_31911S24_42781S24_46201S32_32071S32_35221S50_13921S50_15141S700_28241S72_32121S12_10991S12_44731S18_13421S18_18891S18_22381S18_27951S18_28701S18_29491S18_31361S18_38561S18_44091S18_46001S24_14441S24_19371S24_34201S24_39691S24_42581S32_12681S32_25091S700_16911S700_28341S10_19491S10_20161S18_10971S18_22481S18_25811S18_32321S18_46681S24_20001S24_20221S24_23001S24_29721S24_34321S24_38161S32_13741S32_22061S32_42891S32_44851S700_20471S700_24661S700_31671
+8,98
+9,12
+1,110
+2,124
+1,111
+_,110
+S,110
+8,79
+4,79
+0,69
+3,68
+7,42
+9,37
+6,35
+5,28
+A99_9999,98
+A999_9999,12
+S10_4698,1
+S12_1666,1
+S12_2823,1
+S12_3380,1
+S12_4675,1
+S18_1367,1
+S18_2432,1
+S18_3259,1
+S18_3320,1
+S18_3782,1
+S24_1578,1
+S24_1628,1
+S24_2360,1
+S24_2766,1
+S24_3856,1
+S24_3949,1
+S50_1341,1
+S700_1138,1
+S700_1938,1
+S700_2610,1
+S700_3962,1
+S700_4002,1
+S72_1253,1
+S10_1678,1
+S18_1129,1
+S18_1749,1
+S18_1984,1
+S18_2319,1
+S18_2325,1
+S18_2625,1
+S18_4027,1
+S18_4933,1
+S24_1046,1
+S24_2840,1
+S24_3151,1
+S24_3371,1
+S24_4048,1
+S50_4713,1
+S700_3505,1
+S10_4757,1
+S10_4962,1
+S12_1108,1
+S12_3148,1
+S12_3891,1
+S12_3990,1
+S18_1589,1
+S18_1662,1
+S18_2957,1
+S18_3029,1
+S18_3140,1
+S18_3233,1
+S18_3278,1
+S18_3482,1
+S18_3685,1
+S18_4522,1
+S18_4721,1
+S24_1785,1
+S24_2011,1
+S24_2841,1
+S24_2887,1
+S24_3191,1
+S24_4278,1
+S24_4620,1
+S32_3207,1
+S32_3522,1
+S50_1392,1
+S50_1514,1
+S700_2824,1
+S72_3212,1
+S12_1099,1
+S12_4473,1
+S18_1342,1
+S18_1889,1
+S18_2238,1
+S18_2795,1
+S18_2870,1
+S18_2949,1
+S18_3136,1
+S18_3856,1
+S18_4409,1
+S18_4600,1
+S24_1444,1
+S24_1937,1
+S24_3420,1
+S24_3969,1
+S24_4258,1
+S32_1268,1
+S32_2509,1
+S700_1691,1
+S700_2834,1
+S10_1949,1
+S10_2016,1
+S18_1097,1
+S18_2248,1
+S18_2581,1
+S18_3232,1
+S18_4668,1
+S24_2000,1
+S24_2022,1
+S24_2300,1
+S24_2972,1
+S24_3432,1
+S24_3816,1
+S32_1374,1
+S32_2206,1
+S32_4289,1
+S32_4485,1
+S700_2047,1
+S700_2466,1
+S700_3167,1
+2,productName,110,2110249259189178167277226236354324304193143132202262152282102361111371331431381401411391,338438523276371, 310e194r142o124a11711159113i105n86t85l71d61059u55s53C48h46c45S42637236331M29529728p28B27y27T26g26D26825A24F23m23v22-18417k17P17R15b12H11V10z9w8L8G8E7f7x5W5K4X4Y4/3U3J3:3Z3I2O2)1N1(1q1'1Q1,9999 Aaaaa Aaaaaaa39999 Aaaaa Aaaaaaaa29999 Aaaa Aaaa Aaaaaa29999 Aaaa Aaaaa A19999a Aaaaaaa Aa-Aaaaa19999 Aaaa Aaaaaaaaaaa199aa aaaaaaa aaaaaaaa19999 Aaaaaaaa Aaaa Aaaa19999 Aaaaaa 999 A19999 Aaaa Aaaaaaaa Aaaaa19999 Aaaaaa Aaaaa Aaaa19999 Aaaaaaa Aaaaaaaa19999 Aaaaaaaa-Aaaa AAA19999 Aaaa Aaaaa A Aaaaaaaaa19999 Aaaaa Aaaaaaaaa Aaaaaaa1Aaaaaaa Aaaa Aaaaaaaa A999-99919999 Aaaa Aaaaa 9999a19999 Aaaaaa Aaaaaaaa Aa Aaaaaaaaaaa1AAA: A999-99919999 Aaaaaaaaa Aaaaaa19999 Aaaaaaaaa Aaaaaaaaaaaa19999a AA Aaaaaaaaa Aaaaaaa19999 Aaaaaaaa Aaaa 999a Aaaaaaaa19999 Aaaaa Aaaaaaaa AA 99919999 AAA A999 AA19999 Aaaaa Aaaaa Aaa19999 Aaaaa Aaaaaa AA919999 Aaaaaaaa Aaaa Aaa19999 Aaaaaaaaa Aaaaaa Aaaaa1Aaaaaaa A9A ( Aaaa Aaaa)19999 Aaaaa Aaaaaaa Aaaaa1Aaaaaaaa Aaaaaaaa: AA-99A19999 Aaaaaa Aaaaaaa 9999a1Aaaaaaaa Aaaaaaaa: A999-99919999 Aaaaaaa Aaaaaaa Aaaaa Aaaaaa199aa Aaaaaaa Aaaaaaa Aaaaa Aaaaaaaa19999 Aaaaaa AAA A919999 Aaaaaaaa Aaaaaaaa Aaaaaaa1A/A 99 Aaaaaa 9/9919999 Aaaa Aaaaa AAA1Aaa Aaaaaaaaa19999 Aaaaaaa Aaaaaaa Aaa1Aaa AAA Aaaaaaaaaaaa Aaaa19999 Aaaaaa 999 Aa9 Aaaaa19999 Aaaaaa Aaaaaaaa Aaaaaaaa Aaaaaaa19999 Aaaaaaa Aaaa 999 Aaaaaaaa19999 Aaaaa AA-919999 Aaaaaaaaaa Aaaaaaaa19999a Aaaaa Aaaa Aaaaaaaaaa19999 Aaaaa AA99919999 Aaaaa Aaa19999 Aaaaa Aaaaaaaa Aaaaaaa Aaaaaaa19999 Aaaaaaaaaaa Aaaaaa1Aaa Aaaaaaaa Aaaaaaaa19999 Aaaaaaa Aaaaaaa19999 Aaaaaaa-99AA19999 Aaaa 999 Aaaaa Aaaaa AA1A-99-A Aaaaaaa1Aaaaaa A-99A AAA19999 Aaaaaa AA 99919999 Aaaaa A Aaaa A-Aaaaa19999 Aaaaa Aaaaaa19999 Aaaa Aaaaaaa19999 Aaaaaaaaa Aaaaaa A9919999 Aaaaaaa Aaaa1Aaa Aaaaa Aaaa19999 Aaaaaaa 999A Aaaaa19999 Aaaa aa Aaaaaaa Aaaaaaaaa19999 Aaaaaaaa Aaaaaaaaaaa19999 Aaaaaaaaa 999 Aaaaa Aaa aaaa Aaaaaaaaa19999 Aaaaaa Aaaaa1Aaaaaaaaaaa Aaaaaa Aaaaa19999 Aaaaaaa Aaaaa Aaaa Aaaaaaaa19999 AaaaaaA Aaaaa 99A19999'a Aaaaaaa Aaaaaaa Aaaaa Aaaaaaaaa19999 Aaaaaa Aaaaa 999 A/A19999a Aaaa aaaaa19999 Aaaaaa Aaaaaaa 999919999 Aaaaaaaa Aaaaaaa19999 Aaaaaa 999 Aaaaaaa19999 Aaaaa 999A Aaaaaaaaa19999 Aaaa A9 Aaaaa19999 AAA A 9999 A19999 Aaaaaaa Aaaaa19999 Aaaa Aaaaaa19999 Aaaaaa A9919999 Aaaaaa-Aaaaaaaa Aaaaa Aaaa Aaaa19999 Aaaa Aaaaaaa Aaaaaa19999 Aaaa Aaaaa 9A9999 Aaaaaa Aaaaa19999 Aaaaaaaaa Aaaaaaa Aaaaaa Aaaaaaaaa1Aaaa Aaaaa19999a Aaaaaaa Aaa-Aaaaa19999 Aaaaaaa 999 Aaaaaa aaa1AAA Aaaaaa1Aaaaaaa A999 Aaaa-Aaaaaaa Aaaaaa19999 Aaaaaaaa A-99 Aaaaaaaaaaaa Aaaaaaaaa19999 Aaaaaaaa-Aaaa 999A Aaaaaaa Aaaaaaaa1Aaa Aaaaaaa19999 Aaaaa Aaaaa19999 Aaaaaaa 999-A Aaaaaaaa19999 Aaaaaaaa Aaaaaaaaa19999 Aaaa Aaaa Aaa19999 Aaaaaa AAAA19999 AAA Aaaa Aaaa AAA9919999 Aaaa Aaaaa A Aaaaaaaa Aaaaa19999 Aaaa Aaaaaa Aaaaa1,1903 Ford Model A11932 Model A Ford J-Coupe11934 Ford V8 Coupe11948 Porsche 356-A Roadster11957 Vespa GS15011960 BSA Gold Star DBD3411962 City of Detroit Streetcar11970 Dodge Coronet11980s GM Manhattan Express11982 Ducati 900 Monster11982 Lamborghini Diablo11992 Porsche Cayenne Turbo Silver11999 Yamaha Speed Boat12002 Suzuki XREO12002 Yamaha YZR M11ATA: B757-3001America West Airlines B757-2001Boeing X-32A JSF1Collectable Wooden Train1Diamond T620 Semi-Skirted Tanker1Pont Yacht1The Titanic118th century schooner11904 Buick Runabout11911 Ford Town Car11928 Ford Phaeton Deluxe11932 Alfa Romeo 8C2300 Spider Sport11937 Horch 930V Limousine11937 Lincoln Berline11939 Cadillac Limousine11939 Chevrolet Deluxe Coupe11940 Ford Pickup Truck11949 Jaguar XK 12011950's Chicago Surface Lines Streetcar11957 Chevy Pickup11964 Mercedes Tour Bus11965 Aston Martin DB511969 Ford Falcon11976 Ford Gran Torino11980s Black Hawk Helicopter11982 Ducati 996 R11985 Toyota Supra11997 BMW F650 ST12001 Ferrari Enzo1HMS Bounty1P-51-D Mustang1The Mayflower1The Queen Mary118th Century Vintage Horse Carriage11900s Vintage Tri-Plane11926 Ford Fire Engine11936 Mercedes Benz 500k Roadster11940 Ford Delivery Sedan11940s Ford truck11941 Chevrolet Special Deluxe Cabriolet11948 Porsche Type 356 Roadster11952 Alpine Renault 130011956 Porsche 356A Coupe11958 Chevy Corvette Limited Edition11958 Setra Bus11968 Dodge Charger11968 Ford Mustang11969 Chevrolet Camaro Z2811971 Alpine Renault 1600s11982 Camaro Z2812002 Chevy Corvette1American Airlines: B767-3001American Airlines: MD-11S1F/A 18 Hornet 1/721The USS Constitution Ship11900s Vintage Bi-Plane11917 Grand Touring Sedan11917 Maxwell Touring Car11928 British Royal Navy Airplane11930 Buick Marquette Phaeton11936 Harley Davidson El Knucklehead11952 Citroen-15CV11957 Ford Thunderbird11962 LanciaA Delta 16V11969 Corvair Monza11969 Dodge Charger11969 Dodge Super Bee11969 Harley Davidson Ultimate Chopper11970 Plymouth Hemi Cuda11970 Triumph Spitfire11998 Chrysler Plymouth Prowler1Corsair F4U ( Bird Cage)1The Schooner Bluenose11912 Ford Model T Delivery Wagon11913 Ford Model T Speedster11928 Mercedes-Benz SSK11936 Chrysler Airflow11936 Mercedes-Benz 500K Special Roadster11938 Cadillac V-16 Presidential Limousine11954 Greyhound Scenicruiser11957 Corvette Convertible11961 Chevrolet Impala11962 Volkswagen Microbus11966 Shelby Cobra 427 S/C11970 Chevy Chevelle SS 45411972 Alfa Romeo GTA11974 Ducati 350 Mk3 Desmo11992 Ferrari 360 Spider red11993 Mazda RX-711995 Honda Civic11996 Moto Guzzi 1100i11996 Peterbilt 379 Stake Bed with Outrigger11997 BMW R 1100 S11999 Indy 500 Monte Carlo SS12003 Harley-Davidson Eagle Drag Bike1
+21,10
+24,9
+25,9
+18,9
+17,8
+16,7
+27,7
+22,6
+23,6
+35,4
+32,4
+30,4
+19,3
+14,3
+13,2
+20,2
+26,2
+15,2
+28,2
+10,2
+36,1
+11,1
+37,1
+33,1
+43,1
+38,1
+40,1
+41,1
+39,1
+3,38
+4,38
+5,23
+2,7
+6,3
+7,1
+ ,310
+e,194
+r,142
+o,124
+a,117
+1,115
+9,113
+i,105
+n,86
+t,85
+l,71
+d,61
+0,59
+u,55
+s,53
+C,48
+h,46
+c,45
+S,42
+6,37
+2,36
+3,31
+M,29
+5,29
+7,28
+p,28
+B,27
+y,27
+T,26
+g,26
+D,26
+8,25
+A,24
+F,23
+m,23
+v,22
+-,18
+4,17
+k,17
+P,17
+R,15
+b,12
+H,11
+V,10
+z,9
+w,8
+L,8
+G,8
+E,7
+f,7
+x,5
+W,5
+K,4
+X,4
+Y,4
+/,3
+U,3
+J,3
+:,3
+Z,3
+I,2
+O,2
+),1
+N,1
+(,1
+q,1
+',1
+Q,1
+9999 Aaaaa Aaaaaaa,3
+9999 Aaaaa Aaaaaaaa,2
+9999 Aaaa Aaaa Aaaaaa,2
+9999 Aaaa Aaaaa A,1
+9999a Aaaaaaa Aa-Aaaaa,1
+9999 Aaaa Aaaaaaaaaaa,1
+99aa aaaaaaa aaaaaaaa,1
+9999 Aaaaaaaa Aaaa Aaaa,1
+9999 Aaaaaa 999 A,1
+9999 Aaaa Aaaaaaaa Aaaaa,1
+9999 Aaaaaa Aaaaa Aaaa,1
+9999 Aaaaaaa Aaaaaaaa,1
+9999 Aaaaaaaa-Aaaa AAA,1
+9999 Aaaa Aaaaa A Aaaaaaaaa,1
+9999 Aaaaa Aaaaaaaaa Aaaaaaa,1
+Aaaaaaa Aaaa Aaaaaaaa A999-999,1
+9999 Aaaa Aaaaa 9999a,1
+9999 Aaaaaa Aaaaaaaa Aa Aaaaaaaaaaa,1
+AAA: A999-999,1
+9999 Aaaaaaaaa Aaaaaa,1
+9999 Aaaaaaaaa Aaaaaaaaaaaa,1
+9999a AA Aaaaaaaaa Aaaaaaa,1
+9999 Aaaaaaaa Aaaa 999a Aaaaaaaa,1
+9999 Aaaaa Aaaaaaaa AA 999,1
+9999 AAA A999 AA,1
+9999 Aaaaa Aaaaa Aaa,1
+9999 Aaaaa Aaaaaa AA9,1
+9999 Aaaaaaaa Aaaa Aaa,1
+9999 Aaaaaaaaa Aaaaaa Aaaaa,1
+Aaaaaaa A9A ( Aaaa Aaaa),1
+9999 Aaaaa Aaaaaaa Aaaaa,1
+Aaaaaaaa Aaaaaaaa: AA-99A,1
+9999 Aaaaaa Aaaaaaa 9999a,1
+Aaaaaaaa Aaaaaaaa: A999-999,1
+9999 Aaaaaaa Aaaaaaa Aaaaa Aaaaaa,1
+99aa Aaaaaaa Aaaaaaa Aaaaa Aaaaaaaa,1
+9999 Aaaaaa AAA A9,1
+9999 Aaaaaaaa Aaaaaaaa Aaaaaaa,1
+A/A 99 Aaaaaa 9/99,1
+9999 Aaaa Aaaaa AAA,1
+Aaa Aaaaaaaaa,1
+9999 Aaaaaaa Aaaaaaa Aaa,1
+Aaa AAA Aaaaaaaaaaaa Aaaa,1
+9999 Aaaaaa 999 Aa9 Aaaaa,1
+9999 Aaaaaa Aaaaaaaa Aaaaaaaa Aaaaaaa,1
+9999 Aaaaaaa Aaaa 999 Aaaaaaaa,1
+9999 Aaaaa AA-9,1
+9999 Aaaaaaaaaa Aaaaaaaa,1
+9999a Aaaaa Aaaa Aaaaaaaaaa,1
+9999 Aaaaa AA999,1
+9999 Aaaaa Aaa,1
+9999 Aaaaa Aaaaaaaa Aaaaaaa Aaaaaaa,1
+9999 Aaaaaaaaaaa Aaaaaa,1
+Aaa Aaaaaaaa Aaaaaaaa,1
+9999 Aaaaaaa Aaaaaaa,1
+9999 Aaaaaaa-99AA,1
+9999 Aaaa 999 Aaaaa Aaaaa AA,1
+A-99-A Aaaaaaa,1
+Aaaaaa A-99A AAA,1
+9999 Aaaaaa AA 999,1
+9999 Aaaaa A Aaaa A-Aaaaa,1
+9999 Aaaaa Aaaaaa,1
+9999 Aaaa Aaaaaaa,1
+9999 Aaaaaaaaa Aaaaaa A99,1
+9999 Aaaaaaa Aaaa,1
+Aaa Aaaaa Aaaa,1
+9999 Aaaaaaa 999A Aaaaa,1
+9999 Aaaa aa Aaaaaaa Aaaaaaaaa,1
+9999 Aaaaaaaa Aaaaaaaaaaa,1
+9999 Aaaaaaaaa 999 Aaaaa Aaa aaaa Aaaaaaaaa,1
+9999 Aaaaaa Aaaaa,1
+Aaaaaaaaaaa Aaaaaa Aaaaa,1
+9999 Aaaaaaa Aaaaa Aaaa Aaaaaaaa,1
+9999 AaaaaaA Aaaaa 99A,1
+9999'a Aaaaaaa Aaaaaaa Aaaaa Aaaaaaaaa,1
+9999 Aaaaaa Aaaaa 999 A/A,1
+9999a Aaaa aaaaa,1
+9999 Aaaaaa Aaaaaaa 9999,1
+9999 Aaaaaaaa Aaaaaaa,1
+9999 Aaaaaa 999 Aaaaaaa,1
+9999 Aaaaa 999A Aaaaaaaaa,1
+9999 Aaaa A9 Aaaaa,1
+9999 AAA A 9999 A,1
+9999 Aaaaaaa Aaaaa,1
+9999 Aaaa Aaaaaa,1
+9999 Aaaaaa A99,1
+9999 Aaaaaa-Aaaaaaaa Aaaaa Aaaa Aaaa,1
+9999 Aaaa Aaaaaaa Aaaaaa,1
+9999 Aaaa Aaaaa 9A9999 Aaaaaa Aaaaa,1
+9999 Aaaaaaaaa Aaaaaaa Aaaaaa Aaaaaaaaa,1
+Aaaa Aaaaa,1
+9999a Aaaaaaa Aaa-Aaaaa,1
+9999 Aaaaaaa 999 Aaaaaa aaa,1
+AAA Aaaaaa,1
+Aaaaaaa A999 Aaaa-Aaaaaaa Aaaaaa,1
+9999 Aaaaaaaa A-99 Aaaaaaaaaaaa Aaaaaaaaa,1
+9999 Aaaaaaaa-Aaaa 999A Aaaaaaa Aaaaaaaa,1
+Aaa Aaaaaaa,1
+9999 Aaaaa Aaaaa,1
+9999 Aaaaaaa 999-A Aaaaaaaa,1
+9999 Aaaaaaaa Aaaaaaaaa,1
+9999 Aaaa Aaaa Aaa,1
+9999 Aaaaaa AAAA,1
+9999 AAA Aaaa Aaaa AAA99,1
+9999 Aaaa Aaaaa A Aaaaaaaa Aaaaa,1
+9999 Aaaa Aaaaaa Aaaaa,1
+1903 Ford Model A,1
+1932 Model A Ford J-Coupe,1
+1934 Ford V8 Coupe,1
+1948 Porsche 356-A Roadster,1
+1957 Vespa GS150,1
+1960 BSA Gold Star DBD34,1
+1962 City of Detroit Streetcar,1
+1970 Dodge Coronet,1
+1980s GM Manhattan Express,1
+1982 Ducati 900 Monster,1
+1982 Lamborghini Diablo,1
+1992 Porsche Cayenne Turbo Silver,1
+1999 Yamaha Speed Boat,1
+2002 Suzuki XREO,1
+2002 Yamaha YZR M1,1
+ATA: B757-300,1
+America West Airlines B757-200,1
+Boeing X-32A JSF,1
+Collectable Wooden Train,1
+Diamond T620 Semi-Skirted Tanker,1
+Pont Yacht,1
+The Titanic,1
+18th century schooner,1
+1904 Buick Runabout,1
+1911 Ford Town Car,1
+1928 Ford Phaeton Deluxe,1
+1932 Alfa Romeo 8C2300 Spider Sport,1
+1937 Horch 930V Limousine,1
+1937 Lincoln Berline,1
+1939 Cadillac Limousine,1
+1939 Chevrolet Deluxe Coupe,1
+1940 Ford Pickup Truck,1
+1949 Jaguar XK 120,1
+1950's Chicago Surface Lines Streetcar,1
+1957 Chevy Pickup,1
+1964 Mercedes Tour Bus,1
+1965 Aston Martin DB5,1
+1969 Ford Falcon,1
+1976 Ford Gran Torino,1
+1980s Black Hawk Helicopter,1
+1982 Ducati 996 R,1
+1985 Toyota Supra,1
+1997 BMW F650 ST,1
+2001 Ferrari Enzo,1
+HMS Bounty,1
+P-51-D Mustang,1
+The Mayflower,1
+The Queen Mary,1
+18th Century Vintage Horse Carriage,1
+1900s Vintage Tri-Plane,1
+1926 Ford Fire Engine,1
+1936 Mercedes Benz 500k Roadster,1
+1940 Ford Delivery Sedan,1
+1940s Ford truck,1
+1941 Chevrolet Special Deluxe Cabriolet,1
+1948 Porsche Type 356 Roadster,1
+1952 Alpine Renault 1300,1
+1956 Porsche 356A Coupe,1
+1958 Chevy Corvette Limited Edition,1
+1958 Setra Bus,1
+1968 Dodge Charger,1
+1968 Ford Mustang,1
+1969 Chevrolet Camaro Z28,1
+1971 Alpine Renault 1600s,1
+1982 Camaro Z28,1
+2002 Chevy Corvette,1
+American Airlines: B767-300,1
+American Airlines: MD-11S,1
+F/A 18 Hornet 1/72,1
+The USS Constitution Ship,1
+1900s Vintage Bi-Plane,1
+1917 Grand Touring Sedan,1
+1917 Maxwell Touring Car,1
+1928 British Royal Navy Airplane,1
+1930 Buick Marquette Phaeton,1
+1936 Harley Davidson El Knucklehead,1
+1952 Citroen-15CV,1
+1957 Ford Thunderbird,1
+1962 LanciaA Delta 16V,1
+1969 Corvair Monza,1
+1969 Dodge Charger,1
+1969 Dodge Super Bee,1
+1969 Harley Davidson Ultimate Chopper,1
+1970 Plymouth Hemi Cuda,1
+1970 Triumph Spitfire,1
+1998 Chrysler Plymouth Prowler,1
+Corsair F4U ( Bird Cage),1
+The Schooner Bluenose,1
+1912 Ford Model T Delivery Wagon,1
+1913 Ford Model T Speedster,1
+1928 Mercedes-Benz SSK,1
+1936 Chrysler Airflow,1
+1936 Mercedes-Benz 500K Special Roadster,1
+1938 Cadillac V-16 Presidential Limousine,1
+1954 Greyhound Scenicruiser,1
+1957 Corvette Convertible,1
+1961 Chevrolet Impala,1
+1962 Volkswagen Microbus,1
+1966 Shelby Cobra 427 S/C,1
+1970 Chevy Chevelle SS 454,1
+1972 Alfa Romeo GTA,1
+1974 Ducati 350 Mk3 Desmo,1
+1992 Ferrari 360 Spider red,1
+1993 Mazda RX-7,1
+1995 Honda Civic,1
+1996 Moto Guzzi 1100i,1
+1996 Peterbilt 379 Stake Bed with Outrigger,1
+1997 BMW R 1100 S,1
+1999 Indy 500 Monte Carlo SS,1
+2003 Harley-Davidson Eagle Drag Bike,1
+3,productLine,7,12626151113161159,262137311,s208a150C100r89 84c75i74l63e60n50t37o26V24g24u22T14M13y13P12d11k11B11S9p9h9,Aaaaaaa Aaaa62Aaaaaa15Aaaaaaaaaaa13Aaaaaa aaa Aaaaa11Aaaaa9,Classic Cars38Vintage Cars24Motorcycles13Planes12Trucks and Buses11Ships9Trains3
+12,62
+6,15
+11,13
+16,11
+5,9
+2,62
+1,37
+3,11
+s,208
+a,150
+C,100
+r,89
+ ,84
+c,75
+i,74
+l,63
+e,60
+n,50
+t,37
+o,26
+V,24
+g,24
+u,22
+T,14
+M,13
+y,13
+P,12
+d,11
+k,11
+B,11
+S,9
+p,9
+h,9
+Aaaaaaa Aaaa,62
+Aaaaaa,15
+Aaaaaaaaaaa,13
+Aaaaaa aaa Aaaaa,11
+Aaaaa,9
+Classic Cars,38
+Vintage Cars,24
+Motorcycles,13
+Planes,12
+Trucks and Buses,11
+Ships,9
+Trains,3
+4,productScale,8,1110149,1110,021062063174.1107110899588176448916210,9.9999999991019.999,0.054166667420.058333333270.527777778100.0590.06388888980.04861111160.09166666740.0763888894
+11,101
+4,9
+1,110
+0,210
+6,206
+3,174
+.,110
+7,110
+8,99
+5,88
+1,76
+4,48
+9,16
+2,10
+9.999999999,101
+9.99,9
+0.054166667,42
+0.058333333,27
+0.527777778,10
+0.05,9
+0.063888889,8
+0.048611111,6
+0.091666667,4
+0.076388889,4
+5,productVendor,13,2319241820171916139218158258177,366426218, 228s201i196e186t175a154o129l114r101n85c84C74D57d56M52u41g35A33S31y26x26G25618b18L17w9E9h9H9W8m8U8P8R7,Aaaaaaa Aaaaa Aaaaaaaaa10Aaaaa Aaaa Aaa Aaaaaaaa9Aaaaaaaa AaaAaaa Aaaaaaa9Aaaaa Aaaaaaa9Aaaaaaa Aaaaaaaaaaaa9Aaaaaaa 99 Aaaa Aaaaaaaa9Aaaaa Aaaaaaa Aaaaaaaaaaa8Aaaaaa Aaa Aaaaaaaaa8Aaaaaaa Aaaaaa Aaaaaa8Aaaaaa A Aaa Aaaaaa8Aaa Aaa Aaaaaaa8Aaaaaa Aaaa Aaaaaaa8Aaa Aaaaa Aaaaaaa7,Classic Metal Creations10Motor City Art Classics9Gearbox Collectibles9Highway 66 Mini Classics9Carousel DieCast Legends9Exoto Designs9Unimax Art Galleries8Min Lin Diecast8Studio M Art Models8Welly Diecast Productions8Autoart Studio Design8Second Gear Diecast8Red Start Diecast7
+23,19
+24,18
+20,17
+19,16
+13,9
+21,8
+15,8
+25,8
+17,7
+3,66
+4,26
+2,18
+ ,228
+s,201
+i,196
+e,186
+t,175
+a,154
+o,129
+l,114
+r,101
+n,85
+c,84
+C,74
+D,57
+d,56
+M,52
+u,41
+g,35
+A,33
+S,31
+y,26
+x,26
+G,25
+6,18
+b,18
+L,17
+w,9
+E,9
+h,9
+H,9
+W,8
+m,8
+U,8
+P,8
+R,7
+Aaaaaaa Aaaaa Aaaaaaaaa,10
+Aaaaa Aaaa Aaa Aaaaaaaa,9
+Aaaaaaaa AaaAaaa Aaaaaaa,9
+Aaaaa Aaaaaaa,9
+Aaaaaaa Aaaaaaaaaaaa,9
+Aaaaaaa 99 Aaaa Aaaaaaaa,9
+Aaaaa Aaaaaaa Aaaaaaaaaaa,8
+Aaaaaa Aaa Aaaaaaaaa,8
+Aaaaaaa Aaaaaa Aaaaaa,8
+Aaaaaa A Aaa Aaaaaa,8
+Aaa Aaa Aaaaaaa,8
+Aaaaaa Aaaa Aaaaaaa,8
+Aaa Aaaaa Aaaaaaa,7
+Classic Metal Creations,10
+Motor City Art Classics,9
+Gearbox Collectibles,9
+Highway 66 Mini Classics,9
+Carousel DieCast Legends,9
+Exoto Designs,9
+Unimax Art Galleries,8
+Min Lin Diecast,8
+Studio M Art Models,8
+Welly Diecast Productions,8
+Autoart Studio Design,8
+Second Gear Diecast,8
+Red Start Diecast,7
+6,productDescription,86,234364474454594143416136132035432532234325728122322402552692442582135238212226112415019411041741167125613241911111114413011411229175168113115111051188112819213511515110311821220128162111619618617612671701133129119118617711761321,31481068771271061865645952142031132323216227224215242213157137130111341381281321291221," 1255e876i624a586n516s512t500o474r458l378d356c281h235u186g184p155f127m110194w83\"79.77T64b54y54;49k44-41:35C33933233v32F32031827x25M20H19418617/14313A12L12E11W11711511D10q10P9R8I7G5O5V5j4S4U3K2B2z2Z2'1+1%1N1J1","Aaaaaaaa aaaaa aaaaaa; aaaaaaaa aaaaaaaa; aaaaaaaa aaaaaaaa; aaaaaaaa aaaaaa; aaaaaaa aaaa; aaaaaaa aaaaa; aaaaaaa aaaaa; aaa aaaaaaaa aaaaaaa.4\"Aaaaaaaa aaaaaaa aaaaa4\"Aaaa aaaaa aaaaaaaa aaaaaa-aaaaaaa aaaaaa aaaa3\"Aaaa aaaaaaa aaaaaaaa aaaaaaa aaaaa3Aaaaaaaa aaaaaaa: Aaaaaaaa aaaaa aaaaaa; aaaaaaaa aaaaaaaa; aaaaaaaa aaaaaaaa; aaaaaaaa aaaaaa; aaaaaaa aaaa; aaaaaaa aaaaa; aaaaaaa aaaaa; aaa aaaaaaaa aaaaaaa.3\"Aaaaaaaa aaaaaaaa aaaaaa3\"Aaaaaaaa aaaaaaa aaaa3\"Aaaa aaaaa aaaaaaaa3\"Aaaaaa Aaaa2\"9:99 aaaaa aaa-aaaa aaaaa 99 aaaa aaaaa aaaa2\"Aaaaa aaaaaaa. Aaaa aaa Aaaaa. Aaaa aaaaaa aaaaaaaaa aaaaaaa2\"Aaaa aaaaa aaaaaaaa aaaa aaaaaa aaaaa2Aaaaaaaa aaaaa aaaaaaa aaaa aaaaaaa aaaaaaaaaa aaa aaaaaaaaaaa aaaa aaaa 99 aaaaa299 Aaaaaaaa aaaa aaaaaaaaaaa aaaaaaa aaaaa.Aaaaa aaaa aaaaa2Aaaaa aaaaaa aaaa aaaaaaaa aaaaa aaa aaaaaaaaa aaa aaaaaaaaaaa aaaaaa2\"Aaaa aaaaaaaaa aa a aaa aa aaa. Aa aaa 99 aaaaaaaa aaaaaaa2\"Aaaa aaaaa aaaaaaaa aaa-aaaa aaaaa aaaa aaaaaa aaaaaaa1Aaaaaaaa aaaaa aaa aaaaaaaaa. Aaaaaaa aaaaaaaa aaaaaa. Aaaaaaaa aaa aaaaaaa1\"Aaaaaaaa Aaaa Aaaaa aaaaa aaa aaaaaaaaa1\"9999 A/99 Aaaaa Aaaaaa 9:99 aaaaa aaaaaaa. Aaa aaaaaaaaa aaaaa aa aaaa aaaaaaa aaaaaaa 9:99 aaaaa aaaaaaa aaaaa aaa 9999 Aaaaa Aaaaaa A99- aaaa1Aaaa aaaaaaa aaaaaaa-aaaa aaaaa aa-aaaaa aa aa-aaaaaaa aa aaaaa 9:99 aaaaa aa aaaaaaa aaaaaaa aaaaaaaa. Aaa aaaa-aaaaaaaaa aaaa aaaa aaaaaaaaa aaaaa. Aaaa-aaaaaaa aa aaaaaaa aaaaaa aaa aaaaaaaa aaaaaaa aaaaaaaa aa aaaaaaaa aaaaaaaa.1\"Aaaaa aaaaaaa. 999+ aaaaa. aaaaaaa aaaaaaaa aaaaaa1\"Aaaa aaaaaaa aaaaaa aaa aaaaa aaa aa aa aaaaa 9:99 aaaaa1\"Aaaa 9:99 aaaaaaa aaaaaaaa aaaaaa-aaaaaaa aaaaaa aaaa1\"Aaaa1\"Aaa-aaaa aaaaa aa aaa aaaaaa 9999 Aaaaa Aaaaaa AA9 aa aaaaaa. Aaaa aaaaa aaaaaaaa aaaa aaaa aaaaaa aaa aaaaa aaaa aaaa aaaa aaaaa aaaaaaaa aaaaaaaaa aaaaaaaaaaa. Aa 9:99 aaaaa1Aaaa aaaaaaa aaaaaaa aaaaa aa aaaaaaaa aaa aaaaaaaaa aaaaaa aaa Aaaaaa Aaaaaa. Aaa Aaaaaaa A999 aaa aaaa aaaaaaaa aa aaaaa aaaaaaaaa aaaaaaa aaa aaaaaaa aaaa a aaaa aaaaa aaaaaa aaaaaa. Aa aaaaa aaaa a aaaaaaaaa aaaaaa aaa aa a aaaaaaa aaaaa aa aaa aaaaaaaaaaaa aa aaaa aaaaaa aaaaa aa aaa aaaaaa aa aa aaaa aaaa aa aaaaaaa.1\"Aaa aaaa aaaa aaaaaa aaaaa. Aaaa aaaaaa aaaaaaaaa aaaaaaa1\"Aaaa 9999a aaa aaa aaaa Aaaaaaaaa aaaaaaa aa aaaaa aaaaaa1\"Aaaaaaaaa aaaaaaa aaaa-aaaaaaaaa 9:99 aaaaa aaaaaaaaaaaa aa aaa 9999 99AA1Aaaa aaaaaaaa 9999 Aaaaaaaa Aaaa aaaaa aa 9:99 aaaaa. Aaa Aaaa aa aaaaaaaaa aaaaaaaa aa aaa aa aaa aaaaaaa aaaaaaaa aaaaaa aaaa aaaa aaa 9999a. Aaaa aaaaa aa a aaaaaaaaaaaa aa aaa aa aaa aaaaaaa 999 aaaa aaaaa aa 9999. Aaa aaaaa.1\"Aaaaaaaa 99 aaaaaa Aaaa a 99 9/9 aaaaaa Aaaa. Aaaaaaaa a aaaaa. Aaaa aaaaaa aaaaaaaaa aaaaaaa1\"Aaaaaaaa aaa aaaaaaaa aaaaaaaaaa. Aaaaaaaaaa aa aaaa aaa aaaa aaaaa1\"Aaaa 999 aaaa aaaaaaaaaaaa aaaaaaaa aaaaaa aaaaaaaaaa1Aaaaaaaa aaaaaaa aaaaaaa aaa aaaaaaa aaaaa. Aaaaa: Aaaaa. Aaaaaaaa aaaaaaaaaaaaa 9 9/9 Aaaa.1Aaaaaaaa aaaaaaa aaaaaaa aaa aaaaaaa aaaaa. Aaaaa: Aaaaa.1\"Aaaaaaaaaaa aaaaaaaa aaaa aaaaaa aaaaaaa aaa aaaa1\"Aaaa aaaaaaa aaaaaaaa aaaaaaa aaaaaaaaa1\"Aaa aaaa aaaa aaaaaa aaaaa. Aaaaaaaa 99 9/9 Aaaaaa a 99 9/9 Aaaa a 9 9/9 Aaaaa. Aaaaaa aaaaaaa 9 aaaaa aa aaaa1\"Aaaaaaaa Aaaa Aaaa1\"9:99 aaaaa aaa-aaaa aaaaa 99 aaaa Aaaa aaaaa1\"Aaaa aaaaaaaaa aaa-aaaa aaaaaaa aaaaaaaa aaaaaaa aaaaa1\"Aaaa 9:99 aaaaa aaaaaaaaa aaa aaaa aaaaaaa aa aaa 9999 Aaaaaaaa A-99 Aaaaaaaaaaaa Aaaaaaaaa aaa aaa aaa aaaaaaa aa aaa aaaaaaaa1\"Aaa aaaaaaaaa aaaaa aa aaaa 9999 Aaaaa Aaaaaaaa Aaaaaaa Aaaaaaa aaa aaaaaaaaaaaa aaaaaaaa aaa aa aaaaa aaaaaaa aaaaa aaa aaaaaaa aaaaaaa aaaa aaa aaaaaaaaa. Aaaaaaaa aaaaaaaa aaaaaa1\"Aaaaaaaa aaa-aaaa aaaaa aaaa aaaaaa aaaaaaa1Aaaaaaaa aaaaa aaa aaaaaaaaa1\"Aaa aaaaaaaaa aaaaa aa aaaa aaaaaaa aaaaaaa Aaaaaaa 9999 Aaaaa Aaaaaaaa 99aa Aaaaaaaaaaa Aaaa aaa Aaaaaaa Aaaaaaa aaa aaaaaaaaaaaa aaaaaaaa aaa aa aaaaa aaaaaaa aaaaa aaa aaaaaaa aaaaaaa aaaa aaa aaaaaaaaa. Aaaaaaaa aaaaaaaa aaaaaa1\"Aaaa 9:99 aaaaa aaaaaaaaa aaa aaaa aaaaaaa aaaaaaaa aaa 9 aaaaa aaaaaaaaaa aa aaa aaaaaaaa1Aaaaaaaa aaaaaaa aaaaaaa aaa aaaaaaa aaaaa. Aaaaa: Aaa1\"Aaaaa aaaaaaaa 99 aaaaaaa1\"aaa aaaaaaa aaaaaaaa aaaaaaa aaaaa1\"Aaaaaaaa aaaaa aaa aaaaaaaaa1\"9:99 aaaaa aaaaa aa a 9999 Aaaaa Aaaaaaa. Aaaa1\"Aaaa 9:99 aaaaa aaa-aaaa aaaaaaa aa aaa 9999 Aaaaaaaaa Aaaaaa Aaaaa aaa aaa aaaa aaaaaa aaaa aa aaa aaaaaaaa. Aaaaaaaa aaaaaaa aaaaa1Aaaaaaaa aaaaa aa aaa 9999 Aaaaa Aaaaaaa. Aaaa aaaaa aaaaaaaa aaaaaa aaaaaaaa aaaaaaaa aaa aaaaaaaa aaaaaaaa. Aaaaaaa aa aaa aaa aaaaa.1Aaa aaaaaaaaaaa aaaaaa aaa aaaaa aaaa a aaaaa1Aaaaaaaa aaaaaaaa aaa-aaaaaa aaaaa aaa aaaaa aaaaaa aaaaaa. Aaaaa aaaa aaaaa.1\"Aaaaaaaa aaaaaaa aaaaaa aaaaa1\"Aaaa aaaaa aaaaaaaa aaaaaaa aaaaa aaa aaaa aaaaaaaaaa aa aaaaaaaaaa aaaaaaaaaa aaa aaaaaaaaa aaaaa aaaaaaaaa aa aaaa aa aaaaaaa aaaaaa aaaaa1\"Aaaa 9:99 aaaaa aaaaaaa aa aaaaaaaaaaa aa aaaaa aaa-aaaa aaaaa aaa aaa aaa aaa aaaaaaaa aa aaa aaaaaaaa: aaaaaaa aaaaa aaa aaaaaa aaaa1\"Aaaaa aaaaaaaa1\"Aaaa 9:99 aaaaa aaa aaaa aaaaaaa aa aaa 9999 Aaaaaaaa aa aaaaaa aaaa aaaaaaaa: A aaaaaaa aaaaaaaa aaaaaa1\"Aaa aaaa aaaa aaaaaa aaaaa. Aaaaaaaa 99 9/9 aaaaaa aa Aaaaaa1\"Aaaaaaaa 99 aaaaaa Aaaa a 99 9/9 aaaaaa Aaaa a 9 9/9 aaaaaa Aaaa. Aaaa aaaaaa aaaaaaaaa aaaaaaa1\"9:99 aaaaa aaaaaaa aa aaaaaa Aaaa AA-99A AAAAA AAAA Aaaaaaaaaa. 999% aaaa-aaaaaaaaa. Aaaaaaaa aaaaaaaa aaaaa aaaaaa1Aaaaaa aaaaaaaa 9999 Aaaa Aaaa Aaaaaa Aaaaaaa aaa Aaaaa aaaaaaa aaaaa. Aaaa aaaa aaaaaaaaaaa aaa aaaaaaa aa aaa aaa aaaaa aaaaaaaa.1\"Aaaa 9:99 aaaaa aaaaaaaaa aaa-aaaa aaaaaaaaaaaa aa aaa 9999 Aaaaaaaaa Aaaaaa aaa aaa aaa aaaaaaaa-aaaaa1\"Aaaaaaaa aaaaaaaaaa aaaaaaaa aaaaaaaa aaaaaaaaa Aaaaaa aaaaaaa aaaaaa1Aaa aaaaaaaaaaa aaaaaa aaa aaaaa aaaa a aaaaa. Aaaaaaaa aaaaa aaa aaaaaaaaa.1\"Aaaaa aaaaaaaa aa-aaaaa aaaaaaa1\"Aaaaaaaaa-aaaaaaaaaa aaaa aaaaaaaa Aaaaaa aaaaaaaaaaaaa aa aaaaaaa aaaaa aaaaa. Aaaaaaaa aaaaaaa aaaaa1Aaaa 9999a Aaaa Aaaa-Aa aaaaa aa aa-aaaaaaa aa 9:99 aaaaa aa aaaaaaaa 9999a Aaaa aaaaa. Aaaa aaaaaaa aaaaa aaaaa 9999a Aaaa Aaaaaaa aaaaa aa aaa aaaa-aaaaaaaaa. Aaaa aaaaaaaaaaa 9999a Aaaa-Aa aaaaa aa aaaaaaa aa aaaaaaa aaaa aaaaa aaaaa  aaa aaaaaaaa aaaaaaaa aaaaaa.1\"Aaaaaaaaa aaaaa aaaaaaaa 99 9/9 aaaaaa aaaa1Aaaaaaaa aaaaaa. Aaaaa aaaaaa aaaa aaaaaaaa aaaaa aaa aaaaaaaaa aaa aaaaaaaaaaa aaaaaa1\"Aaaa 9999 Aaaaaa Aaaaaaa 9999a aaaaaaa Aaaaaaaa aaaaaaa aaaaa19999 aaa aaaa Aaaaaaaa Aaaaaaaaaaa aa Aaaaa Aaa aaaa aaaaa aaaaa aaa aaaaaaaaa aaaaa. 9:99 aaaaa aaaaaaa aaa-aaaa aaaa aaaaaaaa aaaaaa aaa aaaaaaaaaa. Aaa aaa aaa aaa Aaa Aaaaaaa Aaaaaaaa.1\"Aaaa aaaaa aaaaaaaa aaaaaaaa aaaaaa1\"Aaaa 9:99 aaaaa aaaaaaaaa aaa-aaaa aaaaaaa1\"Aaaa aaaaaaa aaaaaaa-aaaa aaaaa aaaaa aaaaaaaa aa aa-aaaaaaa aa aaaaa 9:99 aaaaa aa aaaaaaa aaaaa aaaaaaaa. Aaaa aaaaaaa aaaaa aaaaa Aaaaaaaaaa aa aaa aaaa-aaaaaaaaa aaaa aaaa aaaaaaaaa aaaaa.Aaaa aaaaaaaaaaa aaaaa aaaaa aaaaaaaa aa aaaaaaa aa aaaaaaa Aaa1\"Aaaaaaaa 99 9/9 aaaaaa Aaaa a 99 9/9 aaaaaa Aaaa a 99 9/9 aaaaaa Aaaa. Aaa aaaa aaaa aaaaaa aaaa. Aaaaaa aaaaaaa aaaa aaaaa1\"Aaaa 9:99 aaaaa aaaaaaa aa aaa 9999 Aaaaa Aaaaaaa aaa aaa aaa aaa aaaaaaaa aaa aaaaa aaaaaa aaaa aaaaaa aaaaaaa aaaaaaaaaaaaa: aaa aaaa aaaaa aaa aa-aaaa aaaa aaaaaaa1Aaaa aaaaaaa aaaaa aa aaa 9999 Aaaaaa Aaaaa 999 A/A aaaaaaaa aaaa aaaaaaaaa aaaaaaa aaa aaaaaaaaa aaaaa. Aaa 9:99 aaaaa aaaaa aa aaaa aaaaaa aaaaaaaaaa aaaaaa aaa aaaa aaa 9999a aaaaa aa aaaaaa aaa aaa aaa aaaaaaa aaaa.'1Aaaa aaaaaaa aaaaaaa-aaaa aaaaa Aaaaaaaa aa Aa-aaaaaaa aa aaaaa 9:99 aaaaa aa aaaaaaa aaaaaaa aaaaaaaa. Aaaa aaaaaaa aaaaa aaaaa aaaaaaaa aa aaa aaaa-aaaaaaaaa aaaa aaaa aaaaaaaaa aaaaa.1\"Aaaa aaaaa aaaaaaaa aaaaaa aaaa aaa aaaaaa1","Turnable front wheels; steering function; detailed interior; detailed engine; opening hood; opening trunk; opening doors; and detailed chassis.4\"Features opening trunk4\"This model features3\"This model features grille-mounted chrome horn3Features include: Turnable front wheels; steering function; detailed interior; detailed engine; opening hood; opening trunk; opening doors; and detailed chassis.3\"This replica features opening doors3\"Features opening hood3\"Features rotating wheels310 Wingspan with retractable landing gears.Comes with pilot2Exact replia with official logos and insignias and retractable wheels2\"This model features soft rubber tires2\"Exact replica. Wood and Metal. Many extras including rigging2\"Chrome Trim2Detailed scale replica with working suspension and constructed from over 70 parts2\"1:18 scale die-cast about 10 long doors open1\"1:18 scale replica of actual Army UH-60L BLACK HAWK Helicopter. 100% hand-assembled. Features rotating rotor blades1\"1:24 scale die-cast about 18 long doors open1\"Official Moto Guzzi logos and insignias1\"Official logos and insignias1\"This 1980s era new look Manhattan express is still active1\"This 1:18 replica features grille-mounted chrome horn1\"This 1:18 scale precision die cast replica features the 6 front headlights of the original1\"This 1:18 scale replica is constructed of heavy die-cast metal and has all the features of the original: working doors and rumble seat1Hand crafted diecast-like metal Triplane is Re-created in about 1:24 scale of antique pioneer airplane. This antique style metal triplane is all hand-assembled with many different parts.1\"1969 Z/28 Chevy Camaro 1:24 scale replica. The operating parts of this limited edition 1:24 scale diecast model car 1969 Chevy Camaro Z28- hood1\"1:12 scale model of a 1968 Dodge Charger. Hood1\"All wood with canvas sails. Measures 31 1/2 inches in Length1\"Die-cast model of the silver 1965 Aston Martin DB5 in silver. This model includes full wire wheels and doors that open with fully detailed passenger compartment. In 1:18 scale1\"Exact replica. 100+ parts. working steering system1\"Hood1\"Intricately detailed with chrome accents and trim1\"Model features bi-level seating1\"Precision-engineered from original Jaguar specification in perfect scale ratio. Features opening doors1\"This 1971 Alpine Renault 1600s replica Features opening doors1\"This 1:18 scale die cast replica of the 1962 Microbus is loaded with features: A working steering system1\"This 250 part reproduction includes moving handbrakes1Polished finish. Exact replia with official logos and insignias and retractable wheels1\"All wood with canvas sails. Many extras including rigging1\"All wood with canvas sails. Measures 31 1/2 Length x 22 3/8 High x 8 1/4 Width. Extras include 4 boats on deck1\"Features opening engine cover1\"This 1:18 scale precision die-cast reproduction of the 1961 Chevrolet Impala has all the features-doors1\"This 1:24 scale die-cast replica of the 1939 Chevrolet Deluxe Coupe has the same classy look as the original. Features opening trunk1\"This model features chrome trim and grille1\"This replica features working kickstand1\"This streetcar is a joy to see. It has 80 separate windows1\"This streetcar is a joy to see. It has 99 separate windows1Features official die-struck logos and baked enamel finish. Comes with stand.1Hand crafted diecast-like metal bi-plane is re-created in about 1:24 scale of antique pioneer airplane. All hand-assembled with many different parts. Hand-painted in classic yellow and features correct markings of original airplane.1Highly detailed 1976 Ford Gran Torino Starsky and Hutch diecast model. Very well constructed and painted in red and white patterns.1\"1:12 scale die-cast about 20 long Hood opens1\"Features completely detailed interior including Velvet flocked drapes1\"Features two-tone paint with chrome accents1\"Gleaming red handsome appearance. Everything is here the fire hoses1\"Hand crafted diecast-like metal horse carriage is re-created in about 1:18 scale of antique horse carriage. This antique style metal Stagecoach is all hand-assembled with many different parts.This collectible metal horse carriage is painted in classic Red1\"Measures 30 inches Long x 27 1/2 inches High x 4 3/4 inches Wide. Many extras including rigging1\"Measures 31 1/2 inches Long x 25 1/2 inches High x 10 5/8 inches Wide. All wood with canvas sail. Extras include long boats1\"Model features 30 windows1\"The operating parts of this 1958 Chevy Corvette Limited Edition are particularly delicate due to their precise scale and require special care and attention. Features rotating wheels1\"The operating parts of this limited edition Diecast 2002 Chevy Corvette 50th Anniversary Pace car Limited Edition are particularly delicate due to their precise scale and require special care and attention. Features rotating wheels1\"This precision die-cast replica features opening doors1\"his replica features opening doors1Detailed model of the 1969 Dodge Charger. This model includes finely detailed interior and exterior features. Painted in red and white.1Features include opening and closing doors. Color: White.1Features include opening and closing doors. Color: White. Measures approximately 9 1/2 Long.1Has retractable wheels and comes with a stand. Official logos and insignias.1Official logos and insignias1Official logos and insignias. Working steering system. Rotating jet engines1This diecast model of the 1966 Shelby Cobra 427 S/C includes many authentic details and operating parts. The 1:24 scale model of this iconic lighweight sports car from the 1960s comes in silver and its own display case.'1\"Completed model measures 19 1/2 inches long1\"Features Gold Trim1\"Hand crafted wooden toy train set is in about 1:18 scale1\"Measures 38 inches Long x 33 3/4 inches High. Includes a stand. Many extras including rigging1\"Model features1\"Precision crafted hand-assembled 1:18 scale reproduction of the 1952 15CV1\"This 1:18 scale precision die-cast replica1\"This 1:18 scale replica of the 1917 Grand Touring car has all the features you would expect from museum quality reproductions: all four doors and bi-fold hood opening1\"This 1:24 scale precision die cast replica of the 1938 Cadillac V-16 Presidential Limousine has all the details of the original1\"This model features rotating wheels1\"This model features two-tone paint with chrome accents1\"This model features working front and rear suspension on accurately replicated and actuating shock absorbers as well as opening engine cover11957 die cast Corvette Convertible in Roman Red with white sides and whitewall tires. 1:18 scale quality die-cast with detailed engine and underbvody. Now you can own The Classic Corvette.1Features include opening and closing doors. Color: Red1Has retractable wheels and comes with a stand1This 1940s Ford Pick-Up truck is re-created in 1:18 scale of original 1940s Ford truck. This antique style metal 1940s Ford Flatbed truck is all hand-assembled. This collectible 1940s Pick-Up truck is painted in classic dark green color  and features rotating wheels.1This limited edition model is licensed and perfectly scaled for Lionel Trains. The Diamond T620 has been produced in solid precision diecast and painted with a fire baked enamel finish. It comes with a removable tanker and is a perfect model to add authenticity to your static train or car layout or to just have on display.1Very detailed 1970 Plymouth Cuda model in 1:12 scale. The Cuda is generally accepted as one of the fastest original muscle cars from the 1970s. This model is a reproduction of one of the orginal 652 cars built in 1970. Red color.1"
+23,4
+36,4
+47,4
+45,4
+59,4
+143,4
+161,3
+61,3
+20,3
+54,3
+25,3
+22,3
+43,2
+57,2
+81,2
+232,2
+40,2
+55,2
+69,2
+44,2
+58,2
+135,2
+38,2
+12,2
+26,1
+124,1
+50,1
+94,1
+104,1
+74,1
+167,1
+256,1
+324,1
+91,1
+111,1
+144,1
+30,1
+141,1
+229,1
+75,1
+68,1
+131,1
+51,1
+105,1
+188,1
+128,1
+92,1
+35,1
+15,1
+5,1
+103,1
+182,1
+220,1
+28,1
+62,1
+116,1
+96,1
+86,1
+76,1
+267,1
+70,1
+133,1
+29,1
+19,1
+186,1
+77,1
+176,1
+32,1
+3,14
+8,10
+6,8
+7,7
+12,7
+10,6
+18,6
+5,6
+4,5
+9,5
+21,4
+20,3
+11,3
+2,3
+23,2
+16,2
+27,2
+24,2
+15,2
+42,2
+13,1
+57,1
+37,1
+30,1
+1,1
+34,1
+38,1
+28,1
+32,1
+29,1
+22,1
+ ,1255
+e,876
+i,624
+a,586
+n,516
+s,512
+t,500
+o,474
+r,458
+l,378
+d,356
+c,281
+h,235
+u,186
+g,184
+p,155
+f,127
+m,110
+1,94
+w,83
+"\"",79
+.,77
+T,64
+b,54
+y,54
+;,49
+k,44
+-,41
+:,35
+C,33
+9,33
+2,33
+v,32
+F,32
+0,31
+8,27
+x,25
+M,20
+H,19
+4,18
+6,17
+/,14
+3,13
+A,12
+L,12
+E,11
+W,11
+7,11
+5,11
+D,10
+q,10
+P,9
+R,8
+I,7
+G,5
+O,5
+V,5
+j,4
+S,4
+U,3
+K,2
+B,2
+z,2
+Z,2
+',1
++,1
+%,1
+N,1
+J,1
+Aaaaaaaa aaaaa aaaaaa; aaaaaaaa aaaaaaaa; aaaaaaaa aaaaaaaa; aaaaaaaa aaaaaa; aaaaaaa aaaa; aaaaaaa aaaaa; aaaaaaa aaaaa; aaa aaaaaaaa aaaaaaa.,4
+"\"Aaaaaaaa aaaaaaa aaaaa",4
+"\"Aaaa aaaaa aaaaaaaa aaaaaa-aaaaaaa aaaaaa aaaa",3
+"\"Aaaa aaaaaaa aaaaaaaa aaaaaaa aaaaa",3
+Aaaaaaaa aaaaaaa: Aaaaaaaa aaaaa aaaaaa; aaaaaaaa aaaaaaaa; aaaaaaaa aaaaaaaa; aaaaaaaa aaaaaa; aaaaaaa aaaa; aaaaaaa aaaaa; aaaaaaa aaaaa; aaa aaaaaaaa aaaaaaa.,3
+"\"Aaaaaaaa aaaaaaaa aaaaaa",3
+"\"Aaaaaaaa aaaaaaa aaaa",3
+"\"Aaaa aaaaa aaaaaaaa",3
+"\"Aaaaaa Aaaa",2
+"\"9:99 aaaaa aaa-aaaa aaaaa 99 aaaa aaaaa aaaa",2
+"\"Aaaaa aaaaaaa. Aaaa aaa Aaaaa. Aaaa aaaaaa aaaaaaaaa aaaaaaa",2
+"\"Aaaa aaaaa aaaaaaaa aaaa aaaaaa aaaaa",2
+Aaaaaaaa aaaaa aaaaaaa aaaa aaaaaaa aaaaaaaaaa aaa aaaaaaaaaaa aaaa aaaa 99 aaaaa,2
+99 Aaaaaaaa aaaa aaaaaaaaaaa aaaaaaa aaaaa.Aaaaa aaaa aaaaa,2
+Aaaaa aaaaaa aaaa aaaaaaaa aaaaa aaa aaaaaaaaa aaa aaaaaaaaaaa aaaaaa,2
+"\"Aaaa aaaaaaaaa aa a aaa aa aaa. Aa aaa 99 aaaaaaaa aaaaaaa",2
+"\"Aaaa aaaaa aaaaaaaa aaa-aaaa aaaaa aaaa aaaaaa aaaaaaa",1
+Aaaaaaaa aaaaa aaa aaaaaaaaa. Aaaaaaa aaaaaaaa aaaaaa. Aaaaaaaa aaa aaaaaaa,1
+"\"Aaaaaaaa Aaaa Aaaaa aaaaa aaa aaaaaaaaa",1
+"\"9999 A/99 Aaaaa Aaaaaa 9:99 aaaaa aaaaaaa. Aaa aaaaaaaaa aaaaa aa aaaa aaaaaaa aaaaaaa 9:99 aaaaa aaaaaaa aaaaa aaa 9999 Aaaaa Aaaaaa A99- aaaa",1
+Aaaa aaaaaaa aaaaaaa-aaaa aaaaa aa-aaaaa aa aa-aaaaaaa aa aaaaa 9:99 aaaaa aa aaaaaaa aaaaaaa aaaaaaaa. Aaa aaaa-aaaaaaaaa aaaa aaaa aaaaaaaaa aaaaa. Aaaa-aaaaaaa aa aaaaaaa aaaaaa aaa aaaaaaaa aaaaaaa aaaaaaaa aa aaaaaaaa aaaaaaaa.,1
+"\"Aaaaa aaaaaaa. 999+ aaaaa. aaaaaaa aaaaaaaa aaaaaa",1
+"\"Aaaa aaaaaaa aaaaaa aaa aaaaa aaa aa aa aaaaa 9:99 aaaaa",1
+"\"Aaaa 9:99 aaaaaaa aaaaaaaa aaaaaa-aaaaaaa aaaaaa aaaa",1
+"\"Aaaa",1
+"\"Aaa-aaaa aaaaa aa aaa aaaaaa 9999 Aaaaa Aaaaaa AA9 aa aaaaaa. Aaaa aaaaa aaaaaaaa aaaa aaaa aaaaaa aaa aaaaa aaaa aaaa aaaa aaaaa aaaaaaaa aaaaaaaaa aaaaaaaaaaa. Aa 9:99 aaaaa",1
+Aaaa aaaaaaa aaaaaaa aaaaa aa aaaaaaaa aaa aaaaaaaaa aaaaaa aaa Aaaaaa Aaaaaa. Aaa Aaaaaaa A999 aaa aaaa aaaaaaaa aa aaaaa aaaaaaaaa aaaaaaa aaa aaaaaaa aaaa a aaaa aaaaa aaaaaa aaaaaa. Aa aaaaa aaaa a aaaaaaaaa aaaaaa aaa aa a aaaaaaa aaaaa aa aaa aaaaaaaaaaaa aa aaaa aaaaaa aaaaa aa aaa aaaaaa aa aa aaaa aaaa aa aaaaaaa.,1
+"\"Aaa aaaa aaaa aaaaaa aaaaa. Aaaa aaaaaa aaaaaaaaa aaaaaaa",1
+"\"Aaaa 9999a aaa aaa aaaa Aaaaaaaaa aaaaaaa aa aaaaa aaaaaa",1
+"\"Aaaaaaaaa aaaaaaa aaaa-aaaaaaaaa 9:99 aaaaa aaaaaaaaaaaa aa aaa 9999 99AA",1
+Aaaa aaaaaaaa 9999 Aaaaaaaa Aaaa aaaaa aa 9:99 aaaaa. Aaa Aaaa aa aaaaaaaaa aaaaaaaa aa aaa aa aaa aaaaaaa aaaaaaaa aaaaaa aaaa aaaa aaa 9999a. Aaaa aaaaa aa a aaaaaaaaaaaa aa aaa aa aaa aaaaaaa 999 aaaa aaaaa aa 9999. Aaa aaaaa.,1
+"\"Aaaaaaaa 99 aaaaaa Aaaa a 99 9/9 aaaaaa Aaaa. Aaaaaaaa a aaaaa. Aaaa aaaaaa aaaaaaaaa aaaaaaa",1
+"\"Aaaaaaaa aaa aaaaaaaa aaaaaaaaaa. Aaaaaaaaaa aa aaaa aaa aaaa aaaaa",1
+"\"Aaaa 999 aaaa aaaaaaaaaaaa aaaaaaaa aaaaaa aaaaaaaaaa",1
+Aaaaaaaa aaaaaaa aaaaaaa aaa aaaaaaa aaaaa. Aaaaa: Aaaaa. Aaaaaaaa aaaaaaaaaaaaa 9 9/9 Aaaa.,1
+Aaaaaaaa aaaaaaa aaaaaaa aaa aaaaaaa aaaaa. Aaaaa: Aaaaa.,1
+"\"Aaaaaaaaaaa aaaaaaaa aaaa aaaaaa aaaaaaa aaa aaaa",1
+"\"Aaaa aaaaaaa aaaaaaaa aaaaaaa aaaaaaaaa",1
+"\"Aaa aaaa aaaa aaaaaa aaaaa. Aaaaaaaa 99 9/9 Aaaaaa a 99 9/9 Aaaa a 9 9/9 Aaaaa. Aaaaaa aaaaaaa 9 aaaaa aa aaaa",1
+"\"Aaaaaaaa Aaaa Aaaa",1
+"\"9:99 aaaaa aaa-aaaa aaaaa 99 aaaa Aaaa aaaaa",1
+"\"Aaaa aaaaaaaaa aaa-aaaa aaaaaaa aaaaaaaa aaaaaaa aaaaa",1
+"\"Aaaa 9:99 aaaaa aaaaaaaaa aaa aaaa aaaaaaa aa aaa 9999 Aaaaaaaa A-99 Aaaaaaaaaaaa Aaaaaaaaa aaa aaa aaa aaaaaaa aa aaa aaaaaaaa",1
+"\"Aaa aaaaaaaaa aaaaa aa aaaa 9999 Aaaaa Aaaaaaaa Aaaaaaa Aaaaaaa aaa aaaaaaaaaaaa aaaaaaaa aaa aa aaaaa aaaaaaa aaaaa aaa aaaaaaa aaaaaaa aaaa aaa aaaaaaaaa. Aaaaaaaa aaaaaaaa aaaaaa",1
+"\"Aaaaaaaa aaa-aaaa aaaaa aaaa aaaaaa aaaaaaa",1
+Aaaaaaaa aaaaa aaa aaaaaaaaa,1
+"\"Aaa aaaaaaaaa aaaaa aa aaaa aaaaaaa aaaaaaa Aaaaaaa 9999 Aaaaa Aaaaaaaa 99aa Aaaaaaaaaaa Aaaa aaa Aaaaaaa Aaaaaaa aaa aaaaaaaaaaaa aaaaaaaa aaa aa aaaaa aaaaaaa aaaaa aaa aaaaaaa aaaaaaa aaaa aaa aaaaaaaaa. Aaaaaaaa aaaaaaaa aaaaaa",1
+"\"Aaaa 9:99 aaaaa aaaaaaaaa aaa aaaa aaaaaaa aaaaaaaa aaa 9 aaaaa aaaaaaaaaa aa aaa aaaaaaaa",1
+Aaaaaaaa aaaaaaa aaaaaaa aaa aaaaaaa aaaaa. Aaaaa: Aaa,1
+"\"Aaaaa aaaaaaaa 99 aaaaaaa",1
+"\"aaa aaaaaaa aaaaaaaa aaaaaaa aaaaa",1
+"\"Aaaaaaaa aaaaa aaa aaaaaaaaa",1
+"\"9:99 aaaaa aaaaa aa a 9999 Aaaaa Aaaaaaa. Aaaa",1
+"\"Aaaa 9:99 aaaaa aaa-aaaa aaaaaaa aa aaa 9999 Aaaaaaaaa Aaaaaa Aaaaa aaa aaa aaaa aaaaaa aaaa aa aaa aaaaaaaa. Aaaaaaaa aaaaaaa aaaaa",1
+Aaaaaaaa aaaaa aa aaa 9999 Aaaaa Aaaaaaa. Aaaa aaaaa aaaaaaaa aaaaaa aaaaaaaa aaaaaaaa aaa aaaaaaaa aaaaaaaa. Aaaaaaa aa aaa aaa aaaaa.,1
+Aaa aaaaaaaaaaa aaaaaa aaa aaaaa aaaa a aaaaa,1
+Aaaaaaaa aaaaaaaa aaa-aaaaaa aaaaa aaa aaaaa aaaaaa aaaaaa. Aaaaa aaaa aaaaa.,1
+"\"Aaaaaaaa aaaaaaa aaaaaa aaaaa",1
+"\"Aaaa aaaaa aaaaaaaa aaaaaaa aaaaa aaa aaaa aaaaaaaaaa aa aaaaaaaaaa aaaaaaaaaa aaa aaaaaaaaa aaaaa aaaaaaaaa aa aaaa aa aaaaaaa aaaaaa aaaaa",1
+"\"Aaaa 9:99 aaaaa aaaaaaa aa aaaaaaaaaaa aa aaaaa aaa-aaaa aaaaa aaa aaa aaa aaa aaaaaaaa aa aaa aaaaaaaa: aaaaaaa aaaaa aaa aaaaaa aaaa",1
+"\"Aaaaa aaaaaaaa",1
+"\"Aaaa 9:99 aaaaa aaa aaaa aaaaaaa aa aaa 9999 Aaaaaaaa aa aaaaaa aaaa aaaaaaaa: A aaaaaaa aaaaaaaa aaaaaa",1
+"\"Aaa aaaa aaaa aaaaaa aaaaa. Aaaaaaaa 99 9/9 aaaaaa aa Aaaaaa",1
+"\"Aaaaaaaa 99 aaaaaa Aaaa a 99 9/9 aaaaaa Aaaa a 9 9/9 aaaaaa Aaaa. Aaaa aaaaaa aaaaaaaaa aaaaaaa",1
+"\"9:99 aaaaa aaaaaaa aa aaaaaa Aaaa AA-99A AAAAA AAAA Aaaaaaaaaa. 999% aaaa-aaaaaaaaa. Aaaaaaaa aaaaaaaa aaaaa aaaaaa",1
+Aaaaaa aaaaaaaa 9999 Aaaa Aaaa Aaaaaa Aaaaaaa aaa Aaaaa aaaaaaa aaaaa. Aaaa aaaa aaaaaaaaaaa aaa aaaaaaa aa aaa aaa aaaaa aaaaaaaa.,1
+"\"Aaaa 9:99 aaaaa aaaaaaaaa aaa-aaaa aaaaaaaaaaaa aa aaa 9999 Aaaaaaaaa Aaaaaa aaa aaa aaa aaaaaaaa-aaaaa",1
+"\"Aaaaaaaa aaaaaaaaaa aaaaaaaa aaaaaaaa aaaaaaaaa Aaaaaa aaaaaaa aaaaaa",1
+Aaa aaaaaaaaaaa aaaaaa aaa aaaaa aaaa a aaaaa. Aaaaaaaa aaaaa aaa aaaaaaaaa.,1
+"\"Aaaaa aaaaaaaa aa-aaaaa aaaaaaa",1
+"\"Aaaaaaaaa-aaaaaaaaaa aaaa aaaaaaaa Aaaaaa aaaaaaaaaaaaa aa aaaaaaa aaaaa aaaaa. Aaaaaaaa aaaaaaa aaaaa",1
+Aaaa 9999a Aaaa Aaaa-Aa aaaaa aa aa-aaaaaaa aa 9:99 aaaaa aa aaaaaaaa 9999a Aaaa aaaaa. Aaaa aaaaaaa aaaaa aaaaa 9999a Aaaa Aaaaaaa aaaaa aa aaa aaaa-aaaaaaaaa. Aaaa aaaaaaaaaaa 9999a Aaaa-Aa aaaaa aa aaaaaaa aa aaaaaaa aaaa aaaaa aaaaa  aaa aaaaaaaa aaaaaaaa aaaaaa.,1
+"\"Aaaaaaaaa aaaaa aaaaaaaa 99 9/9 aaaaaa aaaa",1
+Aaaaaaaa aaaaaa. Aaaaa aaaaaa aaaa aaaaaaaa aaaaa aaa aaaaaaaaa aaa aaaaaaaaaaa aaaaaa,1
+"\"Aaaa 9999 Aaaaaa Aaaaaaa 9999a aaaaaaa Aaaaaaaa aaaaaaa aaaaa",1
+9999 aaa aaaa Aaaaaaaa Aaaaaaaaaaa aa Aaaaa Aaa aaaa aaaaa aaaaa aaa aaaaaaaaa aaaaa. 9:99 aaaaa aaaaaaa aaa-aaaa aaaa aaaaaaaa aaaaaa aaa aaaaaaaaaa. Aaa aaa aaa aaa Aaa Aaaaaaa Aaaaaaaa.,1
+"\"Aaaa aaaaa aaaaaaaa aaaaaaaa aaaaaa",1
+"\"Aaaa 9:99 aaaaa aaaaaaaaa aaa-aaaa aaaaaaa",1
+"\"Aaaa aaaaaaa aaaaaaa-aaaa aaaaa aaaaa aaaaaaaa aa aa-aaaaaaa aa aaaaa 9:99 aaaaa aa aaaaaaa aaaaa aaaaaaaa. Aaaa aaaaaaa aaaaa aaaaa Aaaaaaaaaa aa aaa aaaa-aaaaaaaaa aaaa aaaa aaaaaaaaa aaaaa.Aaaa aaaaaaaaaaa aaaaa aaaaa aaaaaaaa aa aaaaaaa aa aaaaaaa Aaa",1
+"\"Aaaaaaaa 99 9/9 aaaaaa Aaaa a 99 9/9 aaaaaa Aaaa a 99 9/9 aaaaaa Aaaa. Aaa aaaa aaaa aaaaaa aaaa. Aaaaaa aaaaaaa aaaa aaaaa",1
+"\"Aaaa 9:99 aaaaa aaaaaaa aa aaa 9999 Aaaaa Aaaaaaa aaa aaa aaa aaa aaaaaaaa aaa aaaaa aaaaaa aaaa aaaaaa aaaaaaa aaaaaaaaaaaaa: aaa aaaa aaaaa aaa aa-aaaa aaaa aaaaaaa",1
+Aaaa aaaaaaa aaaaa aa aaa 9999 Aaaaaa Aaaaa 999 A/A aaaaaaaa aaaa aaaaaaaaa aaaaaaa aaa aaaaaaaaa aaaaa. Aaa 9:99 aaaaa aaaaa aa aaaa aaaaaa aaaaaaaaaa aaaaaa aaa aaaa aaa 9999a aaaaa aa aaaaaa aaa aaa aaa aaaaaaa aaaa.',1
+Aaaa aaaaaaa aaaaaaa-aaaa aaaaa Aaaaaaaa aa Aa-aaaaaaa aa aaaaa 9:99 aaaaa aa aaaaaaa aaaaaaa aaaaaaaa. Aaaa aaaaaaa aaaaa aaaaa aaaaaaaa aa aaa aaaa-aaaaaaaaa aaaa aaaa aaaaaaaaa aaaaa.,1
+"\"Aaaa aaaaa aaaaaaaa aaaaaa aaaa aaa aaaaaa",1
+Turnable front wheels; steering function; detailed interior; detailed engine; opening hood; opening trunk; opening doors; and detailed chassis.,4
+"\"Features opening trunk",4
+"\"This model features",3
+"\"This model features grille-mounted chrome horn",3
+Features include: Turnable front wheels; steering function; detailed interior; detailed engine; opening hood; opening trunk; opening doors; and detailed chassis.,3
+"\"This replica features opening doors",3
+"\"Features opening hood",3
+"\"Features rotating wheels",3
+10 Wingspan with retractable landing gears.Comes with pilot,2
+Exact replia with official logos and insignias and retractable wheels,2
+"\"This model features soft rubber tires",2
+"\"Exact replica. Wood and Metal. Many extras including rigging",2
+"\"Chrome Trim",2
+Detailed scale replica with working suspension and constructed from over 70 parts,2
+"\"1:18 scale die-cast about 10 long doors open",1
+"\"1:18 scale replica of actual Army UH-60L BLACK HAWK Helicopter. 100% hand-assembled. Features rotating rotor blades",1
+"\"1:24 scale die-cast about 18 long doors open",1
+"\"Official Moto Guzzi logos and insignias",1
+"\"Official logos and insignias",1
+"\"This 1980s era new look Manhattan express is still active",1
+"\"This 1:18 replica features grille-mounted chrome horn",1
+"\"This 1:18 scale precision die cast replica features the 6 front headlights of the original",1
+"\"This 1:18 scale replica is constructed of heavy die-cast metal and has all the features of the original: working doors and rumble seat",1
+Hand crafted diecast-like metal Triplane is Re-created in about 1:24 scale of antique pioneer airplane. This antique style metal triplane is all hand-assembled with many different parts.,1
+"\"1969 Z/28 Chevy Camaro 1:24 scale replica. The operating parts of this limited edition 1:24 scale diecast model car 1969 Chevy Camaro Z28- hood",1
+"\"1:12 scale model of a 1968 Dodge Charger. Hood",1
+"\"All wood with canvas sails. Measures 31 1/2 inches in Length",1
+"\"Die-cast model of the silver 1965 Aston Martin DB5 in silver. This model includes full wire wheels and doors that open with fully detailed passenger compartment. In 1:18 scale",1
+"\"Exact replica. 100+ parts. working steering system",1
+"\"Hood",1
+"\"Intricately detailed with chrome accents and trim",1
+"\"Model features bi-level seating",1
+"\"Precision-engineered from original Jaguar specification in perfect scale ratio. Features opening doors",1
+"\"This 1971 Alpine Renault 1600s replica Features opening doors",1
+"\"This 1:18 scale die cast replica of the 1962 Microbus is loaded with features: A working steering system",1
+"\"This 250 part reproduction includes moving handbrakes",1
+Polished finish. Exact replia with official logos and insignias and retractable wheels,1
+"\"All wood with canvas sails. Many extras including rigging",1
+"\"All wood with canvas sails. Measures 31 1/2 Length x 22 3/8 High x 8 1/4 Width. Extras include 4 boats on deck",1
+"\"Features opening engine cover",1
+"\"This 1:18 scale precision die-cast reproduction of the 1961 Chevrolet Impala has all the features-doors",1
+"\"This 1:24 scale die-cast replica of the 1939 Chevrolet Deluxe Coupe has the same classy look as the original. Features opening trunk",1
+"\"This model features chrome trim and grille",1
+"\"This replica features working kickstand",1
+"\"This streetcar is a joy to see. It has 80 separate windows",1
+"\"This streetcar is a joy to see. It has 99 separate windows",1
+Features official die-struck logos and baked enamel finish. Comes with stand.,1
+Hand crafted diecast-like metal bi-plane is re-created in about 1:24 scale of antique pioneer airplane. All hand-assembled with many different parts. Hand-painted in classic yellow and features correct markings of original airplane.,1
+Highly detailed 1976 Ford Gran Torino Starsky and Hutch diecast model. Very well constructed and painted in red and white patterns.,1
+"\"1:12 scale die-cast about 20 long Hood opens",1
+"\"Features completely detailed interior including Velvet flocked drapes",1
+"\"Features two-tone paint with chrome accents",1
+"\"Gleaming red handsome appearance. Everything is here the fire hoses",1
+"\"Hand crafted diecast-like metal horse carriage is re-created in about 1:18 scale of antique horse carriage. This antique style metal Stagecoach is all hand-assembled with many different parts.This collectible metal horse carriage is painted in classic Red",1
+"\"Measures 30 inches Long x 27 1/2 inches High x 4 3/4 inches Wide. Many extras including rigging",1
+"\"Measures 31 1/2 inches Long x 25 1/2 inches High x 10 5/8 inches Wide. All wood with canvas sail. Extras include long boats",1
+"\"Model features 30 windows",1
+"\"The operating parts of this 1958 Chevy Corvette Limited Edition are particularly delicate due to their precise scale and require special care and attention. Features rotating wheels",1
+"\"The operating parts of this limited edition Diecast 2002 Chevy Corvette 50th Anniversary Pace car Limited Edition are particularly delicate due to their precise scale and require special care and attention. Features rotating wheels",1
+"\"This precision die-cast replica features opening doors",1
+"\"his replica features opening doors",1
+Detailed model of the 1969 Dodge Charger. This model includes finely detailed interior and exterior features. Painted in red and white.,1
+Features include opening and closing doors. Color: White.,1
+Features include opening and closing doors. Color: White. Measures approximately 9 1/2 Long.,1
+Has retractable wheels and comes with a stand. Official logos and insignias.,1
+Official logos and insignias,1
+Official logos and insignias. Working steering system. Rotating jet engines,1
+This diecast model of the 1966 Shelby Cobra 427 S/C includes many authentic details and operating parts. The 1:24 scale model of this iconic lighweight sports car from the 1960s comes in silver and its own display case.',1
+"\"Completed model measures 19 1/2 inches long",1
+"\"Features Gold Trim",1
+"\"Hand crafted wooden toy train set is in about 1:18 scale",1
+"\"Measures 38 inches Long x 33 3/4 inches High. Includes a stand. Many extras including rigging",1
+"\"Model features",1
+"\"Precision crafted hand-assembled 1:18 scale reproduction of the 1952 15CV",1
+"\"This 1:18 scale precision die-cast replica",1
+"\"This 1:18 scale replica of the 1917 Grand Touring car has all the features you would expect from museum quality reproductions: all four doors and bi-fold hood opening",1
+"\"This 1:24 scale precision die cast replica of the 1938 Cadillac V-16 Presidential Limousine has all the details of the original",1
+"\"This model features rotating wheels",1
+"\"This model features two-tone paint with chrome accents",1
+"\"This model features working front and rear suspension on accurately replicated and actuating shock absorbers as well as opening engine cover",1
+1957 die cast Corvette Convertible in Roman Red with white sides and whitewall tires. 1:18 scale quality die-cast with detailed engine and underbvody. Now you can own The Classic Corvette.,1
+Features include opening and closing doors. Color: Red,1
+Has retractable wheels and comes with a stand,1
+This 1940s Ford Pick-Up truck is re-created in 1:18 scale of original 1940s Ford truck. This antique style metal 1940s Ford Flatbed truck is all hand-assembled. This collectible 1940s Pick-Up truck is painted in classic dark green color  and features rotating wheels.,1
+This limited edition model is licensed and perfectly scaled for Lionel Trains. The Diamond T620 has been produced in solid precision diecast and painted with a fire baked enamel finish. It comes with a removable tanker and is a perfect model to add authenticity to your static train or car layout or to just have on display.,1
+Very detailed 1970 Plymouth Cuda model in 1:12 scale. The Cuda is generally accepted as one of the fastest original muscle cars from the 1970s. This model is a reproduction of one of the orginal 652 cars built in 1970. Red color.,1
+7,quantityInStock,83,4271073171372452143842041633312341252172292362626318516719011301141113615111511071441561141331186143171321541215912312861181,1362233144105665731129222117151110121114131120181," 369e270n205o193i187a180s173t168r166d136l125h89g78p69c62u62f48w41b39m39k35.28y22120220\"18517914414614313013-12712810C10v9S6B5x4T3N3z3H3;2/2M2F2q2G2D1R1&1W1A1I1","999927aaaaaa aaaaaa aaa aaaaaaaaaaaaa7aaaa aaaaa6aaaaaaa aaaaa4aaaa-aa aaaaaaaa aaaa4aaaaaaa aaaa3aaaaaaa aaaa aaaaa. Aaaaa aaaa aaaaa.\"39993aaaaaaa aaaaaaaa aaaaaa\"3aaaaaaaa aaa-aaaa aaaaaa2aaaaaaaa aaaa aaaaaa2Aaaaaa Aaaaaa2aaaaaaa aaaaaaaa2aaaaaa aaaa aaaaaaa aa aaaa aa aaaaaaaaaa2aaaaa2aaaaaa2aaaaaaaa Aaaaaa Aaaaaaaa aaaaa aaa aaaaaaaaa1aaaaaaaa aaaaaaaaa1aaaa aaaaa aaa aaaaaa aaaaaa\"1aaaaaaaa aaaaaa aaa aaaaaaaaaa aaaaa1aaaa a aaaaaaaa aaaaaaa aa aaa 999 aaaaaaaaaa aaaaaaaa 9 aaaaaa199 aaaaaa Aaaa aaa 9 9/9 aaaaaa Aaaa. Aaaa aaaaaa. Aaa aaaaaaaa Aaaaaaaa aaa aaaaa aa Aaaa Aaaaaa aa 9999 aa aaaa aaa aaaaa aaaaaa aaa aaa aaaaa aa Aaaaaaaaaaaa. Aaaaaaa aa aaa Aaaaaaaa aaaaaa aaaaaaa aaa aaaaaa aaa aaaaa aa aaa Aaaaaaaaa. Aaaaa aaaaaaaa aa aaaaaa aaa aaa Aaaaaaaa aaaa199 aaaaaaa1Aaaa Aaaa Aaaaa Aaaa1aaaa aaaaaaaaaa aaaa19 aaaaaa aaaa1aaaaa aaaaaaaaaa1aaaa aaa aaaaaaaa aaaaaaaa aaaaaaa aaa aaaaaaa aaaaa-aaaaaa Aaaaaaaaaaa Aaaaaa aaaaaa1aaaaaaaaa aaaaaa aaa aaaaaa aaaaaa.\"1aaaa aaa aaaaa aaa a aaaaaaaa aaaaaaa aaaaa aaaaaa aaaaaa.\"1aaaa aaaaa aaaaaaaa aaaaaaaaaaaaa 99 aaaaaa/99 aa aaaa.\"1aaaaaaa aaaaaaaa aaaaaa. Aaaaa aaaa aaaaa.\"1aaaa aaa aaaaaaaaaaa aaaaaa aaaaaaaaaa1aaaaaa aaaa aaaaa aaaaa1991Aaaaaa aaaaaa\"1aaaaa aaa aaaaa aaa aaaa aa aaaaaa aaaaaa aaaaaaaa aaaaaaaa aaaaaaaa. Aaaaaaaa aaaaa aaaaaaaa aaaaa aaa aaaaa aaaaaa. Aaaaa aaaa aaaaa.\"1aaaaaaa1aaaaaaaaa & aaaaa aaaaaaaaa aaaaa1aaaaaaaa aaa-aaaaaa aaaaa aaa aaaaa aaaaaa aaaaaa.\"1aaaaaaaaaaa aaaaaa aaaaaaaaaa1aaaa aaa aaaaa aa aaa aaaaa aa aa aaaaaaa aaaa aaaa aaaaaaaaaaa aaaaaaaa aaaa aaaaaaaaa aaa aaaaa. Aaaaaaaa aaaaaaa aaaaa-aaaaaa aaaaa aaaaaa1aaaa aaa aaaaa aaaa aaaa; aaaaaaaa 999 aaaaa-aaaa aaaaaa; aaaaaa aaaaaaaaa aaa aaaaa aaaaa199 aaaaaa aa aaaaa aaaaaa aaaaaaaaa 9 aaaaaaaaaa aaaaa1aaaaa aaa aaaaa aaa aaaa aa aaaaaa aaaaaa aaaaaaaa aaaaaaaa aaaaaaaa. Aaaaaaaa aaaaa aaaaaaaa aaaaa aaa aaaaa aaaaaa. Aaaaa aaaaa\"1aaaaaaaa aaaaa\"1aaaaaaa aaaaaaaaa aaaaaa aaa aaaaaaa aaaaa. Aaa aaaaa aaa aaaaaaaaaaaa aaaaaaaa aaa aa aaaaa aaaaaaa aaaaa aaa aaaaaaa aaaaaaa aaaa aaa aaaaaaaaa. Aa aaaaaa aaa aa aaaaaa aa aa aaa aaaaa1aaaaaaa aaaaa aaaaa aaa aaaaaaaa1aaaaaaa aaaaaaaaa1aaa aaaaaa aa aaa1aaa aaaaaaaa aaaaaaa aaaaaaaa aaaaa aaa aa aaaaaaaa aaaa-aaaaaaaa.\"1aaaaaaa aaaa aaa Aaaaa aa aaa-aaaa Aaaaaaaaa. Aaa 99 aaaaaaaa aaaaaaa aaa aaaaaaa aaaaaa. Aaaaa a aaaaaaa.\"1","superb detail and craftsmanship7long boats5lift-up louvered hood4opening doors4working steering system\"3working kick stand. Comes with stand.\"3opening hood3superior die-cast detail2Chrome Grille2saddle bags located on side of motorcycle2electric wire guides2working steering21049122 inches High and 4 3/4 inches Wide. Many extras. The schooner Bluenose was built in Nova Scotia in 1921 to fish the rough waters off the coast of Newfoundland. Because of the Bluenose racing prowess she became the pride of all Canadians. Still featured on stamps and the Canadian dime13128136191566317106181641deluxe wood grain floor1opening front doors and tailgate1original logos\"1with its independent spring suspension1working streering11249136271551166001679116934188201clutch1from the flags on the front to an opening back seat compartment complete with telephone and rifle. Features factory baked-enamel black finish1front suspension1official Harley Davidson logos and insignias1rear stabilizer flap1running from the Bronx to mid-town Manhattan. Has 35 opeining windows and working lights. Needs a battery.\"1working streering system and opening doors. All parts are particularly delicate due to their precise scale and require special care and attention. It should not be picked up by the doors1101614857173051Rubber wheels\"1doors1ladder1poseable streering1skylights & glare resistant glass1with its optional porthole hardtop and factory baked-enamel Thunderbird Bronze finish1working steering system. Color dark green.\"12756150 windows155451681217003173231819719 inches high196531hood and trunk that open; detailed 409 cubic-inch engine; chrome dashboard and stick shift1independent spring suspension1official die-struck logos and baked enamel finish.\"1plus a detailed version of the 142 horsepower straight 8 engine1propeller blades and rubber wheels.\"1rigging1this model measures approximately 10 inches/20 cm long.\"1151178125 inches in total length including 2 additional carts132521472415841159421912719921Full Size Spare Tire1and features turning steering wheel and is entirely hand-finished.\"1detailed engine and instrument panel1doors and trunk all open to reveal highly detailed interior features. Steering wheel actually turns the front wheels. Color black\"1doors and trunk all open to reveal highly detailed interior features. Steering wheel actually turns the front wheels. Color dark green.\"1hood and doors and a showroom quality baked enamel finish.\"1hood opens1hood opens and rubber wheels\"1sea sprite on bow1trunk1"
+4,27
+10,7
+31,7
+13,7
+24,5
+21,4
+38,4
+20,4
+16,3
+3,3
+12,3
+41,2
+5,2
+17,2
+29,2
+36,2
+6,2
+63,1
+85,1
+67,1
+90,1
+130,1
+141,1
+136,1
+51,1
+15,1
+107,1
+44,1
+56,1
+14,1
+33,1
+186,1
+43,1
+7,1
+32,1
+54,1
+2,1
+59,1
+23,1
+286,1
+18,1
+1,36
+2,23
+3,14
+4,10
+5,6
+6,5
+7,3
+11,2
+9,2
+22,1
+17,1
+51,1
+10,1
+21,1
+14,1
+31,1
+20,1
+8,1
+ ,369
+e,270
+n,205
+o,193
+i,187
+a,180
+s,173
+t,168
+r,166
+d,136
+l,125
+h,89
+g,78
+p,69
+c,62
+u,62
+f,48
+w,41
+b,39
+m,39
+k,35
+.,28
+y,22
+1,20
+2,20
+"\"",18
+5,17
+9,14
+4,14
+6,14
+3,13
+0,13
+-,12
+7,12
+8,10
+C,10
+v,9
+S,6
+B,5
+x,4
+T,3
+N,3
+z,3
+H,3
+;,2
+/,2
+M,2
+F,2
+q,2
+G,2
+D,1
+R,1
+&,1
+W,1
+A,1
+I,1
+9999,27
+aaaaaa aaaaaa aaa aaaaaaaaaaaaa,7
+aaaa aaaaa,6
+aaaaaaa aaaaa,4
+aaaa-aa aaaaaaaa aaaa,4
+aaaaaaa aaaa,3
+"aaaaaaa aaaa aaaaa. Aaaaa aaaa aaaaa.\"",3
+999,3
+"aaaaaaa aaaaaaaa aaaaaa\"",3
+aaaaaaaa aaa-aaaa aaaaaa,2
+aaaaaaaa aaaa aaaaaa,2
+Aaaaaa Aaaaaa,2
+aaaaaaa aaaaaaaa,2
+aaaaaa aaaa aaaaaaa aa aaaa aa aaaaaaaaaa,2
+aaaaa,2
+aaaaaa,2
+aaaaaaaa Aaaaaa Aaaaaaaa aaaaa aaa aaaaaaaaa,1
+aaaaaaaa aaaaaaaaa,1
+"aaaa aaaaa aaa aaaaaa aaaaaa\"",1
+aaaaaaaa aaaaaa aaa aaaaaaaaaa aaaaa,1
+aaaa a aaaaaaaa aaaaaaa aa aaa 999 aaaaaaaaaa aaaaaaaa 9 aaaaaa,1
+99 aaaaaa Aaaa aaa 9 9/9 aaaaaa Aaaa. Aaaa aaaaaa. Aaa aaaaaaaa Aaaaaaaa aaa aaaaa aa Aaaa Aaaaaa aa 9999 aa aaaa aaa aaaaa aaaaaa aaa aaa aaaaa aa Aaaaaaaaaaaa. Aaaaaaa aa aaa Aaaaaaaa aaaaaa aaaaaaa aaa aaaaaa aaa aaaaa aa aaa Aaaaaaaaa. Aaaaa aaaaaaaa aa aaaaaa aaa aaa Aaaaaaaa aaaa,1
+99 aaaaaaa,1
+Aaaa Aaaa Aaaaa Aaaa,1
+aaaa aaaaaaaaaa aaaa,1
+9 aaaaaa aaaa,1
+aaaaa aaaaaaaaaa,1
+aaaa aaa aaaaaaaa aaaaaaaa aaaaaaa aaa aaaaaaa aaaaa-aaaaaa Aaaaaaaaaaa Aaaaaa aaaaaa,1
+"aaaaaaaaa aaaaaa aaa aaaaaa aaaaaa.\"",1
+"aaaa aaa aaaaa aaa a aaaaaaaa aaaaaaa aaaaa aaaaaa aaaaaa.\"",1
+"aaaa aaaaa aaaaaaaa aaaaaaaaaaaaa 99 aaaaaa/99 aa aaaa.\"",1
+"aaaaaaa aaaaaaaa aaaaaa. Aaaaa aaaa aaaaa.\"",1
+aaaa aaa aaaaaaaaaaa aaaaaa aaaaaaaaaa,1
+aaaaaa aaaa aaaaa aaaaa,1
+99,1
+"Aaaaaa aaaaaa\"",1
+"aaaaa aaa aaaaa aaa aaaa aa aaaaaa aaaaaa aaaaaaaa aaaaaaaa aaaaaaaa. Aaaaaaaa aaaaa aaaaaaaa aaaaa aaa aaaaa aaaaaa. Aaaaa aaaa aaaaa.\"",1
+aaaaaaa,1
+aaaaaaaaa & aaaaa aaaaaaaaa aaaaa,1
+"aaaaaaaa aaa-aaaaaa aaaaa aaa aaaaa aaaaaa aaaaaa.\"",1
+aaaaaaaaaaa aaaaaa aaaaaaaaaa,1
+aaaa aaa aaaaa aa aaa aaaaa aa aa aaaaaaa aaaa aaaa aaaaaaaaaaa aaaaaaaa aaaa aaaaaaaaa aaa aaaaa. Aaaaaaaa aaaaaaa aaaaa-aaaaaa aaaaa aaaaaa,1
+aaaa aaa aaaaa aaaa aaaa; aaaaaaaa 999 aaaaa-aaaa aaaaaa; aaaaaa aaaaaaaaa aaa aaaaa aaaaa,1
+99 aaaaaa aa aaaaa aaaaaa aaaaaaaaa 9 aaaaaaaaaa aaaaa,1
+"aaaaa aaa aaaaa aaa aaaa aa aaaaaa aaaaaa aaaaaaaa aaaaaaaa aaaaaaaa. Aaaaaaaa aaaaa aaaaaaaa aaaaa aaa aaaaa aaaaaa. Aaaaa aaaaa\"",1
+"aaaaaaaa aaaaa\"",1
+aaaaaaa aaaaaaaaa aaaaaa aaa aaaaaaa aaaaa. Aaa aaaaa aaa aaaaaaaaaaaa aaaaaaaa aaa aa aaaaa aaaaaaa aaaaa aaa aaaaaaa aaaaaaa aaaa aaa aaaaaaaaa. Aa aaaaaa aaa aa aaaaaa aa aa aaa aaaaa,1
+aaaaaaa aaaaa aaaaa aaa aaaaaaaa,1
+aaaaaaa aaaaaaaaa,1
+aaa aaaaaa aa aaa,1
+"aaa aaaaaaaa aaaaaaa aaaaaaaa aaaaa aaa aa aaaaaaaa aaaa-aaaaaaaa.\"",1
+"aaaaaaa aaaa aaa Aaaaa aa aaa-aaaa Aaaaaaaaa. Aaa 99 aaaaaaaa aaaaaaa aaa aaaaaaa aaaaaa. Aaaaa a aaaaaaa.\"",1
+superb detail and craftsmanship,7
+long boats,5
+lift-up louvered hood,4
+opening doors,4
+"working steering system\"",3
+"working kick stand. Comes with stand.\"",3
+opening hood,3
+superior die-cast detail,2
+Chrome Grille,2
+saddle bags located on side of motorcycle,2
+electric wire guides,2
+working steering,2
+1049,1
+22 inches High and 4 3/4 inches Wide. Many extras. The schooner Bluenose was built in Nova Scotia in 1921 to fish the rough waters off the coast of Newfoundland. Because of the Bluenose racing prowess she became the pride of all Canadians. Still featured on stamps and the Canadian dime,1
+3128,1
+3619,1
+5663,1
+7106,1
+8164,1
+deluxe wood grain floor,1
+opening front doors and tailgate,1
+"original logos\"",1
+with its independent spring suspension,1
+working streering,1
+1249,1
+3627,1
+551,1
+6600,1
+6791,1
+6934,1
+8820,1
+clutch,1
+from the flags on the front to an opening back seat compartment complete with telephone and rifle. Features factory baked-enamel black finish,1
+front suspension,1
+official Harley Davidson logos and insignias,1
+rear stabilizer flap,1
+"running from the Bronx to mid-town Manhattan. Has 35 opeining windows and working lights. Needs a battery.\"",1
+working streering system and opening doors. All parts are particularly delicate due to their precise scale and require special care and attention. It should not be picked up by the doors,1
+1016,1
+4857,1
+7305,1
+"Rubber wheels\"",1
+doors,1
+ladder,1
+poseable streering,1
+skylights & glare resistant glass,1
+with its optional porthole hardtop and factory baked-enamel Thunderbird Bronze finish,1
+"working steering system. Color dark green.\"",1
+2756,1
+50 windows,1
+5545,1
+6812,1
+7003,1
+7323,1
+8197,1
+9 inches high,1
+9653,1
+hood and trunk that open; detailed 409 cubic-inch engine; chrome dashboard and stick shift,1
+independent spring suspension,1
+"official die-struck logos and baked enamel finish.\"",1
+plus a detailed version of the 142 horsepower straight 8 engine,1
+"propeller blades and rubber wheels.\"",1
+rigging,1
+"this model measures approximately 10 inches/20 cm long.\"",1
+15,1
+178,1
+25 inches in total length including 2 additional carts,1
+3252,1
+4724,1
+5841,1
+5942,1
+9127,1
+992,1
+Full Size Spare Tire,1
+"and features turning steering wheel and is entirely hand-finished.\"",1
+detailed engine and instrument panel,1
+"doors and trunk all open to reveal highly detailed interior features. Steering wheel actually turns the front wheels. Color black\"",1
+"doors and trunk all open to reveal highly detailed interior features. Steering wheel actually turns the front wheels. Color dark green.\"",1
+"hood and doors and a showroom quality baked enamel finish.\"",1
+hood opens,1
+"hood opens and rubber wheels\"",1
+sea sprite on bow,1
+trunk,1
+8,buyPrice,85,526421239116136216155631732272122292162281531411941591471671241315514312513311091271,1552223164693725218111181131," 162e148o108n104s97t93i92r90a79d67l57g46.43h35w32m31u29927327k25p23622221520f18818418117b17017c17715y15\"11-10C3v3H3A2;2%2O2T2q1x1&1B1/1","99.9925999916aaaaaaa aaaaaaaa aaaaaa9aaaaaaa aaaaa6aaaaaaaa aaaaaa5aaaaa aaaaa5aaaa-aaaa aaaaaa aaaa499.93aaaaaaa2aaaa2aaaaaa aaa aaaaaa2Aaaaaaa Aaaa2aaaaaaaa aaaaaaaaa aaaa aaaaa2992999.992aaa aaaaaa aaa-aaaa aaaaaaa aaaaa aaaaaa aaaaaa1aaa Aaaaaaaa aaa aaaa aaa Aaaaa aa 9999.\"1aaa-aaaa aaaaaaaa; aaaaaaa aaaaaaaa aaaaaa; aaa aaaaaa aa aaaa a aaaaaaa aaaaa-aaaaaa aaaaaa.\"1aa aaaaaa aaaaaaa aaaaa. Aaaa aaaaaaa aaaaa aaaaaa aaa aaaaa aaaaa aaa aa aaa aaaa-aaaaaaaaa aaaa 999% aaaa.\"1aaaa aaaaaa aaa aaaaa aaaaaa aaaaaaaaaaaaa aaaaaaaaa. Aaaaa aaaaa.\"1aaaaaa-aaaa aaaa1Aaaaaa Aaaa1aaaaaaaa aaaaaaaa1aaaa-aaaaa aaaaa19991aa a 999% aaaaaaaa aaaaaaaaa aa aaaa Aaaaaaaa aaaaaaa.\"1aaaa aaaaaaa aaaaaaaa1aaa 9 aaaaaaa aaaaa.\"1aaaaaaaaaa aaaa aaaaaaa aaa1aaaaa1aaa a aaaa aaaaa aaaaaa aaaa aaaaaaaa aaaaaa aaaaaaa\"1aaaaa aaaaa aaa aaaaaa aaaa\"1aaaaaaa aaaaa aaa aaaaa.\"1aaaaaaa aaaaa aaa aaaaa. Aaaaa aaaa aaaaa.\"1aaaaaa1aaaaaaaaa & aaaaa aaaaaaaaa aaaaa1aaaaaaaa aaa aaaa aaaaaa19aaaaaa aaaa aaa aa aa aaaa aaa/aaaaa. Aaa aaaa aaa aaaaa.\"1","working steering system9pilot house5fold-down rumble seat4opening doors3detailed engine3opening trunk3Opening Hood2rotating wheels2detailed interiors with seats2rubber mud guards229.18129.34134.25137.32139131407414710151.15156.76159.33160016125168.29168.8170621768919123195.591detachable rear wheelie bar1is a 100% accurate rendition of this American classic.\"1opening doors and trunk. Color dark green.\"1opening doors and trunk.\"1roof1skylights & glare resistant glass1throttle and foot pedals1trunk1two-tone interior; working steering system; all topped of with a factory baked-enamel finish.\"131.92132.7713inches wide and is in barn red/black. All wood and metal.\"154.4166.741733219042192411and famous two-tone factory baked enamel finish136.2314357146.5315330158.7315992160.8618290184.76198.31Chrome Trim1anchors1and 4 opening doors.\"1and a wood grain casket with seperate chrome handles\"1of actual vintage train. This antique style wooden toy train model set is all hand-assembled with 100% wood.\"136.27173.49191.921axes1hood goddess ornament1the Bluenose was lost off Haiti in 1946.\"1trunk opens and wheels roll\"1101.511103.4214915099166.92168169.9318258183.05185.68198.581chrome-look trim1detailed interior1dual spares and their famous comprehensive dashboard. Color black.\"1gear-shift lever1ladders1wheels1"
+5,26
+4,21
+23,9
+11,6
+13,6
+21,6
+15,5
+6,3
+17,3
+2,2
+7,2
+12,2
+29,2
+16,2
+28,1
+53,1
+41,1
+94,1
+59,1
+47,1
+67,1
+24,1
+3,1
+55,1
+43,1
+25,1
+33,1
+109,1
+27,1
+1,55
+2,22
+3,16
+4,6
+9,3
+7,2
+5,2
+18,1
+11,1
+8,1
+13,1
+ ,162
+e,148
+o,108
+n,104
+s,97
+t,93
+i,92
+r,90
+a,79
+d,67
+l,57
+g,46
+.,43
+h,35
+w,32
+m,31
+u,29
+9,27
+3,27
+k,25
+p,23
+6,22
+2,21
+5,20
+f,18
+8,18
+4,18
+1,17
+b,17
+0,17
+c,17
+7,15
+y,15
+"\"",11
+-,10
+C,3
+v,3
+H,3
+A,2
+;,2
+%,2
+O,2
+T,2
+q,1
+x,1
+&,1
+B,1
+/,1
+99.99,25
+9999,16
+aaaaaaa aaaaaaaa aaaaaa,9
+aaaaaaa aaaaa,6
+aaaaaaaa aaaaaa,5
+aaaaa aaaaa,5
+aaaa-aaaa aaaaaa aaaa,4
+99.9,3
+aaaaaaa,2
+aaaa,2
+aaaaaa aaa aaaaaa,2
+Aaaaaaa Aaaa,2
+aaaaaaaa aaaaaaaaa aaaa aaaaa,2
+99,2
+999.99,2
+aaa aaaaaa aaa-aaaa aaaaaaa aaaaa aaaaaa aaaaaa,1
+"aaa Aaaaaaaa aaa aaaa aaa Aaaaa aa 9999.\"",1
+"aaa-aaaa aaaaaaaa; aaaaaaa aaaaaaaa aaaaaa; aaa aaaaaa aa aaaa a aaaaaaa aaaaa-aaaaaa aaaaaa.\"",1
+"aa aaaaaa aaaaaaa aaaaa. Aaaa aaaaaaa aaaaa aaaaaa aaa aaaaa aaaaa aaa aa aaa aaaa-aaaaaaaaa aaaa 999% aaaa.\"",1
+"aaaa aaaaaa aaa aaaaa aaaaaa aaaaaaaaaaaaa aaaaaaaaa. Aaaaa aaaaa.\"",1
+aaaaaa-aaaa aaaa,1
+Aaaaaa Aaaa,1
+aaaaaaaa aaaaaaaa,1
+aaaa-aaaaa aaaaa,1
+999,1
+"aa a 999% aaaaaaaa aaaaaaaaa aa aaaa Aaaaaaaa aaaaaaa.\"",1
+aaaa aaaaaaa aaaaaaaa,1
+"aaa 9 aaaaaaa aaaaa.\"",1
+aaaaaaaaaa aaaa aaaaaaa aaa,1
+aaaaa,1
+"aaa a aaaa aaaaa aaaaaa aaaa aaaaaaaa aaaaaa aaaaaaa\"",1
+"aaaaa aaaaa aaa aaaaaa aaaa\"",1
+"aaaaaaa aaaaa aaa aaaaa.\"",1
+"aaaaaaa aaaaa aaa aaaaa. Aaaaa aaaa aaaaa.\"",1
+aaaaaa,1
+aaaaaaaaa & aaaaa aaaaaaaaa aaaaa,1
+aaaaaaaa aaa aaaa aaaaaa,1
+"9aaaaaa aaaa aaa aa aa aaaa aaa/aaaaa. Aaa aaaa aaa aaaaa.\"",1
+working steering system,9
+pilot house,5
+fold-down rumble seat,4
+opening doors,3
+detailed engine,3
+opening trunk,3
+Opening Hood,2
+rotating wheels,2
+detailed interiors with seats,2
+rubber mud guards,2
+29.18,1
+29.34,1
+34.25,1
+37.32,1
+3913,1
+4074,1
+4710,1
+51.15,1
+56.76,1
+59.33,1
+600,1
+6125,1
+68.29,1
+68.8,1
+7062,1
+7689,1
+9123,1
+95.59,1
+detachable rear wheelie bar,1
+"is a 100% accurate rendition of this American classic.\"",1
+"opening doors and trunk. Color dark green.\"",1
+"opening doors and trunk.\"",1
+roof,1
+skylights & glare resistant glass,1
+throttle and foot pedals,1
+trunk,1
+"two-tone interior; working steering system; all topped of with a factory baked-enamel finish.\"",1
+31.92,1
+32.77,1
+"3inches wide and is in barn red/black. All wood and metal.\"",1
+54.4,1
+66.74,1
+7332,1
+9042,1
+9241,1
+and famous two-tone factory baked enamel finish,1
+36.23,1
+4357,1
+46.53,1
+5330,1
+58.73,1
+5992,1
+60.86,1
+8290,1
+84.76,1
+98.3,1
+Chrome Trim,1
+anchors,1
+"and 4 opening doors.\"",1
+"and a wood grain casket with seperate chrome handles\"",1
+"of actual vintage train. This antique style wooden toy train model set is all hand-assembled with 100% wood.\"",1
+36.27,1
+73.49,1
+91.92,1
+axes,1
+hood goddess ornament,1
+"the Bluenose was lost off Haiti in 1946.\"",1
+"trunk opens and wheels roll\"",1
+101.51,1
+103.42,1
+49,1
+5099,1
+66.92,1
+68,1
+69.93,1
+8258,1
+83.05,1
+85.68,1
+98.58,1
+chrome-look trim,1
+detailed interior,1
+"dual spares and their famous comprehensive dashboard. Color black.\"",1
+gear-shift lever,1
+ladders,1
+wheels,1
+9,MSRP,88,53241461227715676214234134203163262192323612133114132156122191241,16831921346628171,"e92 92r84n80o78i65t59s54.51a49g42l37134d33w30630429p28727524224m23c23923322k21h19817015f12u10y9b8\"8v4C3F2O2D2G1j1q1z1","99.9927999.9912999911aaaaaaa aaaaaaa aaaaaaaaaaa7aaaaaaa6999.94aaaaaaa aaaaaaaa aaaaaa4aaaa aaaaa aaaa aaaaa399.93aaaaaaa aaaaaaaa3Aaaaaaa Aaaaa29992aaaaaaa aaaa aaaaa\"2aaaaaaaaa Aaaa aaaaa2aaaaa aaa aaaaaaa aaaaaaaa2aaaaaaaa aaaaaa2aaaaaaa aaaaaaaa aaaaaa aaa aaaaaa aaaaaa. Aaaaa aaaaa.\"1aaaaaaa aaaaa1aaaaaaa aaaa aaaaa.\"1aaa aaaa aaaaaa aaa. Aaaaa aaaaa\"1aaaaaa aaaaaaa1aaaaaaa aaaaa aaa aaaa1aaaa aa aaaaa.\"1aaaaa aaaaaaa aaaaa aaaa aaaaa aaaaa1aaaaaaaa aaaaa\"1aaaaaaa aaaaaaaa aaaaaa\"1991aaa aaaaaa aaaaaaaaaa1aaaaaaaaa1aaaaa1Aaaaaa Aaaaaa1aaa aaa aaaaaa aa aa aaa aaaaaaa1aaaaaaaaaa aaaa1aaaaaaaaa aaaaa1","opening forward compartment7anchors5working steering system4working steering3wide white wall tires3detailed engine2poles and drivers controls2Opening Doors2working kick stand\"2authentic Ford logos2115.161115.751140.431147.741163.731173.0211897119561214.3132.95165.96168.511899019446199.891hood or trunk.\"1opening doors and hood1original logos\"1112.711321143.62150.31155.7157.461645016645168.3172.45175.16176.17191.341Chrome Grille1and fuel filler cap. Color black\"132.37177.2717869184.48199.721footbrake lever1railing1squeezable horn1working steering system\"1136124.14124.231254213209152.66168.24174.03174.86179.81and tufted upholstery1copper railing1heavy diecast metal with resin parts1streering1working jump seats.\"1101.151109.421118.651121.081146.991148.81207.8122.57127.06134.17149.66153.93160.741655316906180195.341are all topped of by the sliding1bells1opening trunk1working steering system and rubber wheels. Color black.\"1"
+5,32
+4,14
+6,12
+27,7
+15,6
+7,6
+21,4
+23,4
+13,4
+20,3
+16,3
+26,2
+19,2
+3,2
+36,1
+2,1
+33,1
+14,1
+32,1
+56,1
+22,1
+9,1
+24,1
+1,68
+3,19
+2,13
+4,6
+6,2
+8,1
+7,1
+e,92
+ ,92
+r,84
+n,80
+o,78
+i,65
+t,59
+s,54
+.,51
+a,49
+g,42
+l,37
+1,34
+d,33
+w,30
+6,30
+4,29
+p,28
+7,27
+5,24
+2,24
+m,23
+c,23
+9,23
+3,22
+k,21
+h,19
+8,17
+0,15
+f,12
+u,10
+y,9
+b,8
+"\"",8
+v,4
+C,3
+F,2
+O,2
+D,2
+G,1
+j,1
+q,1
+z,1
+99.99,27
+999.99,12
+9999,11
+aaaaaaa aaaaaaa aaaaaaaaaaa,7
+aaaaaaa,6
+999.9,4
+aaaaaaa aaaaaaaa aaaaaa,4
+aaaa aaaaa aaaa aaaaa,3
+99.9,3
+aaaaaaa aaaaaaaa,3
+Aaaaaaa Aaaaa,2
+999,2
+"aaaaaaa aaaa aaaaa\"",2
+aaaaaaaaa Aaaa aaaaa,2
+aaaaa aaa aaaaaaa aaaaaaaa,2
+aaaaaaaa aaaaaa,2
+"aaaaaaa aaaaaaaa aaaaaa aaa aaaaaa aaaaaa. Aaaaa aaaaa.\"",1
+aaaaaaa aaaaa,1
+"aaaaaaa aaaa aaaaa.\"",1
+"aaa aaaa aaaaaa aaa. Aaaaa aaaaa\"",1
+aaaaaa aaaaaaa,1
+aaaaaaa aaaaa aaa aaaa,1
+"aaaa aa aaaaa.\"",1
+aaaaa aaaaaaa aaaaa aaaa aaaaa aaaaa,1
+"aaaaaaaa aaaaa\"",1
+"aaaaaaa aaaaaaaa aaaaaa\"",1
+99,1
+aaa aaaaaa aaaaaaaaaa,1
+aaaaaaaaa,1
+aaaaa,1
+Aaaaaa Aaaaaa,1
+aaa aaa aaaaaa aa aa aaa aaaaaaa,1
+aaaaaaaaaa aaaa,1
+aaaaaaaaa aaaaa,1
+opening forward compartment,7
+anchors,5
+working steering system,4
+working steering,3
+wide white wall tires,3
+detailed engine,2
+poles and drivers controls,2
+Opening Doors,2
+"working kick stand\"",2
+authentic Ford logos,2
+115.16,1
+115.75,1
+140.43,1
+147.74,1
+163.73,1
+173.02,1
+1897,1
+1956,1
+214.3,1
+32.95,1
+65.96,1
+68.51,1
+8990,1
+9446,1
+99.89,1
+"hood or trunk.\"",1
+opening doors and hood,1
+"original logos\"",1
+112.7,1
+132,1
+143.62,1
+50.31,1
+55.7,1
+57.46,1
+6450,1
+6645,1
+68.3,1
+72.45,1
+75.16,1
+76.17,1
+91.34,1
+Chrome Grille,1
+"and fuel filler cap. Color black\"",1
+32.37,1
+77.27,1
+7869,1
+84.48,1
+99.72,1
+footbrake lever,1
+railing,1
+squeezable horn,1
+"working steering system\"",1
+136,1
+24.14,1
+24.23,1
+2542,1
+3209,1
+52.66,1
+68.24,1
+74.03,1
+74.86,1
+79.8,1
+and tufted upholstery,1
+copper railing,1
+heavy diecast metal with resin parts,1
+streering,1
+"working jump seats.\"",1
+101.15,1
+109.42,1
+118.65,1
+121.08,1
+146.99,1
+148.8,1
+207.8,1
+22.57,1
+27.06,1
+34.17,1
+49.66,1
+53.93,1
+60.74,1
+6553,1
+6906,1
+80,1
+95.34,1
+are all topped of by the sliding,1
+bells,1
+opening trunk,1
+"working steering system and rubber wheels. Color black.\"",1

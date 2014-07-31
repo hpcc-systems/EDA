@@ -1,0 +1,12 @@
+txt
+ProductsRS := RECORD
+  SALT25.StrType9 productCode;
+  SALT25.StrType43 productName;
+  SALT25.StrType16 productLine;
+  REAL8 productScale;
+  SALT25.StrType25 productVendor;
+  SALT25.StrType productDescription;
+  SALT25.StrType quantityInStock;
+  SALT25.StrType buyPrice;
+  SALT25.StrType56 MSRP;
+  END;
