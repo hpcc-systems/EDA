@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin id="ECLCorrelation"
+	iconfile="correlation.png"
+	description="Correlation"
+	tooltip="Correlation" 
+	category="HPCC EDA"
+	classname="org.hpccsystems.pentaho.job.eclcorrelation.ECLCorrelation">
+            
+    <libraries>
+	  <library name="../../hpcc-common/javaecl-0.1.0.jar"/>
+        <library name="../../hpcc-common/eclgui.jar"/>
+        <library name="eclcorrelation.jar"/>
+    </libraries>            
+</plugin>
